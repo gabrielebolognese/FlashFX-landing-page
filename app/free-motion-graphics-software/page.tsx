@@ -9,6 +9,7 @@ import { FMGFAQSection } from '@/components/sections/free-motion-graphics/FMGFAQ
 import { fmgFaqData } from '@/components/sections/free-motion-graphics/fmgFaqData';
 import { FMGFinalCTA } from '@/components/sections/free-motion-graphics/FMGFinalCTA';
 import { SectionDivider } from '@/components/ui/SectionDivider';
+import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
@@ -36,11 +37,13 @@ export const metadata: Metadata = {
     siteName: 'FlashFX',
     locale: 'en_US',
     type: 'website',
+    images: OG_IMAGES,
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Free Motion Graphics Software (2026) — No Watermark | FlashFX',
     description: 'FlashFX is free motion graphics software with no watermark, no installation, and no subscription. Create professional animations in your browser.',
+    images: OG_IMAGES,
   },
   alternates: {
     canonical: 'https://flashfx.app/free-motion-graphics-software',

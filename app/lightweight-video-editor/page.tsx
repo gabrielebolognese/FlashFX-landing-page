@@ -5,6 +5,7 @@ import { BenchmarkComparisons } from '@/components/sections/lightweight-video-ed
 import { LightweightFAQSection } from '@/components/sections/lightweight-video-editor/LightweightFAQSection';
 import { LightweightFinalCTA } from '@/components/sections/lightweight-video-editor/LightweightFinalCTA';
 import { SectionDivider } from '@/components/ui/SectionDivider';
+import { OG_IMAGES } from '@/lib/seo';
 import { lightweightFaqData } from '@/components/sections/lightweight-video-editor/lightweightFaqData';
 
 export const metadata: Metadata = {
@@ -34,11 +35,13 @@ export const metadata: Metadata = {
     siteName: 'FlashFX',
     locale: 'en_US',
     type: 'website',
+    images: OG_IMAGES,
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Lightweight Video Editor — Works on Low-End PCs & Chromebooks | FlashFX',
     description: 'FlashFX is a lightweight video editing software that runs in the browser on any hardware.',
+    images: OG_IMAGES,
   },
   alternates: {
     canonical: 'https://flashfx.app/lightweight-video-editor',

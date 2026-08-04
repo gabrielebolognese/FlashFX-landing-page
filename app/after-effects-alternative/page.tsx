@@ -9,6 +9,7 @@ import { MigrationGuide } from '@/components/sections/after-effects-alternative/
 import { AEFAQSection } from '@/components/sections/after-effects-alternative/AEFAQSection';
 import { AEFinalCTA } from '@/components/sections/after-effects-alternative/AEFinalCTA';
 import { SectionDivider } from '@/components/ui/SectionDivider';
+import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
@@ -36,11 +37,13 @@ export const metadata: Metadata = {
     siteName: 'FlashFX',
     locale: 'en_US',
     type: 'website',
+    images: OG_IMAGES,
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Best After Effects Alternative in 2026 — FlashFX',
     description: 'Looking for a free After Effects alternative? FlashFX delivers professional motion graphics with no learning curve, no heavy install, and no subscription. Try it free.',
+    images: OG_IMAGES,
   },
   alternates: {
     canonical: 'https://flashfx.app/after-effects-alternative',
@@ -62,7 +65,9 @@ const softwareSchema = {
   // No aggregateRating — see app/page.tsx. Do not reintroduce.
   description: 'FlashFX is a free, browser-based motion graphics application that provides a lightweight alternative to Adobe After Effects. Create professional motion graphics without installation, subscription fees, or high-end hardware requirements.',
   url: 'https://flashfx.app',
-  screenshot: 'https://flashfx.app/static/screenshot.png',
+  // Was https://flashfx.app/static/screenshot.png — that path 404s, there is no
+  // public/static directory. Pointed at a real asset 2026-08-04.
+  screenshot: 'https://flashfx.app/Screenshot_2026-03-01_183521.png',
   // softwareVersion and releaseNotes removed 2026-08-04: both were unverifiable.
   // Restore with a real version string and real release notes if wanted — schema
   // does not require either property.

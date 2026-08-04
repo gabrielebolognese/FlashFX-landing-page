@@ -24,7 +24,7 @@ deferred note — do not touch them.
 | M2 | Entity graph JSON-LD on the homepage | DONE |
 | M3 | Fix the footer | DONE |
 | M4 | Remove unverifiable trust signals | DONE |
-| M5 | Close the metadata gaps | NOT_STARTED |
+| M5 | Close the metadata gaps | DONE |
 | M6 | Kill every dead internal link | NOT_STARTED |
 | M7 | Asset cleanup | NOT_STARTED |
 | M8 | Launch verification | NOT_STARTED |
@@ -461,7 +461,39 @@ grep -rn "aggregateRating\|ratingValue\|ratingCount" app components   # expect n
 
 ## M5 — Close the metadata gaps
 
-**Status:** NOT_STARTED
+**Status:** DONE — 2026-08-04
+
+> **Completed.** All six pages now carry a title, canonical, `robots`,
+> `og:image`, and `twitter:image`. Before this, the site had **no social image
+> at all** while declaring `summary_large_image` everywhere, so every share
+> rendered a blank card.
+>
+> - **Homepage title:** `FlashFX — Free Browser-Based Motion Graphics & Video
+>   Editor` (59 chars, inside the ~60 char SERP limit). Set on `app/layout.tsx`
+>   rather than a new `app/page.tsx` metadata export — the homepage declares no
+>   metadata of its own and inherits the layout wholesale, so one edit covers it
+>   and the layout stops being a weak `FlashFX` fallback for any future page.
+> - **Social image:** `Screenshot_2026-03-01_183521.png`, 1872×955 (ratio 1.96 vs
+>   the 1.905 ideal), verified live at 200 / 176 KB / `image/png`. Chosen over
+>   `Screenshot_2026-01-23_164632.png`, which has placeholder canvas text
+>   ("Yo bro Do you see this") and is unusable for a brand card.
+> - **`lib/seo.ts`** added. Next.js merges metadata shallowly, so a page
+>   declaring its own `openGraph` replaces the layout's wholesale — the image
+>   has to be repeated on all six pages. The shared constant stops those copies
+>   drifting; swapping in a purpose-made 1200×630 asset is now a one-file change.
+> - **Explicit `robots: { index: true, follow: true }`** on the homepage,
+>   matching the sub-pages.
+> - **Broken schema image fixed.** `after-effects-alternative` pointed
+>   `screenshot` at `https://flashfx.app/static/screenshot.png`, which 404s —
+>   there is no `public/static/` directory. Repointed at the real asset, so both
+>   pages that set `screenshot` now use the same live file.
+>
+> **Observation, not actioned — pre-existing title lengths.** Four sub-page
+> titles exceed the ~60 character SERP limit and will truncate:
+> `lightweight-video-editor` 71, `after-effects-alternative` 69,
+> `video-editing-software-for-beginners` 67, `free-motion-graphics-software` 61.
+> Left alone deliberately: these are live, indexed titles and rewriting them is
+> a ranking decision, not a bug fix.
 
 ### Why
 

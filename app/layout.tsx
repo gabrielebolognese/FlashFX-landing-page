@@ -5,6 +5,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { PageLoader } from '@/components/PageLoader';
 import { BodyWrapper, ContentGate } from '@/components/BodyWrapper';
+import { OG_IMAGES } from '@/lib/seo';
 
 const cormorantGaramond = Cormorant_Garamond({
   subsets: ['latin'],
@@ -34,9 +35,14 @@ const lexend = Lexend({
   display: 'swap',
 });
 
+/*
+ * The homepage (app/page.tsx) declares no metadata of its own, so it inherits
+ * this block verbatim — title, robots, canonical, and social cards all come
+ * from here. Editing this edits the homepage.
+ */
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'FlashFX',
+  title: 'FlashFX — Free Browser-Based Motion Graphics & Video Editor',
   icons: {
     icon: '/apple-touch-icon.png',
     apple: '/apple-touch-icon.png',
@@ -44,18 +50,24 @@ export const metadata: Metadata = {
   description: 'Create professional motion graphics in minutes. Free, lightweight, and built for creators. No After Effects required.',
   keywords: ['motion graphics', 'video editing', 'animation', 'FlashFX', 'after effects alternative'],
   authors: [{ name: 'FlashFX' }],
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
-    title: 'FlashFX',
+    title: 'FlashFX — Free Browser-Based Motion Graphics & Video Editor',
     description: 'Create professional motion graphics in minutes. Free, lightweight, and built for creators. No After Effects required.',
     url: 'https://flashfx.app',
     siteName: 'FlashFX',
     locale: 'en_US',
     type: 'website',
+    images: OG_IMAGES,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FlashFX',
+    title: 'FlashFX — Free Browser-Based Motion Graphics & Video Editor',
     description: 'Create professional motion graphics in minutes. Free, lightweight, and built for creators. No After Effects required.',
+    images: OG_IMAGES,
   },
   alternates: {
     canonical: 'https://flashfx.app/',

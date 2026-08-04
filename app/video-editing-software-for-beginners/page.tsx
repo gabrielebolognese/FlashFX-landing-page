@@ -5,6 +5,7 @@ import { BeginnerWalkthrough } from '@/components/sections/video-editing-for-beg
 import { BeginnerFAQSection } from '@/components/sections/video-editing-for-beginners/BeginnerFAQSection';
 import { BeginnerFinalCTA } from '@/components/sections/video-editing-for-beginners/BeginnerFinalCTA';
 import { SectionDivider } from '@/components/ui/SectionDivider';
+import { OG_IMAGES } from '@/lib/seo';
 import { beginnerFaqData } from '@/components/sections/video-editing-for-beginners/beginnerFaqData';
 
 export const metadata: Metadata = {
@@ -33,11 +34,13 @@ export const metadata: Metadata = {
     siteName: 'FlashFX',
     locale: 'en_US',
     type: 'website',
+    images: OG_IMAGES,
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Video Editing Software for Beginners (2026) — Easy & Free | FlashFX',
     description: 'FlashFX is the easiest video editing software for beginners. Free, browser-based. First export in under 15 minutes.',
+    images: OG_IMAGES,
   },
   alternates: {
     canonical: 'https://flashfx.app/video-editing-software-for-beginners',

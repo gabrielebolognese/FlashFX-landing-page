@@ -5,6 +5,7 @@ import { FoundingTeam } from '@/components/sections/about/FoundingTeam';
 import { CompanyTimeline } from '@/components/sections/about/CompanyTimeline';
 import { AboutCTA } from '@/components/sections/about/AboutCTA';
 import { SectionDivider } from '@/components/ui/SectionDivider';
+import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
@@ -33,12 +34,14 @@ export const metadata: Metadata = {
     siteName: 'FlashFX',
     locale: 'en_US',
     type: 'website',
+    images: OG_IMAGES,
   },
   twitter: {
     card: 'summary_large_image',
     title: 'About FlashFX — Founded by Gabriele Bolognese',
     description:
       'FlashFX is a browser-based motion graphics and video editor founded on 1 January 2024 by Gabriele Bolognese, its founder and CEO.',
+    images: OG_IMAGES,
   },
   alternates: {
     canonical: 'https://flashfx.app/about',
