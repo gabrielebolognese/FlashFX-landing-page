@@ -1,0 +1,160 @@
+'use client';
+
+import { motion, useAnimationControls } from 'framer-motion';
+import Image from 'next/image';
+import { useState, useRef, useEffect } from 'react';
+import { WebGLShader } from '@/components/ui/web-gl-shader';
+
+const images = [
+  {
+    src: '/Screenshot_2026-03-01_180920_-_Copy.png',
+    alt: 'FlashFX 3D Airplane Animation',
+  },
+  {
+    src: '/Screenshot_2026-03-01_200913.png',
+    alt: 'FlashFX Brand Strategy Design',
+  },
+  {
+    src: '/Screenshot_2026-03-01_202425_-_Copy.png',
+    alt: 'FlashFX Eye Effect with Color Adjustments',
+  },
+  {
+    src: '/Screenshot_2026-03-03_204557_-_Copy.png',
+    alt: 'FlashFX Pattern Design',
+  },
+  {
+    src: '/Screenshot_2026-03-01_183521.png',
+    alt: 'FlashFX Logo Animation',
+  },
+  {
+    src: '/Screenshot_2026-01-23_164632.png',
+    alt: 'FlashFX Project Timeline',
+  },
+  {
+    src: '/back_on_track.png',
+    alt: 'Back on Track Design',
+  },
+  {
+    src: '/EASY.png',
+    alt: 'Easy to Use Interface',
+  },
+  {
+    src: '/VISUALS.png',
+    alt: 'Stunning Visuals',
+  },
+];
+
+// Duplicate images for seamless loop
+const duplicatedImages = [...images, ...images, ...images];
+
+export function ImageCarousel() {
+  const [isDragging, setIsDragging] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const controls = useAnimationControls();
+  const constraintsRef = useRef(null);
+
+  const imageWidth = 490; // 700 * 0.7 = 490px (30% smaller)
+  const gap = 24; // 6 * 4 = 24px
+  const totalWidth = (imageWidth + gap) * images.length;
+
+  useEffect(() => {
+    if (!isDragging && !isHovering) {
+      // Auto-scroll animation
+      const animateScroll = async () => {
+        await controls.start({
+          x: -totalWidth,
+          transition: {
+            duration: 40,
+            ease: 'linear',
+            repeat: Infinity,
+          },
+        });
+      };
+
+      animateScroll();
+    } else {
+      controls.stop();
+    }
+  }, [isDragging, isHovering, controls, totalWidth]);
+
+  return (
+    <section className="relative w-full py-20 overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <WebGLShader />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 mb-12">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-4xl md:text-5xl lg:text-6xl leading-tight font-bold text-center mb-4"
+          style={{ fontFamily: 'Georgia, serif', letterSpacing: '-0.03em' }}
+        >
+          <span style={{ color: '#f5c842' }}>See</span><span className="text-white"> what it looks like</span>
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
+          className="text-fx-text-secondary text-center text-lg"
+          style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
+        >
+          Drag to explore real projects created with FlashFX
+        </motion.p>
+      </div>
+
+      <div
+        ref={constraintsRef}
+        className="relative z-10 w-full h-[350px] cursor-grab active:cursor-grabbing"
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
+        <motion.div
+          drag="x"
+          dragConstraints={{ left: -totalWidth * 2, right: 0 }}
+          dragElastic={0.1}
+          onDragStart={() => setIsDragging(true)}
+          onDragEnd={() => setIsDragging(false)}
+          animate={controls}
+          className="flex gap-6 absolute left-0"
+          style={{ paddingLeft: '10%' }}
+        >
+          {duplicatedImages.map((image, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: (index % images.length) * 0.05 }}
+              className="relative flex-shrink-0 w-[490px] h-[350px] rounded-lg overflow-hidden shadow-2xl border border-fx-border"
+              whileHover={!isDragging ? { scale: 1.05 } : {}}
+            >
+              <Image
+                src={image.src}
+                alt={image.alt}
+                fill
+                className="object-cover pointer-events-none"
+                draggable={false}
+                quality={90}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-fx-bg-base/70 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 pointer-events-none">
+                <p className="text-fx-accent-yellow text-sm font-medium" style={{ fontFamily: 'var(--font-outfit), sans-serif' }}>
+                  {image.alt}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 mt-8 text-center">
+        <p className="text-fx-text-secondary text-sm" style={{ fontFamily: 'var(--font-outfit), sans-serif' }}>
+          ← Drag to explore more →
+        </p>
+      </div>
+    </section>
+  );
+}

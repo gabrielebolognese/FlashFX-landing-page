@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://flashfx.app
+
+# Sitemaps
+Sitemap: https://flashfx.app/sitemap.xml

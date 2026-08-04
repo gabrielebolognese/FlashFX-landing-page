@@ -1,0 +1,142 @@
+import Link from 'next/link';
+
+const footerLinks = {
+  product: {
+    label: 'Product',
+    links: [
+      { text: 'Motion Editor', href: 'https://editor.flashfx.app', external: true },
+      { text: 'Templates Library', href: '/features#templates' },
+      { text: 'Export & Formats', href: '/features#export' },
+      { text: 'Pricing', href: '/pricing' },
+      { text: 'Download', href: '/download' },
+      { text: 'Changelog', href: '/changelog' },
+      { text: 'Roadmap', href: '/roadmap' },
+    ],
+  },
+  resources: {
+    label: 'Resources',
+    links: [
+      { text: 'Documentation', href: 'https://documentation.flashfx.app', external: true },
+      { text: 'Blog', href: '/blog' },
+      { text: 'Beginner Guide', href: '/video-editing-software-for-beginners' },
+      { text: 'YouTube Creators', href: '/motion-graphics-software-for-youtube' },
+      { text: 'FAQ', href: '/faq' },
+      { text: 'Status', href: '/status' },
+    ],
+  },
+  compare: {
+    label: 'Compare',
+    accent: true,
+    links: [
+      { text: 'vs After Effects', href: '/after-effects-alternative' },
+      { text: 'vs CapCut', href: '/flashfx-vs-capcut' },
+      { text: 'vs DaVinci Resolve', href: '/flashfx-vs-davinci' },
+      { text: 'Free Motion Graphics', href: '/free-motion-graphics-software' },
+      { text: 'Lightweight Editor', href: '/lightweight-video-editor' },
+    ],
+  },
+  company: {
+    label: 'Company',
+    links: [
+      { text: 'About', href: '/about' },
+      { text: 'Careers', href: '/careers' },
+      { text: 'Brand', href: '/brand' },
+      { text: 'Privacy Policy', href: '/privacy' },
+      { text: 'Terms of Service', href: '/terms' },
+      { text: 'Security', href: '/security' },
+    ],
+  },
+  connect: {
+    label: 'Connect',
+    links: [
+      { text: 'X (Twitter)', href: 'https://x.com/FlashFXeditor', external: true },
+      { text: 'Instagram', href: 'https://www.instagram.com/flashfxeditor/', external: true },
+      { text: 'YouTube', href: 'https://www.youtube.com/@flashfxeditor', external: true },
+      { text: 'Newsletter', href: 'https://substack.com/@flashfx', external: true },
+    ],
+  },
+};
+
+export function Footer() {
+  return (
+    <footer className="relative w-full bg-fx-bg-surface">
+      <div className="max-w-7xl mx-auto px-6 pt-16 pb-10">
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold text-fx-text-primary mb-2" style={{ fontFamily: 'var(--font-cormorant), serif' }}>
+            FlashFX
+          </h2>
+          <p className="text-fx-text-secondary text-[0.8rem]" style={{ fontFamily: 'var(--font-outfit), sans-serif' }}>
+            Motion graphics without the complexity.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12">
+          {Object.entries(footerLinks).map(([key, column]) => (
+            <div key={key}>
+              <h3
+                className={`font-medium text-[0.75rem] tracking-wider uppercase text-fx-text-secondary mb-5 ${'accent' in column && column.accent ? 'border-l border-[rgba(245,197,24,0.3)] pl-[6px]' : ''}`}
+                style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
+              >
+                {column.label}
+              </h3>
+              <nav className="flex flex-col gap-[10px]">
+                {column.links.map((link) =>
+                  'external' in link && link.external ? (
+                    <a
+                      key={link.text}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[0.875rem] text-fx-text-secondary hover:text-fx-text-primary transition-colors duration-150"
+                      style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
+                    >
+                      {link.text}
+                    </a>
+                  ) : (
+                    <Link
+                      key={link.text}
+                      href={link.href}
+                      className="text-[0.875rem] text-fx-text-secondary hover:text-fx-text-primary transition-colors duration-150"
+                      style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
+                    >
+                      {link.text}
+                    </Link>
+                  )
+                )}
+              </nav>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+          <p className="text-[0.75rem] text-fx-text-secondary" style={{ fontFamily: 'var(--font-outfit), sans-serif' }}>
+            © 2026 FlashFX. All rights reserved.
+          </p>
+          {/*
+            Sitewide founder attribution. The rel="me" is the point of this link:
+            it is the reciprocal half of the identity claim gabrielebolognese.blog
+            makes, and it appears on every page because the footer does. Do not
+            drop `me` from the rel when editing — "noopener noreferrer" alone
+            silently removes the identity signal while looking untouched.
+
+            Rendered outside the footerLinks map on purpose: that map's renderer
+            hardcodes rel="noopener noreferrer" and has no way to express rel="me".
+          */}
+          <p className="text-[0.75rem] text-fx-text-secondary" style={{ fontFamily: 'var(--font-outfit), sans-serif' }}>
+            Built by{' '}
+            <a
+              href="https://gabrielebolognese.blog"
+              target="_blank"
+              rel="me noopener noreferrer"
+              className="text-fx-text-primary hover:text-fx-accent-yellow transition-colors duration-150"
+            >
+              Gabriele Bolognese
+            </a>
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
