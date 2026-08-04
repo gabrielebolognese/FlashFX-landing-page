@@ -2,7 +2,6 @@ import { Metadata } from 'next';
 import { LightHero } from '@/components/sections/lightweight-video-editor/LightHero';
 import { SystemRequirementsSection } from '@/components/sections/lightweight-video-editor/SystemRequirementsSection';
 import { BenchmarkComparisons } from '@/components/sections/lightweight-video-editor/BenchmarkComparisons';
-import { HardwareTestimonials } from '@/components/sections/lightweight-video-editor/HardwareTestimonials';
 import { LightweightFAQSection } from '@/components/sections/lightweight-video-editor/LightweightFAQSection';
 import { LightweightFinalCTA } from '@/components/sections/lightweight-video-editor/LightweightFinalCTA';
 import { SectionDivider } from '@/components/ui/SectionDivider';
@@ -123,8 +122,6 @@ export default function LightweightVideoEditorPage() {
         <SystemRequirementsSection />
         <SectionDivider />
         <BenchmarkComparisons />
-        <SectionDivider />
-        <HardwareTestimonials />
         <SectionDivider />
         <LightweightFAQSection />
         <SectionDivider />

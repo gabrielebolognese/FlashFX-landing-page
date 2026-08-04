@@ -2,7 +2,6 @@ import { Metadata } from 'next';
 import { BeginnersHero } from '@/components/sections/video-editing-for-beginners/BeginnersHero';
 import { LearningCurveComparison } from '@/components/sections/video-editing-for-beginners/LearningCurveComparison';
 import { BeginnerWalkthrough } from '@/components/sections/video-editing-for-beginners/BeginnerWalkthrough';
-import { BeginnerTestimonials } from '@/components/sections/video-editing-for-beginners/BeginnerTestimonials';
 import { BeginnerFAQSection } from '@/components/sections/video-editing-for-beginners/BeginnerFAQSection';
 import { BeginnerFinalCTA } from '@/components/sections/video-editing-for-beginners/BeginnerFinalCTA';
 import { SectionDivider } from '@/components/ui/SectionDivider';
@@ -170,8 +169,6 @@ export default function VideoEditingForBeginnersPage() {
         <LearningCurveComparison />
         <SectionDivider />
         <BeginnerWalkthrough />
-        <SectionDivider />
-        <BeginnerTestimonials />
         <SectionDivider />
         <BeginnerFAQSection />
         <SectionDivider />

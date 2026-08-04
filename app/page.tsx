@@ -10,7 +10,6 @@ import { ThreeDSupport } from '@/components/sections/ThreeDSupport';
 import { KeyframeInterpolation } from '@/components/sections/KeyframeInterpolation';
 import { SplitHero } from '@/components/sections/SplitHero';
 import { FeatureHighlights } from '@/components/sections/FeatureHighlights';
-import { SocialProof } from '@/components/sections/SocialProof';
 import { ComparisonTeaser } from '@/components/sections/ComparisonTeaser';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { FinalCTA } from '@/components/sections/FinalCTA';
@@ -162,7 +161,6 @@ export default function Home() {
         <VideoPlaceholder title="Share Projects" description="Collaborate and share your work with anyone, instantly" gridBackground youtubeId="sqdlJULYNZA" sectionHeading="Share Projects" />
         <SplitHero />
         <VideoPlaceholder title="Templates & Presets" description="Start creating instantly with pre-built motion graphics" />
-        <SocialProof />
         <CreatorStories />
         <ComparisonTeaser />
         <LoadTime />
