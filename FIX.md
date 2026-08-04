@@ -604,10 +604,13 @@ component. Five `.mp4` files (~13 MB) sit in the repo root, served by nothing.
    byte-identical to `android-chrome-192x192.png`. Only `PageLoader.tsx`
    references the copy. Low value, non-zero risk — skip unless trivial.
 
-### ⚠️ No version control
+### ✅ Version control is in place (as of 2026-08-04)
 
-There is no `.git` directory. Deletions are permanent. Strongly consider
-`git init` before this milestone — see M8.
+The repo is now tracked and pushed to
+`https://github.com/gabrielebolognese/FlashFX-landing-page`. Deletions in this
+milestone are recoverable from history, so the earlier "confirm before deleting"
+caution is relaxed — though still confirm the root `.mp4` files are unwanted,
+since nothing references them and their provenance is unknown.
 
 ### Acceptance criteria
 
@@ -636,9 +639,13 @@ structured data validates.
 
 ### Changes
 
-1. **`git init`.** This project has no version control. Before launch, and
-   ideally before M7's deletions, initialise a repo and make a baseline commit.
-   Currently a mistake is unrecoverable.
+1. ~~**`git init`.**~~ **Done 2026-08-04.** Repo initialised, baseline commit
+   `3166b46` taken before any destructive work, and pushed to
+   `https://github.com/gabrielebolognese/FlashFX-landing-page` (public, `main`).
+   A `README.md` was added covering stack, commands, routes, deployment, and the
+   conventions that break quietly — the JSON-LD delivery rule, the byte-exact
+   `@id`/`sameAs` requirement, the footer `rel="me"`, and the no-rating-markup
+   rule.
 2. **Full build:**
    ```bash
    npm install
