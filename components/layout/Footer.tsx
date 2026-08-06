@@ -10,7 +10,10 @@ const footerLinks = {
       { text: 'Pricing', href: '/pricing' },
       { text: 'Download', href: '/download' },
       { text: 'Changelog', href: '/changelog' },
-      { text: 'Roadmap', href: '/roadmap' },
+      // Lives on its own subdomain, not a route here — external so the renderer
+      // emits <a target="_blank"> rather than a next/link to a page that does
+      // not exist.
+      { text: 'Roadmap', href: 'https://roadmap.flashfx.app', external: true },
     ],
   },
   resources: {
@@ -43,6 +46,8 @@ const footerLinks = {
       { text: 'Brand', href: '/brand' },
       { text: 'Privacy Policy', href: '/privacy' },
       { text: 'Terms of Service', href: '/terms' },
+      { text: 'Refund Policy', href: '/refund-policy' },
+      { text: 'Acceptable Use', href: '/acceptable-use-policy' },
       { text: 'Security', href: '/security' },
     ],
   },
