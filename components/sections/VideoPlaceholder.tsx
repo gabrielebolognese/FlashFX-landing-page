@@ -13,6 +13,16 @@ interface VideoPlaceholderProps {
   gridBackground?: boolean;
   youtubeId?: string;
   sectionHeading?: string;
+  /**
+   * Anchor id for the <section>. Added 2026-08-06 so the Navbar Features
+   * dropdown can scroll to the Share Projects section, which had the content
+   * but no id to target.
+   *
+   * This file is otherwise frozen by FIX.md's M8 deferred decision. The freeze
+   * covers the YouTube embed strategy and the PageLoader gate; this prop is
+   * additive and touches neither. Do not read it as the freeze being lifted.
+   */
+  id?: string;
 }
 
 function YouTubeEmbed({ youtubeId, title }: { youtubeId: string; title: string }) {
@@ -70,9 +80,10 @@ function YouTubeEmbed({ youtubeId, title }: { youtubeId: string; title: string }
   );
 }
 
-export function VideoPlaceholder({ title, description, isMainDemo, gridBackground, youtubeId, sectionHeading }: VideoPlaceholderProps) {
+export function VideoPlaceholder({ title, description, isMainDemo, gridBackground, youtubeId, sectionHeading, id }: VideoPlaceholderProps) {
   return (
     <section
+      id={id}
       className={`relative w-full px-6 overflow-hidden ${isMainDemo ? 'flex flex-col justify-center' : 'py-12 md:py-20'} ${gridBackground ? 'bg-fx-bg-base' : ''}`}
       style={isMainDemo ? { height: '100vh', minHeight: '100vh' } : undefined}
     >

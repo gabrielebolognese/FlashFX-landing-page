@@ -5,6 +5,7 @@ import { ImageCarousel } from '@/components/sections/ImageCarousel';
 import { SolutionSection } from '@/components/sections/SolutionSection';
 import { FeaturesIntro } from '@/components/sections/FeaturesIntro';
 import { AllWebEditing } from '@/components/sections/AllWebEditing';
+import { DualTimeline } from '@/components/sections/DualTimeline';
 import { EasyAnimations } from '@/components/sections/EasyAnimations';
 import { ThreeDSupport } from '@/components/sections/ThreeDSupport';
 import { KeyframeInterpolation } from '@/components/sections/KeyframeInterpolation';
@@ -152,13 +153,21 @@ export default function Home() {
         <FeaturesIntro />
         <AllWebEditing />
         <VideoPlaceholder title="All Web Editing" description="Professional editing, right in your browser" gridBackground youtubeId="-zyusYiQNEc" />
+        {/*
+          Sits between All Web Editing and Easy Animations to match the order of
+          the Navbar Features dropdown (Navbar.tsx FEATURES). It carries
+          id="dual-timeline", which that dropdown scrolls to — moving or removing
+          this breaks the menu item.
+        */}
+        <DualTimeline />
         <EasyAnimations />
         <VideoPlaceholder title="Animation Presets" description="Bring your ideas to life effortlessly" gridBackground youtubeId="Rk9hf3QI5Is" />
         <ThreeDSupport />
         <VideoPlaceholder title="3D Support" description="Create stunning 3D motion graphics that captivate your audience" gridBackground />
         <KeyframeInterpolation />
         <VideoPlaceholder title="Keyframe Interpolation" description="Click any curve to preview its shape" gridBackground youtubeId="fkQhKYaSv0Q" />
-        <VideoPlaceholder title="Share Projects" description="Collaborate and share your work with anyone, instantly" gridBackground youtubeId="sqdlJULYNZA" sectionHeading="Share Projects" />
+        {/* id is what the Navbar Features dropdown scrolls to for Share Projects. */}
+        <VideoPlaceholder id="share-projects" title="Share Projects" description="Collaborate and share your work with anyone, instantly" gridBackground youtubeId="sqdlJULYNZA" sectionHeading="Share Projects" />
         <SplitHero />
         <VideoPlaceholder title="Templates & Presets" description="Start creating instantly with pre-built motion graphics" />
         <CreatorStories />

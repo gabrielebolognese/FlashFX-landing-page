@@ -25,7 +25,7 @@ deferred note — do not touch them.
 | M3 | Fix the footer | DONE |
 | M4 | Remove unverifiable trust signals | DONE |
 | M5 | Close the metadata gaps | DONE |
-| M6 | Kill every dead internal link | NOT_STARTED |
+| M6 | Kill every dead internal link | IN_PROGRESS |
 | M7 | Asset cleanup | NOT_STARTED |
 | M8 | Launch verification | NOT_STARTED |
 
@@ -52,6 +52,11 @@ and ask.
 - **FlashFX X account:** `https://x.com/FlashFXeditor`
 - **Product:** browser-based motion graphics and video editing; an alternative
   to After Effects and Premiere Pro; free tier; no install.
+- **No account is required to start.** Confirmed 2026-08-06. The editor opens
+  and is usable without signing up. Already claimed in `MigrationGuide.tsx`,
+  `BeginnerWalkthrough.tsx`, `FeaturesFinalCTA.tsx` and `YTWorkflow.tsx` — this
+  entry makes it verified rather than assumed. Saving to the cloud still needs
+  an account; the free tier includes 500 MB.
 - **Personal site:** `https://gabrielebolognese.blog`
 - **Verified logo URL:** `https://flashfx.app/android-chrome-192x192.png`
   — confirmed live 2026-08-03, 200 OK, PNG, 192×192, 13.1 KB. Clears Google's
@@ -552,7 +557,60 @@ curl -sI https://flashfx.app/Screenshot_2026-03-01_183521.png | head -1   # expe
 
 ## M6 — Kill every dead internal link
 
-**Status:** NOT_STARTED
+**Status:** IN_PROGRESS
+
+### Progress as of 2026-08-06
+
+The audit text below is preserved as written on 2026-08-03. Two of its figures
+were wrong even then, and the route count has since moved:
+
+- "15 routes that do not exist" undercounts its own list, which enumerates **17
+  dead hrefs across 16 distinct routes** (`/features#templates` and
+  `/features#export` share one route).
+- "Only five routes exist sitewide" was already stale — `/about` had shipped.
+  **18 routes exist now.**
+- **The Files list is incomplete.** Six dead links lived in body content, not
+  the footer: `PricingComparison.tsx`, `FMGFreeTierBreakdown.tsx`,
+  `FMGFAQSection.tsx` (x2), `AEFAQSection.tsx`, `MigrationGuide.tsx`. All
+  resolved when `/pricing` and `/features` shipped. In-body links matter more
+  than footer boilerplate — a reader mid-funnel actually clicks them.
+
+**Done:** `app/not-found.tsx` built. Twelve routes added — `/pricing`,
+`/features`, `/motion-graphics-software-for-youtube`, `/brand`, `/careers`,
+`/download`, `/faq`, `/privacy`, `/terms`, `/refund-policy`,
+`/acceptable-use-policy`. `/roadmap` repointed to `roadmap.flashfx.app`.
+Privacy and terms resolved via Termly, so criterion 4 is met.
+
+**Remaining — six dead footer hrefs:**
+`/blog`, `/changelog`, `/security`, `/status` (blocked: need facts, or should
+not be static pages) and `/flashfx-vs-capcut`, `/flashfx-vs-davinci` (blocked:
+awaiting a verified benchmark table).
+
+**Navbar — done 2026-08-06.** All six dropdown entries now scroll to a section
+that exists, verified against the built homepage HTML.
+
+- `#dual-timeline` — `DualTimeline.tsx` was a complete 90-line section that had
+  simply never been mounted. It now sits between All Web Editing and Easy
+  Animations, matching the dropdown order.
+- `#share-projects` — `ShareProjects.tsx` turned out to be an **empty shell**: a
+  `<section>` with an id and no children, rendering 100vh of blank navy.
+  Mounting it would have put a full-screen gap on the homepage. The homepage
+  already carried the Share Projects content in a `VideoPlaceholder` that simply
+  had no id, so an optional `id` prop was added to `VideoPlaceholder` and that
+  instance tagged.
+
+  **This touched `VideoPlaceholder.tsx`, which the M8 deferred list freezes.**
+  Explicitly authorised by the owner on 2026-08-06 after being shown the
+  trade-off. The freeze exists to protect the YouTube embed strategy and the
+  PageLoader gate; an additive optional prop touches neither, and the homepage
+  embed count is unchanged at 5, so `VIDEO_TARGET` is unaffected. The freeze
+  otherwise stands.
+
+  `ShareProjects.tsx` is now provably dead code — an empty component referenced
+  by nothing. Candidate for deletion in M7.
+
+**Acceptance criteria: 3 of 4 met.** Only "every internal href resolves" is
+outstanding, blocked on the six links above.
 
 ### Why
 
