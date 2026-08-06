@@ -1,7 +1,22 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import { WebGLShader } from '@/components/ui/web-gl-shader';
+
+/*
+ * three.js is loaded on demand rather than in the initial bundle
+ * (performancemilestones.md P5). Decorative background only, so `ssr: false`
+ * costs nothing a crawler cares about, and the placeholder matches the
+ * shader's own clear colour so nothing flashes or shifts.
+ */
+const WebGLShader = dynamic(
+  () => import('@/components/ui/web-gl-shader').then((m) => m.WebGLShader),
+  {
+    ssr: false,
+    loading: () => <div className="absolute inset-0" style={{ background: '#0a1628' }} />,
+  }
+);
+
 
 export function FeaturesIntro() {
   return (

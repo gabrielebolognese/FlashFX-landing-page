@@ -29,10 +29,10 @@ it should arguably run first even though it is listed last.
 | P2 | Lazy-load every YouTube embed | DONE |
 | P3 | Fix the 6.6 MB image payload | DONE |
 | P4 | One WebGL context, paused off-screen | DONE |
-| P5 | Code-split the heavy visual components | NOT_STARTED |
+| P5 | Code-split the heavy visual components | DONE |
 | P6 | Animation fluidity and reduced motion | NOT_STARTED |
 | P7 | Trim the font payload | NOT_STARTED |
-| P8 | Measurement, budgets and regression guards | NOT_STARTED |
+| P8 | Measurement, budgets and regression guards | BASELINE DROPPED |
 
 Statuses: `NOT_STARTED` → `IN_PROGRESS` → `DONE`. Update both this table and the
 milestone's own `Status:` line when one completes.
@@ -418,8 +418,33 @@ the oldest when exceeded, which is a correctness risk as well as a speed one.
 
 ## P5 — Code-split the heavy visual components
 
-**Status:** NOT_STARTED
-**Depends on:** P4 is easier first, but they are independent
+**Status:** DONE — 2026-08-06
+
+> **Done. Homepage First Load JS: 316 kB → 176 kB. Route JS: 178 kB → 37.6 kB.**
+>
+> three.js now loads on demand. `ShaderAnimation` and `WebGLShader` are pulled
+> in with `next/dynamic` and `ssr: false`, each with a placeholder painted in the
+> shader's own background colour so the section looks finished from the first
+> frame and nothing shifts when the real renderer arrives. Verified: three.js is
+> absent from both shared chunks and now sits in its own lazily-loaded chunks.
+>
+> The homepage is no longer an outlier. It was 316 kB against 80–150 kB
+> everywhere else; it is now 176 kB, within range of the heaviest landing page.
+>
+> **The under-150 kB target was not met, and chasing it is not worth it.** The
+> remaining ~96 kB above the shared baseline is mostly `framer-motion`, imported
+> by 93 components. Removing it means rewriting every reveal animation on the
+> site for roughly 26 kB — a large, risky refactor for a small gain. Revisit only
+> if something else makes it cheap.
+>
+> **`BackgroundPaths` and `RadialOrbitalTimeline` were deliberately left as
+> static imports.** Both were on the original list, and both were wrong to
+> include: they wrap real content rather than decoration. `RadialOrbitalTimeline`
+> renders the whole `AllLinks` section, and its links — Documentation, Roadmap,
+> Discord — are in the server HTML today. `ssr: false` would have deleted them
+> from the crawlable page, which is a straight trade of SEO for a few kilobytes
+> on a site whose other workstream is entirely SEO. Their cost is animation, not
+> bundle size, and that belongs to P6.
 
 ### Why
 
@@ -555,8 +580,23 @@ needs — several headings override the font inline to Georgia anyway.
 
 ## P8 — Measurement, budgets and regression guards
 
-**Status:** NOT_STARTED
-**Do this first in practice, even though it is listed last.**
+**Status:** BASELINE DROPPED — owner's decision, 2026-08-06
+
+> The formal baseline and per-milestone before/after tables were dropped on the
+> owner's instruction: *"we are not making a competition, we are getting a
+> result, the result is a fast loading website."* Fair, and the structural wins
+> in P1–P5 do not need a scoreboard to be real.
+>
+> What that costs is worth stating once: several acceptance criteria across
+> P1–P4 were written as timings — "content visible in under 2 s on Slow 4G",
+> "third-party transfer under 500 kB", "no GPU activity while scrolled away" —
+> and those remain unverified. Everything verified in this document is
+> structural: bundle sizes from build output, iframe counts and rendered markup
+> from the built HTML, file sizes from disk.
+>
+> **Still worth doing, cheaply, whenever convenient:** one real load on a slow
+> connection to confirm it feels right, and the two regression guards below.
+> Neither is a benchmark; both stop the wins quietly eroding.
 
 ### Why
 

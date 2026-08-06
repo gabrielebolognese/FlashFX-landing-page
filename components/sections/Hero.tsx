@@ -1,8 +1,28 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ShaderAnimation } from '@/components/ui/shader-animation';
+import dynamic from 'next/dynamic';
 import ShimmerButton from '@/components/ui/shimmer-button';
+
+/*
+ * three.js is loaded on demand, not in the initial bundle
+ * (performancemilestones.md P5). `ssr: false` is correct here twice over: the
+ * renderer needs a browser, and the shader is pure decoration with no content
+ * a crawler would want.
+ *
+ * The placeholder is the same colour the shader's own container uses, so the
+ * hero looks finished from the first paint and nothing shifts when the real
+ * component arrives.
+ */
+const ShaderAnimation = dynamic(
+  () => import('@/components/ui/shader-animation').then((m) => m.ShaderAnimation),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full absolute inset-0" style={{ background: '#06091C' }} />
+    ),
+  }
+);
 
 /*
  * This used to render `null` until the PageLoader overlay finished, which meant
