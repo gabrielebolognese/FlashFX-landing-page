@@ -26,7 +26,7 @@ deferred note — do not touch them.
 | M4 | Remove unverifiable trust signals | DONE |
 | M5 | Close the metadata gaps | DONE |
 | M6 | Kill every dead internal link | IN_PROGRESS |
-| M7 | Asset cleanup | NOT_STARTED |
+| M7 | Asset cleanup | DONE |
 | M8 | Launch verification | NOT_STARTED |
 
 Statuses: `NOT_STARTED` → `IN_PROGRESS` → `DONE`. Update both this table and the
@@ -672,7 +672,45 @@ npm run build && npm run start
 
 ## M7 — Asset cleanup
 
-**Status:** NOT_STARTED
+**Status:** DONE
+
+### Completed 2026-08-06
+
+`public/` went from 15 MB to 6.7 MB. Repo root now holds no media at all.
+Thirteen files removed, all of them tracked and pushed before deletion, so every
+one is recoverable from history at `0fcb3f1`:
+
+```
+git checkout 0fcb3f1 -- "<path>"
+```
+
+**`public/` orphans removed (~7.9 MB)** — `fix.png`, `2.png`, `VISUALS2.png`,
+`a815522d626e471d2c3d01460a83051413884b0f.jpg`.
+
+**The audit below missed `2.png`, at 2.9 MB the second-largest orphan on the
+site.** A substring search for `2.png` matches inside
+`android-chrome-192x192.png`, so it read as referenced. Re-checking against the
+`/<name>` form assets are actually written as is what surfaced it — worth
+repeating that way if this is ever audited again.
+
+**Root duplicates removed (~970 KB)** — the four
+`Screenshot_2026-03-01_180920_-_Copy*.png` files and `Screenshot_2026-03-01_183521.png`.
+All five were byte-identical (md5 `3bc1877d…` and `686b1ddf…`) to copies in
+`public/` that *are* referenced. Only the root duplicates went; the served
+copies remain, including the live OG image.
+
+**Root media removed (~12.7 MB)** — `spotify_player_animation.mp4`,
+`newspaper_animation.mp4`, `the_future_of_design.mp4`, `scattered_text.mp4`.
+None were in `public/`, so none were ever served.
+
+**Skipped: the `android-chrome-192x192 copy.png` dedup.** It is byte-identical
+to `android-chrome-192x192.png` (md5 `1036a255…`), but the only reference is in
+`PageLoader.tsx`, which the M8 deferred list freezes. 16 KB is not worth
+touching a frozen file for. Fold it into whatever finally addresses the loader.
+
+**Not in scope, still outstanding:** `ShareProjects.tsx` (an empty component
+referenced by nothing), `ProblemSection.tsx`, and `TrollSection.tsx` are dead
+code rather than assets. M7 is asset cleanup, so they were left alone.
 
 ### Why
 
