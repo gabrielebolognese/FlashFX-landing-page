@@ -27,7 +27,10 @@ export const editorFeatures: FeatureItem[] = [
   { title: 'AI Image Generation', description: 'Generate images with DALL-E directly on your canvas using natural language prompts and import them instantly.', Icon: Sparkles },
   { title: 'AI Chat Assistant', description: 'Natural language design commands with context-aware AI suggestions, chat history, and AI-powered design guidance.', Icon: MessageSquare },
   { title: 'Google Image Search', description: 'Find and import stock images directly into your project without leaving the editor. Preview before import.', Icon: Search },
-  { title: 'Cloud Storage', description: 'Save and access projects from any device via Supabase. 50MB free storage, automatic backup, and secure user isolation.', Icon: Cloud },
+  // 50 MB is the no-account allowance; 500 MB is the free tier once signed up.
+  // Stating only "50MB free storage" read as the free tier and contradicted
+  // PricingSection.tsx, which is the source of truth for what a plan includes.
+  { title: 'Cloud Storage', description: 'Save and access projects from any device via Supabase. 50 MB without an account and 500 MB on the free tier, with automatic backup and secure user isolation.', Icon: Cloud },
   { title: 'Chroma Key', description: 'Green screen removal with color picker selection, similarity control, edge smoothness, and spill reduction.', Icon: Eye },
   { title: '16 Blend Modes', description: 'Multiply, Screen, Overlay, Difference, Luminosity, and 11 more — applied per layer for advanced compositing control.', Icon: Layers },
   { title: 'Smart Guides & Snapping', description: 'Snap to grid, other elements, timeline markers, and keyframes with visual alignment guides and configurable grid size.', Icon: Magnet },

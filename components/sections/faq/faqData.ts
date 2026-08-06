@@ -127,7 +127,7 @@ export const faqData: FaqEntry[] = [
     category: 'Projects & data',
     question: 'Where are my projects stored?',
     answer:
-      'In cloud storage tied to your account, so a project opens on any machine you sign in from rather than living on one hard drive. The free tier includes 500 MB; Ultra and Teams include 20 GB.',
+      'In cloud storage, so a project opens on any machine rather than living on one hard drive. You get 50 MB without an account, 500 MB once you sign up to the free tier, and 20 GB on Ultra and Teams.',
   },
   {
     category: 'Projects & data',
