@@ -77,9 +77,10 @@ export function EasyAnimations() {
           className="w-full h-full relative"
         >
           <Image
-            src="/4.png"
+            src="/4.webp"
             alt="FlashFX Animation Presets"
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover"
             quality={90}
           />

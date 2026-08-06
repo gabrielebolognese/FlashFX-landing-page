@@ -77,9 +77,10 @@ export function DualTimeline() {
           className="w-full h-full relative"
         >
           <Image
-            src="/Screenshot_2026-03-03_204128.png"
+            src="/dual-timeline.webp"
             alt="FlashFX Dual Timeline"
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover"
             quality={90}
           />

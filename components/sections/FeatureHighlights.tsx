@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { useRef, useCallback } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { editorFeatures, FeatureItem } from './feature-highlights/editorFeatures';
@@ -203,24 +204,26 @@ export function FeatureHighlights() {
         />
       </div>
 
+      {/*
+        Was a raw <img>, which meant no lazy loading and no intrinsic sizing.
+        next/image gives both. It sits far below the fold, so it is explicitly
+        not `priority` — see performancemilestones.md P3.
+      */}
       <div
+        className="relative"
         style={{
           width: '100%',
           height: '140vh',
           lineHeight: 0,
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/fix copy.png"
+        <Image
+          src="/fix-copy.webp"
           alt=""
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            objectPosition: 'top',
-            display: 'block',
-          }}
+          fill
+          sizes="100vw"
+          className="object-cover"
+          style={{ objectPosition: 'top' }}
         />
       </div>
 

@@ -77,9 +77,10 @@ export function AllWebEditing() {
           className="w-full h-full relative"
         >
           <Image
-            src="/1.png"
+            src="/1.webp"
             alt="FlashFX Web Editing Interface"
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover"
             quality={90}
           />

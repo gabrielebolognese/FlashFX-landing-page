@@ -27,7 +27,7 @@ it should arguably run first even though it is listed last.
 |---|---|---|
 | P1 | Stop the loader blocking first paint | DONE |
 | P2 | Lazy-load every YouTube embed | DONE |
-| P3 | Fix the 6.6 MB image payload | NOT_STARTED |
+| P3 | Fix the 6.6 MB image payload | DONE |
 | P4 | One WebGL context, paused off-screen | NOT_STARTED |
 | P5 | Code-split the heavy visual components | NOT_STARTED |
 | P6 | Animation fluidity and reduced motion | NOT_STARTED |
@@ -224,8 +224,45 @@ grep -c "<iframe" .next/server/app/index.html   # expect 0
 
 ## P3 — Fix the 6.6 MB image payload
 
-**Status:** NOT_STARTED
+**Status:** DONE — 2026-08-06
 **Impact:** largest byte-count win available
+
+> **Done. 6.56 MB of images became 0.45 MB — 93% smaller.** `public/` went from
+> 6.7 MB to **702 KB**, and the largest asset on the site is now 176 KB.
+>
+> Thirteen PNGs were converted to WebP at sensible display widths with Pillow at
+> quality 82. The originals were wildly oversized — `VISUALS.png` was
+> **4508×2160** and renders in a carousel at **490 px**, a 9× oversize:
+>
+> | Was | Now |
+> |---|---|
+> | `VISUALS.png` 1.7 MB, 4508×2160 | `visuals.webp` 24 KB, 1200×575 |
+> | `fix copy.png` 1.9 MB, 2160×1909 | `fix-copy.webp` 39 KB, 1600×1414 |
+> | `1.png` 699 KB, 2810×1440 | `1.webp` 34 KB, 1600×820 |
+> | `Screenshot_2026-03-01_200913.png` 539 KB | `shot-200913.webp` 47 KB |
+>
+> The raw `<img>` in `FeatureHighlights.tsx` is now `next/image` with `fill` and
+> `sizes`, so it lazy-loads and has intrinsic sizing. `sizes` was added to every
+> `fill` image.
+>
+> **No image is marked `priority`, deliberately.** Above the fold is the hero —
+> a shader canvas and text, no image. Marking a below-fold carousel image
+> `priority` would compete with the LCP text for bandwidth and make things worse.
+>
+> **`images: { unoptimized: true }` was left in place.** With sources now at
+> display resolution there is little left for the optimiser to win, and removing
+> the flag changes runtime behaviour on Netlify in a way that cannot be verified
+> from the repo. Worth testing on a deploy preview — responsive `srcset` is the
+> remaining gain.
+>
+> The 19 superseded PNGs were deleted, including `android-chrome-192x192 copy.png`
+> — the duplicate M7 deliberately left alone because `PageLoader` referenced it.
+> P1 rewrote `PageLoader` to use the canonical file, so it is finally orphaned.
+>
+> `Screenshot_2026-03-01_183521.png` **is deliberately kept as a PNG.** It is the
+> OG image in `lib/seo.ts` and the `screenshot` value in six JSON-LD blocks, at a
+> declared 1872×955. Changing that URL would break every social card. Verified
+> still present.
 
 ### Why
 

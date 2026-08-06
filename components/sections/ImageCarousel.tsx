@@ -7,39 +7,39 @@ import { WebGLShader } from '@/components/ui/web-gl-shader';
 
 const images = [
   {
-    src: '/Screenshot_2026-03-01_180920_-_Copy.png',
+    src: '/shot-180920.webp',
     alt: 'FlashFX 3D Airplane Animation',
   },
   {
-    src: '/Screenshot_2026-03-01_200913.png',
+    src: '/shot-200913.webp',
     alt: 'FlashFX Brand Strategy Design',
   },
   {
-    src: '/Screenshot_2026-03-01_202425_-_Copy.png',
+    src: '/shot-202425.webp',
     alt: 'FlashFX Eye Effect with Color Adjustments',
   },
   {
-    src: '/Screenshot_2026-03-03_204557_-_Copy.png',
+    src: '/shot-204557.webp',
     alt: 'FlashFX Pattern Design',
   },
   {
-    src: '/Screenshot_2026-03-01_183521.png',
+    src: '/carousel-logo-animation.webp',
     alt: 'FlashFX Logo Animation',
   },
   {
-    src: '/Screenshot_2026-01-23_164632.png',
+    src: '/carousel-timeline.webp',
     alt: 'FlashFX Project Timeline',
   },
   {
-    src: '/back_on_track.png',
+    src: '/back-on-track.webp',
     alt: 'Back on Track Design',
   },
   {
-    src: '/EASY.png',
+    src: '/easy.webp',
     alt: 'Easy to Use Interface',
   },
   {
-    src: '/VISUALS.png',
+    src: '/visuals.webp',
     alt: 'Stunning Visuals',
   },
 ];
@@ -135,6 +135,7 @@ export function ImageCarousel() {
                 src={image.src}
                 alt={image.alt}
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover pointer-events-none"
                 draggable={false}
                 quality={90}

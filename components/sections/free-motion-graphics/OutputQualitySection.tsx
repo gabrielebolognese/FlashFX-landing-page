@@ -5,17 +5,17 @@ import Image from 'next/image';
 
 const screenshots = [
   {
-    src: '/Screenshot_2026-03-01_180920_-_Copy.png',
+    src: '/shot-180920.webp',
     caption: 'Timeline editor with keyframe controls — available free',
     tag: 'Timeline',
   },
   {
-    src: '/Screenshot_2026-03-01_183521.png',
+    src: '/carousel-logo-animation.webp',
     caption: 'Motion preset library — included in the free tier',
     tag: 'Presets',
   },
   {
-    src: '/Screenshot_2026-03-03_204128.png',
+    src: '/dual-timeline.webp',
     caption: 'Export panel — 1080p MP4, no watermark, no paywall',
     tag: 'Export',
   },
