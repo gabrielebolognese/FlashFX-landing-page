@@ -28,7 +28,7 @@ it should arguably run first even though it is listed last.
 | P1 | Stop the loader blocking first paint | DONE |
 | P2 | Lazy-load every YouTube embed | DONE |
 | P3 | Fix the 6.6 MB image payload | DONE |
-| P4 | One WebGL context, paused off-screen | NOT_STARTED |
+| P4 | One WebGL context, paused off-screen | DONE |
 | P5 | Code-split the heavy visual components | NOT_STARTED |
 | P6 | Animation fluidity and reduced motion | NOT_STARTED |
 | P7 | Trim the font payload | NOT_STARTED |
@@ -321,7 +321,50 @@ ls -S public/*.png | head -5   # nothing here should be over 200 kB afterwards
 
 ## P4 — One WebGL context, paused off-screen
 
-**Status:** NOT_STARTED
+**Status:** DONE — 2026-08-06
+
+> **Done.** Both shaders now stop rendering when their element leaves the
+> viewport, cap pixel ratio, and draw a single static frame under reduced
+> motion. Shared helpers live in `lib/render-gate.ts`.
+>
+> **Render loops now start and stop.** An IntersectionObserver with
+> `rootMargin: 100px` calls `start()` on entry and `stop()` on exit, and `stop()`
+> genuinely cancels the frame rather than letting the loop spin. Previously all
+> three renderers on the homepage drew every frame for the entire session
+> regardless of scroll position. Because the three shader sections never share
+> the viewport, in practice **at most one context now renders at a time** — the
+> acceptance criterion, reached by pausing rather than by a risky consolidation
+> refactor.
+>
+> **Pixel ratio capped at 1.5** (`MAX_PIXEL_RATIO`). Both called
+> `setPixelRatio(window.devicePixelRatio)` uncapped, so a DPR 3 display rendered
+> nine times the fragments for a decorative gradient.
+>
+> **`web-gl-shader` was sizing itself to the window, not to its canvas.** It
+> called `renderer.setSize(window.innerWidth, window.innerHeight)` regardless of
+> how large the canvas actually was, so it allocated a full-viewport buffer for
+> an element that may be much smaller. It now measures the canvas, falling back
+> to window dimensions if the element has not been laid out yet.
+>
+> **`prefers-reduced-motion: reduce` draws one frame and starts no loop.** The
+> background is still there; it simply does not move.
+>
+> Disposal was already reasonable and is kept, with the `removeChild` in
+> `shader-animation` now guarded on parent identity so a double-unmount cannot
+> throw.
+>
+> **Not consolidated to a single shared context.** `ImageCarousel` and
+> `FeaturesIntro` still each construct a `WebGLShader`. Merging them into one
+> background would change the visual design, and pausing already removes the
+> ongoing cost. Worth revisiting only if context-count limits ever bite.
+>
+> **Left alone:** `shader-lines.tsx` still calls `setPixelRatio` uncapped and
+> injects three.js from a CDN, and `raidal-2.tsx` runs its own canvas loop.
+> Neither is rendered on any page, so neither costs anything at runtime. They
+> are dead-code cleanup, not performance work.
+>
+> Not verified: GPU activity while scrolled away, and memory across repeated
+> navigations. Both need a real browser — P8.
 
 ### Why
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import * as THREE from "three"
+import { cappedPixelRatio, prefersReducedMotion } from "@/lib/render-gate"
 
 export function ShaderAnimation({ active = false }: { active?: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -82,7 +83,7 @@ export function ShaderAnimation({ active = false }: { active?: boolean }) {
     scene.add(mesh)
 
     const renderer = new THREE.WebGLRenderer({ antialias: true })
-    renderer.setPixelRatio(window.devicePixelRatio)
+    renderer.setPixelRatio(cappedPixelRatio())
 
     container.appendChild(renderer.domElement)
 
@@ -99,19 +100,6 @@ export function ShaderAnimation({ active = false }: { active?: boolean }) {
     onWindowResize()
     window.addEventListener("resize", onWindowResize, false)
 
-    // Animation loop
-    const animate = () => {
-      const animationId = requestAnimationFrame(animate)
-      if (activeRef.current) {
-        uniforms.time.value += 0.05
-      }
-      renderer.render(scene, camera)
-
-      if (sceneRef.current) {
-        sceneRef.current.animationId = animationId
-      }
-    }
-
     // Store scene references for cleanup
     sceneRef.current = {
       camera,
@@ -121,17 +109,58 @@ export function ShaderAnimation({ active = false }: { active?: boolean }) {
       animationId: 0,
     }
 
-    // Start animation
-    animate()
+    let rafId: number | null = null
+
+    const animate = () => {
+      if (activeRef.current) {
+        uniforms.time.value += 0.05
+      }
+      renderer.render(scene, camera)
+      rafId = requestAnimationFrame(animate)
+      if (sceneRef.current) sceneRef.current.animationId = rafId
+    }
+
+    const start = () => {
+      if (rafId !== null) return
+      rafId = requestAnimationFrame(animate)
+    }
+
+    const stop = () => {
+      if (rafId === null) return
+      cancelAnimationFrame(rafId)
+      rafId = null
+    }
+
+    const reduced = prefersReducedMotion()
+
+    // Under reduced motion the shader is drawn once and left alone.
+    if (reduced) {
+      renderer.render(scene, camera)
+    }
+
+    /*
+     * The hero is at the top of the page, so this mostly matters once the
+     * visitor scrolls past it — previously the loop kept drawing for the whole
+     * session no matter how far down the page they went.
+     */
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.some((entry) => entry.isIntersecting)
+        if (visible && !reduced) start()
+        else stop()
+      },
+      { rootMargin: "100px" }
+    )
+    observer.observe(container)
 
     // Cleanup function
     return () => {
+      observer.disconnect()
+      stop()
       window.removeEventListener("resize", onWindowResize)
 
       if (sceneRef.current) {
-        cancelAnimationFrame(sceneRef.current.animationId)
-
-        if (container && sceneRef.current.renderer.domElement) {
+        if (container && sceneRef.current.renderer.domElement.parentNode === container) {
           container.removeChild(sceneRef.current.renderer.domElement)
         }
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import * as THREE from "three"
+import { cappedPixelRatio, prefersReducedMotion } from "@/lib/render-gate"
 
 export function WebGLShader() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -66,7 +67,7 @@ export function WebGLShader() {
     const initScene = () => {
       refs.scene = new THREE.Scene()
       refs.renderer = new THREE.WebGLRenderer({ canvas })
-      refs.renderer.setPixelRatio(window.devicePixelRatio)
+      refs.renderer.setPixelRatio(cappedPixelRatio())
       refs.renderer.setClearColor(new THREE.Color(0x0a1628))
 
       refs.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, -1)
@@ -105,28 +106,71 @@ export function WebGLShader() {
       handleResize()
     }
 
-    const animate = () => {
-      if (refs.uniforms) refs.uniforms.time.value += 0.01
+    const renderFrame = () => {
       if (refs.renderer && refs.scene && refs.camera) {
         refs.renderer.render(refs.scene, refs.camera)
       }
+    }
+
+    const animate = () => {
+      if (refs.uniforms) refs.uniforms.time.value += 0.01
+      renderFrame()
       refs.animationId = requestAnimationFrame(animate)
     }
 
+    const start = () => {
+      if (refs.animationId !== null) return
+      refs.animationId = requestAnimationFrame(animate)
+    }
+
+    const stop = () => {
+      if (refs.animationId === null) return
+      cancelAnimationFrame(refs.animationId)
+      refs.animationId = null
+    }
+
+    /*
+     * Size to the canvas, not the window. This used to call
+     * `renderer.setSize(window.innerWidth, window.innerHeight)`, which rendered
+     * a full-viewport buffer regardless of how large the canvas actually was.
+     */
     const handleResize = () => {
       if (!refs.renderer || !refs.uniforms) return
-      const width = window.innerWidth
-      const height = window.innerHeight
+      const width = canvas.clientWidth || window.innerWidth
+      const height = canvas.clientHeight || window.innerHeight
       refs.renderer.setSize(width, height, false)
       refs.uniforms.resolution.value = [width, height]
+      if (refs.animationId === null) renderFrame()
     }
 
     initScene()
-    animate()
     window.addEventListener("resize", handleResize)
 
+    const reduced = prefersReducedMotion()
+
+    // One static frame is the whole behaviour under reduced motion.
+    if (reduced) {
+      renderFrame()
+    }
+
+    /*
+     * The loop only runs while the canvas is on screen. Without this, three
+     * renderers on the homepage drew every frame for the entire session no
+     * matter where the visitor had scrolled to.
+     */
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.some((entry) => entry.isIntersecting)
+        if (visible && !reduced) start()
+        else stop()
+      },
+      { rootMargin: "100px" }
+    )
+    observer.observe(canvas)
+
     return () => {
-      if (refs.animationId) cancelAnimationFrame(refs.animationId)
+      observer.disconnect()
+      stop()
       window.removeEventListener("resize", handleResize)
       if (refs.mesh) {
         refs.scene?.remove(refs.mesh)
