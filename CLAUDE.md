@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Response format — applies to every reply
+
+End **every** response with a `## Recap` section, no exceptions — answers to questions, not just code changes. Two parts, both short:
+
+- **Done:** what changed or what was established, in one or two lines.
+- **Next:** the concrete next actions as a numbered list, each one specific enough to act on without re-reading the conversation (name the file, the milestone, or the command). Where the next step is a FIX.md milestone, name it by ID and title.
+
+If nothing is outstanding, write `Next: nothing outstanding` explicitly rather than dropping the section. If the next step is blocked on a decision, list the question instead of a task. This section is what gets read first when picking the work back up — keep it scannable and never pad it.
+
 ## Project
 
 Marketing site for **FlashFX** (a browser-based motion graphics editor hosted separately at `editor.flashfx.app`). This repo is the public landing site at `flashfx.app` only — there is no backend, no API routes, and no data layer. Every CTA links out to `https://editor.flashfx.app`.
@@ -23,11 +32,21 @@ There are no tests and no test runner configured.
 
 Deployment is Netlify (`netlify.toml`, `@netlify/plugin-nextjs`, publish `.next`). `next-sitemap.config.js` regenerates `public/sitemap.xml`, `public/sitemap-0.xml`, and `public/robots.txt` on every build; `SITE_URL` overrides the default `https://flashfx.app`.
 
+**The Netlify build command must stay `npm run build`.** Sitemap generation hangs off the `postbuild` script, and npm only fires `pre`/`post` lifecycle scripts for scripts invoked through `npm run`. `netlify.toml` previously ran `npx next build`, which calls the `next` binary directly and skips `postbuild` — so `next-sitemap` never ran in production and Netlify shipped whatever stale sitemap was committed to `public/`. Fixed 2026-08-05. Any change to that command reintroduces a silent, invisible failure: the build stays green and the sitemap just stops tracking reality.
+
+## Working from FIX.md
+
+`FIX.md` is the launch-readiness plan and the source of truth for outstanding work: a `## Progress` table of milestones M1–M8, a `## Canonical facts` block, and per-milestone Files / Changes / Acceptance criteria / Verify sections. M1–M5 are `DONE`; M6 (dead internal links), M7 (asset cleanup), and M8 (launch verification) are not.
+
+`/next-milestone` (`.claude/commands/next-milestone.md`) loads the next unfinished milestone and briefs it without writing code; the user replies `code` to implement it. When implementing, stay inside the milestone's declared scope and update **both** its `**Status:**` line and its row in the `## Progress` table on completion.
+
+**Never invent facts about the founder, company, team, funding, or metrics.** Everything factual comes from FIX.md's *Canonical facts*. If a fact is not there, stop and ask. FIX.md also tracks open questions that block specific milestones.
+
 ## Stack
 
 Next.js 13.5.1 App Router · React 18 · TypeScript (strict) · Tailwind · framer-motion · shadcn/ui (Radix) · three.js for shader backgrounds. Path alias `@/*` → repo root. `.env` exists but is empty; nothing reads env vars at runtime.
 
-`next.config.js` also sets `images: { unoptimized: true }` (so `next/image` is layout-only, no optimization) and `transpilePackages: ['@paper-design/shaders']`.
+`next.config.js` also sets `images: { unoptimized: true }` (so `next/image` is layout-only — no WebP conversion, no resizing; image weight is managed by hand) and `transpilePackages: ['@paper-design/shaders']`.
 
 ## Architecture
 
@@ -36,28 +55,42 @@ Next.js 13.5.1 App Router · React 18 · TypeScript (strict) · Tailwind · fram
 `app/<slug>/page.tsx` is always a **server component** that does three things and nothing else:
 
 1. Exports a `Metadata` object (title, description, keywords, openGraph, twitter, `alternates.canonical`).
-2. Declares JSON-LD schema literals (`SoftwareApplication`, `FAQPage`, `BreadcrumbList`) and injects them via `next/script` with `type="application/ld+json"`.
+2. Declares JSON-LD schema literals (`SoftwareApplication`, `FAQPage`, `BreadcrumbList`, `HowTo`, and the entity `@graph`) and emits them.
 3. Renders an ordered list of section components from `components/sections/<slug>/`.
 
 All layout, animation, and copy live in the section components — pages hold no markup of their own. `app/after-effects-alternative/page.tsx` is the fullest example of the pattern.
 
-Existing routes: `/`, `/after-effects-alternative`, `/free-motion-graphics-software`, `/lightweight-video-editor`, `/video-editing-software-for-beginners`. New SEO landing pages should follow the same shape and add a matching `components/sections/<slug>/` directory with a `<Prefix>Hero`, comparison/proof sections, `<Prefix>FAQSection`, and `<Prefix>FinalCTA`.
+Existing routes: `/`, `/about`, `/after-effects-alternative`, `/free-motion-graphics-software`, `/lightweight-video-editor`, `/video-editing-software-for-beginners`. New SEO landing pages should follow the same shape and add a matching `components/sections/<slug>/` directory with a `<Prefix>Hero`, comparison/proof sections, `<Prefix>FAQSection`, and `<Prefix>FinalCTA`.
 
-**FAQ copy is duplicated by design**: the `faqSchema` literal in `page.tsx` and the `*FaqData` array in the FAQ section component contain the same question/answer text verbatim. Editing one without the other silently desyncs the structured data from the visible page. Always update both.
+`app/page.tsx` declares **no metadata of its own** — the homepage inherits the block in `app/layout.tsx` verbatim (title, robots, canonical, social cards). Editing that block edits the homepage.
+
+### SEO invariants — these break silently
+
+**JSON-LD uses a plain `<script>` tag with `dangerouslySetInnerHTML`, never `next/script`.** `next/script` defers the tag into the RSC payload and injects it after hydration, so it never reaches the server-rendered HTML where crawlers look. Every schema block on this site was invisible for exactly this reason until it was fixed (FIX.md M2). There are currently zero `next/script` imports in `app/` — keep it that way.
+
+**The entity graph is load-bearing.** `/` and `/about` both emit an `Organization` ↔ `Person` `@graph`. The `@id` values (`https://flashfx.app/#organization`, `https://gabrielebolognese.blog/#person`) must stay byte-identical across both pages *and* match what [gabrielebolognese.blog](https://gabrielebolognese.blog) emits, or the graphs resolve as unrelated nodes. `sameAs` matching is string-exact: do not normalise `www`, do not add or strip trailing slashes, do not reorder the arrays. Standalone nodes like `SoftwareApplication` tie in via `author`/`publisher` `@id` references. The canonical block is in FIX.md under *The entity graph (verbatim)*.
+
+**The footer carries `rel="me"`.** The "Built by Gabriele Bolognese" link in `components/layout/Footer.tsx` is the reciprocal identity signal, rendered outside the `footerLinks` map because that map's renderer hardcodes `rel="noopener noreferrer"`. Dropping `me` from the `rel` looks like a harmless edit and silently removes it.
+
+**No rating markup.** `aggregateRating`, `Review`, and star ratings are not used anywhere and must not be added. First-party rating markup with no verifiable review source risks a manual action.
+
+**Social cards come from `lib/seo.ts`.** Next.js merges metadata shallowly — a page declaring its own `openGraph` or `twitter` object replaces the layout's wholesale rather than merging into it, so the image has to be repeated on every page that defines those keys. Import `OG_IMAGES` from `@/lib/seo` rather than re-declaring image objects, so the six copies cannot drift.
+
+**FAQ copy is duplicated by design**: the `faqSchema` literal in `page.tsx` and the FAQ data in the section component contain the same question/answer text verbatim. Editing one without the other silently desyncs the structured data from the visible page. Always update both.
 
 ### Section components
 
-Everything under `components/sections/` is `'use client'` and follows the same idiom: a `<section>` with an optional `id` anchor, framer-motion `initial` / `whileInView` / `viewport={{ once: true }}` reveals, and Tailwind `fx-*` tokens. Long content lists (animation presets, editable properties, FAQ entries) are extracted into sibling `.ts` data files rather than inlined into JSX.
+Everything under `components/sections/` is `'use client'` and follows the same idiom: a `<section>` with an optional `id` anchor, framer-motion `initial` / `whileInView` / `viewport={{ once: true }}` reveals, and Tailwind `fx-*` tokens. Long content lists are extracted into sibling `.ts` data files (`fmgFaqData.ts`, `lightweightFaqData.ts`, `beginnerFaqData.ts`, and the three files in `feature-highlights/`) — though the homepage `FAQSection.tsx` and `after-effects-alternative/AEFAQSection.tsx` still inline theirs.
 
 ### Loading gate
 
 `lib/loading-context.tsx` → `components/PageLoader.tsx` → `components/sections/Hero.tsx` form one coupled system, wired in `app/layout.tsx` via `BodyWrapper`:
 
 - A full-screen overlay animates a fake progress bar to 90%, then finishes only once **both** `window.load` has fired **and** `videosReady` is true (6s safety timeout regardless).
-- `videosReady` flips when `markVideoReady()` has been called `VIDEO_TARGET` (currently **5**) times. Callers are the YouTube `<iframe onLoad>` in `components/sections/VideoPlaceholder.tsx` and the shorts embeds in `WhatIsFlashFX.tsx`.
+- `videosReady` flips when `markVideoReady()` has been called `VIDEO_TARGET` (currently **5**) times. Callers are the YouTube `<iframe onLoad>` in `components/sections/VideoPlaceholder.tsx` (5 instances on the homepage carry a `youtubeId`; the rest render no iframe) and the 5 shorts embeds in `WhatIsFlashFX.tsx`.
 - `Hero` renders nothing until `isLoaded` is true, so its shader background and text only start after the overlay fades.
 
-Adding or removing YouTube embeds on the homepage changes how many `markVideoReady()` calls ever arrive. If that count drops below 5 the loader hangs until the 6s fallback fires on every visit — keep `VIDEO_TARGET` in sync with the actual embed count.
+The homepage currently mounts 10 iframes, so the target is comfortably met. If embeds are removed and the reachable count drops below 5, the loader hangs until the 6s fallback fires on every visit — keep `VIDEO_TARGET` in sync. **FIX.md places the embed strategy and the loader gate explicitly out of scope** (M8 deferred list): do not touch `VideoPlaceholder`, `WhatIsFlashFX`, `PageLoader`, or `lib/loading-context.tsx` while working a milestone.
 
 `ContentGate` (exported from `BodyWrapper.tsx`) is currently a pass-through; it exists as a hook point for gating content behind the loader.
 
@@ -67,7 +100,7 @@ Raw hex values live as CSS custom properties in `app/globals.css` (`--color-bg-b
 
 Two global rules in `globals.css` bite easily:
 
-- **`h1` has a hardcoded gradient with `-webkit-text-fill-color: transparent`.** Any `text-*` color class on an `h1` is invisible. Components that need a solid-color heading (e.g. `Hero`) work around this by styling a `motion.h1` with explicit inline styles.
+- **`h1` has a hardcoded gradient with `-webkit-text-fill-color: transparent`.** Any `text-*` color class on an `h1` is invisible. Components that need a solid-color heading (e.g. `Hero`) work around this by styling a `motion.h1` with explicit inline styles, or by using a `<span>`.
 - `* { @apply border-fx-border }` sets the default border color globally; `h1, h2, h3` are forced to the Cormorant display font. `h2.section-heading` gets a gradient underline via `::after`.
 
 Four fonts are loaded in `app/layout.tsx` via `next/font/google` and exposed as CSS variables: `--font-cormorant` (display/headings), `--font-outfit` (`font-sans`, body), `--font-jetbrains` (`font-mono`), `--font-lexend`. Existing components mostly apply these through inline `style={{ fontFamily: 'var(--font-…)' }}` rather than the Tailwind font classes — match whichever the surrounding file uses.
@@ -85,13 +118,13 @@ Shader/visual-effect components (`shader-animation.tsx`, `web-gl-shader.tsx`, `s
 
 ## Known loose ends
 
-Useful context before "fixing" something that looks broken:
+Useful context before "fixing" something that looks broken. Most of these are owned by FIX.md M6/M7 — check there before fixing one ad hoc.
 
-- The `Navbar` Features dropdown scrolls to `#dual-timeline` and `#share-projects`, but `DualTimeline.tsx` and `ShareProjects.tsx` are not rendered on any page — those two entries are dead links. `ProblemSection.tsx` and `TrollSection.tsx` are likewise unreferenced.
-- `components/layout/Footer.tsx` links to many routes that don't exist yet (`/pricing`, `/blog`, `/features`, `/download`, `/changelog`, `/flashfx-vs-capcut`, `/flashfx-vs-davinci`, `/motion-graphics-software-for-youtube`, …). Only the five routes listed above are implemented.
+- The `Navbar` Features dropdown scrolls to `#dual-timeline` and `#share-projects`, but `DualTimeline.tsx` and `ShareProjects.tsx` are not rendered on any page — those two entries are dead links. `ProblemSection.tsx` and `TrollSection.tsx` are likewise unreferenced. FIX.md open question 9 asks whether to mount the sections or drop the dropdown entries.
+- `components/layout/Footer.tsx` links to ~18 routes that don't exist: `/features`, `/pricing`, `/download`, `/changelog`, `/roadmap`, `/blog`, `/faq`, `/status`, `/careers`, `/brand`, `/privacy`, `/terms`, `/security`, `/motion-graphics-software-for-youtube`, `/flashfx-vs-capcut`, `/flashfx-vs-davinci`. Only the six routes listed above are implemented (M6).
 - `@supabase/supabase-js` is a dependency but is imported nowhere.
-- Several `public/` assets have spaces and `copy` suffixes in their filenames (e.g. `/android-chrome-192x192 copy.png`, referenced by `PageLoader`). Renaming them requires updating the referencing components.
-- Large `.mp4` and screenshot files sit at the repo root, unreferenced by any component (the served copies are in `public/`).
+- Several `public/` assets have spaces and `copy` suffixes in their filenames (e.g. `/android-chrome-192x192 copy.png`, referenced by `PageLoader`). Renaming them requires updating the referencing components (M7).
+- Large `.mp4` and screenshot files sit at the repo root, unreferenced by any component — the served copies are in `public/` (M7). Note `public/Screenshot_2026-03-01_183521.png` is the live OG image referenced by `lib/seo.ts`: the root-level duplicate is disposable, the `public/` copy is not.
 
 ## Conventions from `.bolt/prompt`
 
