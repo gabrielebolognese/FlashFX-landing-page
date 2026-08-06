@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { ElegantShapesBackground } from '@/components/ui/elegant-shapes';
-import { usePageLoaded } from '@/lib/loading-context';
 
 interface VideoPlaceholderProps {
   title: string;
@@ -25,17 +24,49 @@ interface VideoPlaceholderProps {
   id?: string;
 }
 
+/*
+ * The iframe is not created until the section is close to the viewport
+ * (performancemilestones.md P2).
+ *
+ * Each YouTube embed pulls roughly 1–2 MB of its own JavaScript and CSS and
+ * opens its own rendering context. The homepage mounts five of these plus five
+ * shorts in WhatIsFlashFX; loading them all eagerly meant several megabytes of
+ * third-party code before anything below the fold had been looked at, and it
+ * held `window.load` open, which the old PageLoader was waiting on.
+ *
+ * `rootMargin: 400px` starts the load just before the section scrolls into
+ * view, so it is ready by the time it is on screen. The play/pause observer is
+ * only attached once the iframe exists.
+ */
 function YouTubeEmbed({ youtubeId, title }: { youtubeId: string; title: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const { markVideoReady } = usePageLoaded();
+  const [shouldLoad, setShouldLoad] = useState(false);
 
   const src = `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&mute=1&loop=1&playlist=${youtubeId}&controls=0&modestbranding=1&rel=0&showinfo=0&disablekb=1&iv_load_policy=3&playsinline=1&enablejsapi=1`;
 
   useEffect(() => {
     const container = containerRef.current;
+    if (!container || shouldLoad) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '400px' }
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [shouldLoad]);
+
+  useEffect(() => {
+    const container = containerRef.current;
     const iframe = iframeRef.current;
-    if (!container || !iframe) return;
+    if (!shouldLoad || !container || !iframe) return;
 
     const sendCommand = (func: string) => {
       iframe.contentWindow?.postMessage(
@@ -55,27 +86,31 @@ function YouTubeEmbed({ youtubeId, title }: { youtubeId: string; title: string }
 
     observer.observe(container);
     return () => observer.disconnect();
-  }, []);
+  }, [shouldLoad]);
 
   return (
     <div ref={containerRef} className="absolute inset-0 w-full h-full overflow-hidden">
-      <iframe
-        ref={iframeRef}
-        src={src}
-        title={title}
-        allow="autoplay; encrypted-media"
-        style={{
-          border: 'none',
-          pointerEvents: 'none',
-          position: 'absolute',
-          width: '130%',
-          height: '130%',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-        }}
-        onLoad={() => markVideoReady()}
-      />
+      {shouldLoad ? (
+        <iframe
+          ref={iframeRef}
+          src={src}
+          title={title}
+          loading="lazy"
+          allow="autoplay; encrypted-media"
+          style={{
+            border: 'none',
+            pointerEvents: 'none',
+            position: 'absolute',
+            width: '130%',
+            height: '130%',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
+        />
+      ) : (
+        <div className="absolute inset-0 w-full h-full bg-fx-bg-base" />
+      )}
     </div>
   );
 }

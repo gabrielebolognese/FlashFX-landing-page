@@ -4,7 +4,6 @@ import { Cormorant_Garamond, Outfit, JetBrains_Mono, Lexend } from 'next/font/go
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { PageLoader } from '@/components/PageLoader';
-import { BodyWrapper, ContentGate } from '@/components/BodyWrapper';
 import { OG_IMAGES } from '@/lib/seo';
 
 const cormorantGaramond = Cormorant_Garamond({
@@ -82,14 +81,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${cormorantGaramond.variable} ${outfit.variable} ${jetbrainsMono.variable} ${lexend.variable} font-sans`}>
-        <BodyWrapper>
-          <PageLoader />
-          <ContentGate>
-            <Navbar />
-            {children}
-            <Footer />
-          </ContentGate>
-        </BodyWrapper>
+        {/*
+          BodyWrapper and ContentGate were removed with the loading context in
+          performancemilestones.md P1. They wrapped the whole tree in a client
+          component to provide state that no longer exists — PageLoader is now a
+          server component and Hero renders unconditionally.
+        */}
+        <PageLoader />
+        <Navbar />
+        {children}
+        <Footer />
       </body>
     </html>
   );

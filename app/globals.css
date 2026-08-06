@@ -84,3 +84,57 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+/*
+ * Splash overlay (components/PageLoader.tsx).
+ *
+ * Deliberately pure CSS. The previous loader was a client component running a
+ * requestAnimationFrame progress bar that dismissed only once `window.load` had
+ * fired AND five YouTube iframes had reported onLoad — with a 6s fallback that,
+ * in practice, was always what dismissed it. That put a flat 6-second wall in
+ * front of every page.
+ *
+ * A CSS animation starts the moment the element paints, needs no hydration,
+ * ships no JavaScript, and cannot hang waiting on a third party. The overlay is
+ * `pointer-events: none` from the first frame, so it never blocks interaction
+ * with the content already rendered underneath it.
+ */
+@keyframes fx-splash-out {
+  0%,
+  28% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.fx-splash {
+  animation: fx-splash-out 520ms ease-out forwards;
+}
+
+@keyframes fx-splash-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.fx-splash-mark {
+  animation: fx-splash-pulse 900ms ease-in-out infinite;
+}
+
+/* No splash at all for anyone who has asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .fx-splash {
+    animation-duration: 1ms;
+  }
+
+  .fx-splash-mark {
+    animation: none;
+  }
+}

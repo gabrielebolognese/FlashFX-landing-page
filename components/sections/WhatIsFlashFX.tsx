@@ -1,7 +1,7 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { usePageLoaded } from '@/lib/loading-context';
 
 const shorts = [
   { id: 'm0-8jXv6rLU' },
@@ -11,11 +11,39 @@ const shorts = [
   { id: 'H6amhANnAPQ' },
 ];
 
-function ShortEmbed({ id, index, onLoad }: { id: string; index: number; onLoad: () => void }) {
-  const src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&rel=0&showinfo=0&disablekb=1&iv_load_policy=3&fs=0&cc_load_policy=0`;
+/*
+ * Five shorts, each a full YouTube embed. Loading them eagerly cost several
+ * megabytes of third-party code before the section had been scrolled to
+ * (performancemilestones.md P2). The iframe is now created on approach, and the
+ * host is youtube-nocookie to match VideoPlaceholder.
+ */
+function ShortEmbed({ id, index }: { id: string; index: number }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  const src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&rel=0&showinfo=0&disablekb=1&iv_load_policy=3&fs=0&cc_load_policy=0`;
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || shouldLoad) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '400px' }
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [shouldLoad]);
 
   return (
     <motion.div
+      ref={containerRef}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -24,30 +52,30 @@ function ShortEmbed({ id, index, onLoad }: { id: string; index: number; onLoad: 
       style={{ width: '18vw', height: 'calc(18vw * 16 / 9)' }}
     >
       <div className="absolute inset-0 overflow-hidden rounded-2xl">
-        <iframe
-          src={src}
-          title={`FlashFX short ${index + 1}`}
-          allow="autoplay; encrypted-media"
-          onLoad={onLoad}
-          style={{
-            position: 'absolute',
-            top: '-2%',
-            left: '-2%',
-            width: '104%',
-            height: '104%',
-            border: 'none',
-            pointerEvents: 'none',
-            display: 'block',
-          }}
-        />
+        {shouldLoad && (
+          <iframe
+            src={src}
+            title={`FlashFX short ${index + 1}`}
+            loading="lazy"
+            allow="autoplay; encrypted-media"
+            style={{
+              position: 'absolute',
+              top: '-2%',
+              left: '-2%',
+              width: '104%',
+              height: '104%',
+              border: 'none',
+              pointerEvents: 'none',
+              display: 'block',
+            }}
+          />
+        )}
       </div>
     </motion.div>
   );
 }
 
 export function WhatIsFlashFX() {
-  const { markVideoReady } = usePageLoaded();
-
   return (
     <section className="relative w-full py-20 overflow-hidden" style={{ backgroundColor: '#0b1a35' }}>
       <div className="max-w-4xl mx-auto px-6 text-center mb-14">
@@ -77,7 +105,7 @@ export function WhatIsFlashFX() {
       <div className="w-full px-6">
         <div className="flex justify-center gap-4 lg:gap-5">
           {shorts.map((short, i) => (
-            <ShortEmbed key={short.id} id={short.id} index={i} onLoad={markVideoReady} />
+            <ShortEmbed key={short.id} id={short.id} index={i} />
           ))}
         </div>
       </div>

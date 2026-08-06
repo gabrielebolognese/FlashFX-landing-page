@@ -25,8 +25,8 @@ it should arguably run first even though it is listed last.
 
 | Milestone | Title | Status |
 |---|---|---|
-| P1 | Stop the loader blocking first paint | NOT_STARTED |
-| P2 | Lazy-load every YouTube embed | NOT_STARTED |
+| P1 | Stop the loader blocking first paint | DONE |
+| P2 | Lazy-load every YouTube embed | DONE |
 | P3 | Fix the 6.6 MB image payload | NOT_STARTED |
 | P4 | One WebGL context, paused off-screen | NOT_STARTED |
 | P5 | Code-split the heavy visual components | NOT_STARTED |
@@ -75,8 +75,25 @@ supersede that deferral. Nothing else in `FIX.md` changes.
 
 ## P1 — Stop the loader blocking first paint
 
-**Status:** NOT_STARTED
+**Status:** DONE — 2026-08-06
 **Impact:** highest. This is the one users experience as "the site is slow."
+
+> **Done.** `PageLoader` is now a **server component with no JavaScript at all**
+> — the fade is a CSS animation (`.fx-splash` in `globals.css`, 520 ms), so it
+> starts at first paint, needs no hydration, and has no mechanism by which it
+> could wait on a third party. It is `pointer-events: none` from the first
+> frame, so it never blocks a click. `prefers-reduced-motion: reduce` collapses
+> it to 1 ms.
+>
+> `Hero` renders unconditionally; the headline is in the server HTML and
+> verified present. `lib/loading-context.tsx` and `components/BodyWrapper.tsx`
+> were **deleted** — with them went `VIDEO_TARGET`, `videosReady`,
+> `markVideoReady`, and a client-component boundary that wrapped the entire
+> application tree. `app/layout.tsx` now renders `PageLoader`, `Navbar`,
+> `children` and `Footer` directly.
+>
+> Not verified: the "under 2 s on Slow 4G" criterion. That needs a throttled
+> browser run, which belongs to P8.
 
 ### Why
 
@@ -139,8 +156,26 @@ npm run build && npm run start
 
 ## P2 — Lazy-load every YouTube embed
 
-**Status:** NOT_STARTED
-**Depends on:** P1 (the loader counts iframe `onLoad` events today)
+**Status:** DONE — 2026-08-06
+**Depends on:** P1 (the loader counted iframe `onLoad` events)
+
+> **Done.** Both `VideoPlaceholder`'s `YouTubeEmbed` and `WhatIsFlashFX`'s
+> `ShortEmbed` now create their iframe only once an IntersectionObserver with
+> `rootMargin: 400px` reports the section approaching the viewport, so the embed
+> is ready by the time it is on screen. Until then each renders a solid
+> placeholder at the same dimensions, so nothing shifts.
+>
+> **Verified: zero `<iframe>` elements in the delivered HTML** of `/`, `/about`,
+> `/pricing` and `/features` — checked both in the build output and against a
+> running production server.
+>
+> The play/pause observer that drives autoplay-on-scroll is unchanged, but is
+> now attached only after the iframe exists. `WhatIsFlashFX` was switched from
+> `youtube.com` to `youtube-nocookie.com` to match `VideoPlaceholder`. The dead
+> `onLoad={markVideoReady}` wiring is gone.
+>
+> Not verified: the "third-party transfer under 500 kB" criterion, which needs a
+> network panel measurement. P8.
 
 ### Why
 

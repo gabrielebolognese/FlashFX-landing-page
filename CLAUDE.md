@@ -82,17 +82,16 @@ Existing routes: `/`, `/about`, `/after-effects-alternative`, `/free-motion-grap
 
 Everything under `components/sections/` is `'use client'` and follows the same idiom: a `<section>` with an optional `id` anchor, framer-motion `initial` / `whileInView` / `viewport={{ once: true }}` reveals, and Tailwind `fx-*` tokens. Long content lists are extracted into sibling `.ts` data files (`fmgFaqData.ts`, `lightweightFaqData.ts`, `beginnerFaqData.ts`, and the three files in `feature-highlights/`) — though the homepage `FAQSection.tsx` and `after-effects-alternative/AEFAQSection.tsx` still inline theirs.
 
-### Loading gate
+### Splash overlay and media loading
 
-`lib/loading-context.tsx` → `components/PageLoader.tsx` → `components/sections/Hero.tsx` form one coupled system, wired in `app/layout.tsx` via `BodyWrapper`:
+**This was rebuilt on 2026-08-06** (see `performancemilestones.md` P1 and P2). The previous design — a loading context gating first paint on `window.load` plus five YouTube `onLoad` events — is gone, along with `lib/loading-context.tsx` and `components/BodyWrapper.tsx`. Anything describing `VIDEO_TARGET`, `videosReady`, `markVideoReady`, `ContentGate` or `usePageLoaded` is stale.
 
-- A full-screen overlay animates a fake progress bar to 90%, then finishes only once **both** `window.load` has fired **and** `videosReady` is true (6s safety timeout regardless).
-- `videosReady` flips when `markVideoReady()` has been called `VIDEO_TARGET` (currently **5**) times. Callers are the YouTube `<iframe onLoad>` in `components/sections/VideoPlaceholder.tsx` (5 instances on the homepage carry a `youtubeId`; the rest render no iframe) and the 5 shorts embeds in `WhatIsFlashFX.tsx`.
-- `Hero` renders nothing until `isLoaded` is true, so its shader background and text only start after the overlay fades.
+- `components/PageLoader.tsx` is a **server component with no JavaScript**. The fade is a CSS animation (`.fx-splash` in `globals.css`, 520 ms), so it begins at first paint, needs no hydration, and cannot hang waiting on anything. It is `pointer-events: none` from the first frame and collapses to 1 ms under `prefers-reduced-motion: reduce`. Timing lives in the CSS, not the component.
+- `Hero` renders unconditionally. It previously returned `null` until the overlay finished, which kept the LCP element out of the DOM for the whole load. **Do not reintroduce a gate there.**
+- YouTube embeds in `VideoPlaceholder.tsx` and `WhatIsFlashFX.tsx` create their iframe only when an IntersectionObserver (`rootMargin: 400px`) reports the section approaching. Server HTML contains **zero iframes** on every route — worth preserving, and easy to check with `grep -c "<iframe" .next/server/app/index.html`.
+- `components/ui/lazy-youtube.tsx` implements the same idea and is used by `SolutionSection`, `LoadTime` and `SplitHero`. Prefer it for new embeds.
 
-The homepage currently mounts 10 iframes, so the target is comfortably met. If embeds are removed and the reachable count drops below 5, the loader hangs until the 6s fallback fires on every visit — keep `VIDEO_TARGET` in sync. **FIX.md places the embed strategy and the loader gate explicitly out of scope** (M8 deferred list): do not touch `VideoPlaceholder`, `WhatIsFlashFX`, `PageLoader`, or `lib/loading-context.tsx` while working a milestone.
-
-`ContentGate` (exported from `BodyWrapper.tsx`) is currently a pass-through; it exists as a hook point for gating content behind the loader.
+`app/layout.tsx` now renders `PageLoader`, `Navbar`, `children` and `Footer` directly, with no client-component wrapper around the tree.
 
 ### Design tokens
 
