@@ -117,7 +117,19 @@ export const hardwareFloor: HardwareSpec[] = [
   },
 ];
 
+export const CAPABILITY_GROUPS = [
+  'Design & vector',
+  'Animation',
+  'Compositing',
+  'Collaboration',
+  'Media & output',
+  'Platform',
+] as const;
+
+export type CapabilityGroup = (typeof CAPABILITY_GROUPS)[number];
+
 export interface CapabilityRow {
+  group: CapabilityGroup;
   capability: string;
   flashfx: boolean;
   capcut: boolean;
@@ -128,36 +140,218 @@ export interface CapabilityRow {
 /*
  * [ARCH] capability presence, not performance.
  *
- * Every FlashFX "true" below is a feature the site already documents in
- * components/sections/feature-highlights/editorFeatures.ts. The source document
- * also credits FlashFX with expressions, repeaters and cloners, audio-reactive
- * keyframing, adjustment layers and puppet warp — none of which appear in that
- * feature data, so they are held back pending confirmation rather than
- * published on a page that names competitors.
+ * TWO RULES FOR EDITING THIS TABLE
+ *
+ * 1. A FlashFX `true` must be traceable. Nearly all of these come from
+ *    components/sections/feature-highlights/editorFeatures.ts or
+ *    editableProperties.ts, or from the plan tiers in PricingSection.tsx.
+ *    Rows marked "owner-confirmed" below were asserted directly by the founder
+ *    on 2026-08-06 and are not yet reflected in that feature data — if they get
+ *    added there, drop the marker.
+ *
+ * 2. When unsure whether a competitor has something, mark them as HAVING it.
+ *    Understating our own advantage costs a little persuasion. Overstating it
+ *    on a page that names CapCut and DaVinci Resolve is a comparative
+ *    advertising claim, and under EU rules those must be objective and
+ *    verifiable. Asymmetric risk, so bias one way deliberately.
  */
 export const capabilities: CapabilityRow[] = [
+  // --- Design & vector -----------------------------------------------------
   {
+    group: 'Design & vector',
+    capability: 'Pen tool with bezier paths',
+    flashfx: true,
+    capcut: false,
+    resolve: true,
+    note: 'Smoothing, per-point corner radius, dash arrays, trim start and end',
+  },
+  {
+    group: 'Design & vector',
+    capability: 'Animatable corner radius',
+    flashfx: true,
+    capcut: false,
+    resolve: true,
+    note: 'Pixel-level, animatable for morphing transitions',
+  },
+  {
+    group: 'Design & vector',
+    capability: 'Auto-layout containers',
+    flashfx: true,
+    capcut: false,
+    resolve: false,
+    note: 'Horizontal and vertical, with padding, margin and nesting',
+  },
+  {
+    group: 'Design & vector',
+    capability: 'Reusable UI component shapes',
+    flashfx: true,
+    capcut: false,
+    resolve: false,
+    note: 'Button, input, toggle, modal, chat bubble, progress bar',
+  },
+  {
+    group: 'Design & vector',
+    capability: 'SVG import with inline editing',
+    flashfx: true,
+    capcut: false,
+    resolve: true,
+    note: 'Fill and stroke override, ViewBox preservation',
+  },
+  {
+    group: 'Design & vector',
+    capability: 'Built-in searchable icon library',
+    flashfx: true,
+    capcut: true,
+    resolve: false,
+  },
+  {
+    group: 'Design & vector',
+    capability: 'Smart guides and snapping',
+    flashfx: true,
+    capcut: true,
+    resolve: true,
+    note: 'Snap to grid, elements, markers and keyframes',
+  },
+  {
+    group: 'Design & vector',
+    capability: 'Blend modes',
+    flashfx: true,
+    capcut: false,
+    resolve: true,
+    note: '16 element-level modes',
+  },
+
+  // --- Animation -----------------------------------------------------------
+  {
+    group: 'Animation',
     capability: 'Keyframe graph with bezier velocity curves',
     flashfx: true,
     capcut: false,
     resolve: true,
     note: '16 easing functions with per-keyframe bezier handles',
   },
-  { capability: 'Per-character text animation', flashfx: true, capcut: false, resolve: true, note: 'By character, word, line or object' },
-  { capability: 'Masking with feather and invert', flashfx: true, capcut: false, resolve: true },
-  { capability: 'Blend modes', flashfx: true, capcut: false, resolve: true, note: '16 element-level modes' },
-  { capability: 'Groups, nesting and shared parent transforms', flashfx: true, capcut: false, resolve: true },
-  { capability: 'Nested compositions', flashfx: true, capcut: false, resolve: true, note: 'Sequence compositor' },
-  { capability: 'Chroma key', flashfx: true, capcut: true, resolve: true },
-  { capability: '3D with model import', flashfx: true, capcut: false, resolve: true, note: 'GLB, OBJ, FBX, STL' },
-  { capability: 'Transparent export', flashfx: true, capcut: false, resolve: true, note: 'PNG sequence' },
-  { capability: 'Runs with no installation', flashfx: true, capcut: false, resolve: false },
-  { capability: 'Mobile app', flashfx: false, capcut: true, resolve: true },
-  { capability: 'Works offline', flashfx: false, capcut: true, resolve: true },
-  { capability: 'Auto-captions and stock library', flashfx: false, capcut: true, resolve: false },
-  { capability: 'Camera RAW and professional codecs', flashfx: false, capcut: false, resolve: true, note: 'BRAW, R3D, ProRes, DNxHR' },
-  { capability: 'ACES and HDR colour grading', flashfx: false, capcut: false, resolve: true, note: '32-bit float, DaVinci Wide Gamut' },
-  { capability: 'Full digital audio workstation', flashfx: false, capcut: false, resolve: true, note: 'Fairlight' },
+  {
+    group: 'Animation',
+    capability: 'Expressions',
+    flashfx: true,
+    capcut: false,
+    resolve: true,
+    note: 'Owner-confirmed 2026-08-06',
+  },
+  {
+    group: 'Animation',
+    capability: 'Repeaters and cloners',
+    flashfx: true,
+    capcut: false,
+    resolve: true,
+    note: 'Owner-confirmed 2026-08-06',
+  },
+  {
+    group: 'Animation',
+    capability: 'Per-character text animation',
+    flashfx: true,
+    capcut: false,
+    resolve: true,
+    note: 'By character, word, line or object',
+  },
+
+  // --- Compositing ---------------------------------------------------------
+  {
+    group: 'Compositing',
+    capability: 'Masking with feather and invert',
+    flashfx: true,
+    capcut: false,
+    resolve: true,
+  },
+  {
+    group: 'Compositing',
+    capability: 'Groups, nesting and shared parent transforms',
+    flashfx: true,
+    capcut: false,
+    resolve: true,
+    note: 'Enter and exit group editing, lock and hide per layer',
+  },
+  {
+    group: 'Compositing',
+    capability: 'Nested compositions',
+    flashfx: true,
+    capcut: false,
+    resolve: true,
+    note: 'Sequence compositor',
+  },
+  { group: 'Compositing', capability: 'Chroma key', flashfx: true, capcut: true, resolve: true },
+  {
+    group: 'Compositing',
+    capability: '3D with model import',
+    flashfx: true,
+    capcut: false,
+    resolve: true,
+    note: 'GLB, OBJ, FBX, STL',
+  },
+
+  // --- Collaboration -------------------------------------------------------
+  {
+    group: 'Collaboration',
+    capability: 'Real-time collaboration',
+    flashfx: true,
+    capcut: false,
+    resolve: true,
+    note: 'FlashFX: Teams plan',
+  },
+  {
+    group: 'Collaboration',
+    capability: 'Version history',
+    flashfx: true,
+    capcut: false,
+    resolve: true,
+    note: '30 days free, 90 days on paid plans',
+  },
+
+  // --- Media & output ------------------------------------------------------
+  {
+    group: 'Media & output',
+    capability: 'Transparent export',
+    flashfx: true,
+    capcut: false,
+    resolve: true,
+    note: 'PNG sequence',
+  },
+  {
+    group: 'Media & output',
+    capability: 'Auto-captions and stock library',
+    flashfx: false,
+    capcut: true,
+    resolve: false,
+  },
+  {
+    group: 'Media & output',
+    capability: 'Camera RAW and professional codecs',
+    flashfx: false,
+    capcut: false,
+    resolve: true,
+    note: 'BRAW, R3D, ProRes, DNxHR',
+  },
+  {
+    group: 'Media & output',
+    capability: 'ACES and HDR colour grading',
+    flashfx: false,
+    capcut: false,
+    resolve: true,
+    note: '32-bit float, DaVinci Wide Gamut',
+  },
+  {
+    group: 'Media & output',
+    capability: 'Full digital audio workstation',
+    flashfx: false,
+    capcut: false,
+    resolve: true,
+    note: 'Fairlight',
+  },
+
+  // --- Platform ------------------------------------------------------------
+  { group: 'Platform', capability: 'Runs with no installation', flashfx: true, capcut: false, resolve: false },
+  { group: 'Platform', capability: 'Mobile app', flashfx: false, capcut: true, resolve: true },
+  { group: 'Platform', capability: 'Works offline', flashfx: false, capcut: true, resolve: true },
 ];
 
 export interface Verdict {

@@ -1,8 +1,9 @@
 'use client';
 
+import { Fragment } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Minus } from 'lucide-react';
-import { capabilities } from './comparisonData';
+import { CAPABILITY_GROUPS, capabilities } from './comparisonData';
 
 /*
  * Presence, not performance. An absent capability is rendered as a visibly
@@ -81,19 +82,39 @@ export function CapabilityMatrix() {
               </tr>
             </thead>
             <tbody>
-              {capabilities.map((row) => (
-                <tr key={row.capability} className="border-b border-fx-border last:border-b-0">
-                  <th scope="row" className="px-4 py-3 text-left font-normal">
-                    <span className="block text-fx-text-primary">{row.capability}</span>
-                    {row.note && (
-                      <span className="block text-xs text-fx-text-secondary mt-0.5">{row.note}</span>
-                    )}
-                  </th>
-                  <Cell has={row.flashfx} />
-                  <Cell has={row.capcut} />
-                  <Cell has={row.resolve} />
-                </tr>
-              ))}
+              {CAPABILITY_GROUPS.map((group) => {
+                const rows = capabilities.filter((row) => row.group === group);
+                if (rows.length === 0) return null;
+
+                return (
+                  <Fragment key={group}>
+                    <tr className="border-b border-fx-border bg-fx-bg-base">
+                      <th
+                        scope="colgroup"
+                        colSpan={4}
+                        className="px-4 py-2.5 text-left font-mono text-xs uppercase tracking-wider text-fx-text-secondary"
+                      >
+                        {group}
+                      </th>
+                    </tr>
+                    {rows.map((row) => (
+                      <tr key={row.capability} className="border-b border-fx-border">
+                        <th scope="row" className="px-4 py-3 text-left font-normal">
+                          <span className="block text-fx-text-primary">{row.capability}</span>
+                          {row.note && (
+                            <span className="block text-xs text-fx-text-secondary mt-0.5">
+                              {row.note}
+                            </span>
+                          )}
+                        </th>
+                        <Cell has={row.flashfx} />
+                        <Cell has={row.capcut} />
+                        <Cell has={row.resolve} />
+                      </tr>
+                    ))}
+                  </Fragment>
+                );
+              })}
             </tbody>
           </table>
         </motion.div>

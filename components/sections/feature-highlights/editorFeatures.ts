@@ -13,6 +13,10 @@ export const editorFeatures: FeatureItem[] = [
   { title: 'Material System', description: '7 unique materials: Matte, Glossy, Metallic, Glass, Neon, Holographic, and Plastic — each with animatable properties and multi-layer gradient fills.', Icon: CircleDot },
   { title: '70+ Image Filters', description: 'Professional filters across 14 categories: blur, sharpen, color grading, distortion, noise, stylize, lens effects, and more.', Icon: SlidersHorizontal },
   { title: 'Keyframe Animation', description: '50+ animatable properties with per-keyframe bezier handles. Animate transforms, colors, effects, filters, materials, and more.', Icon: Zap },
+  // Added 2026-08-06, confirmed by the founder. The comparison page's capability
+  // matrix cites both, so they need to be documented here to stay traceable.
+  { title: 'Expressions', description: 'Drive any animatable property with an expression instead of keyframes, for motion that reacts and repeats without hand-placing every frame.', Icon: FileCode },
+  { title: 'Repeaters & Cloners', description: 'Duplicate an element across a grid or pattern from one control, then offset and stagger the copies without building each one by hand.', Icon: Component },
   { title: 'Multi-Track Timeline', description: 'Dual timeline layout with clip management, named markers, frame-rate presets, loop mode, and pixel-per-second zoom control.', Icon: Clock },
   { title: '16 Easing Functions', description: 'From linear to elastic and bounce, with custom bezier curve control per keyframe. Full hold keyframe support for step interpolation.', Icon: TrendingUp },
   { title: 'Text Animation Modes', description: 'Animate text by character, word, line, or object level with stagger, masking reveals, and procedural text animator layers.', Icon: AlignLeft },

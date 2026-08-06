@@ -51,7 +51,8 @@ export const featureCategories: FeatureCategory[] = [
     highlights: [
       '39 editable properties, 50+ of them animatable',
       '16 easing functions with per-keyframe bezier handles',
-      'Hold keyframes for step interpolation',
+      'Expressions, for motion that reacts instead of being hand-keyed',
+      'Repeaters and cloners with offset and stagger',
       'Text animation by character, word, line, or object',
     ],
     Icon: Zap,
