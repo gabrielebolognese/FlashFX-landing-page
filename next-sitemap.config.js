@@ -24,6 +24,7 @@ const ROUTES = {
   '/lightweight-video-editor': { priority: 0.9, changefreq: 'monthly' },
   '/video-editing-software-for-beginners': { priority: 0.9, changefreq: 'monthly' },
   '/motion-graphics-software-for-youtube': { priority: 0.9, changefreq: 'monthly' },
+  '/flashfx-vs-capcut-vs-davinci': { priority: 0.9, changefreq: 'monthly' },
   // Product surface.
   '/features': { priority: 0.8, changefreq: 'monthly' },
   '/pricing': { priority: 0.8, changefreq: 'monthly' },
@@ -31,6 +32,9 @@ const ROUTES = {
   '/about': { priority: 0.6, changefreq: 'monthly' },
   '/download': { priority: 0.6, changefreq: 'monthly' },
   '/faq': { priority: 0.7, changefreq: 'monthly' },
+  // Weekly because it should change often. If it stops changing, lower it —
+  // a stale changelog is worse than no changelog.
+  '/changelog': { priority: 0.6, changefreq: 'weekly' },
   // Reference material. Indexed, but never the page we want to rank.
   '/brand': { priority: 0.4, changefreq: 'yearly' },
   '/careers': { priority: 0.4, changefreq: 'monthly' },

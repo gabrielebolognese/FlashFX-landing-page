@@ -25,7 +25,10 @@ const footerLinks = {
       { text: 'Beginner Guide', href: '/video-editing-software-for-beginners' },
       { text: 'YouTube Creators', href: '/motion-graphics-software-for-youtube' },
       { text: 'FAQ', href: '/faq' },
-      { text: 'Status', href: '/status' },
+      // No status page exists and none is planned. If one is ever stood up it
+      // belongs on a hosted service at status.flashfx.app, linked externally
+      // like Roadmap and Blog — not hand-written here, where it would go stale
+      // silently during the first outage.
     ],
   },
   compare: {
@@ -33,8 +36,8 @@ const footerLinks = {
     accent: true,
     links: [
       { text: 'vs After Effects', href: '/after-effects-alternative' },
-      { text: 'vs CapCut', href: '/flashfx-vs-capcut' },
-      { text: 'vs DaVinci Resolve', href: '/flashfx-vs-davinci' },
+      // One page covers both, deliberately — see comparisonData.ts.
+      { text: 'vs CapCut & DaVinci', href: '/flashfx-vs-capcut-vs-davinci' },
       { text: 'Free Motion Graphics', href: '/free-motion-graphics-software' },
       { text: 'Lightweight Editor', href: '/lightweight-video-editor' },
     ],

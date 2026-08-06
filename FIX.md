@@ -586,15 +586,53 @@ were wrong even then, and the route count has since moved:
 `/acceptable-use-policy`. `/roadmap` repointed to `roadmap.flashfx.app`.
 Privacy and terms resolved via Termly, so criterion 4 is met.
 
-**Remaining — five dead footer hrefs:**
-`/changelog`, `/security`, `/status` (blocked: need facts, or should not be
-static pages) and `/flashfx-vs-capcut`, `/flashfx-vs-davinci` (blocked: awaiting
-a verified benchmark table).
+**Remaining — one dead footer href:** `/security`. Blocked on facts about what
+`editor.flashfx.app` does with user data, which is not in this repo. A security
+page that overstates the posture is a written commitment you can be held to, so
+it is not something to draft speculatively.
 
-`/blog` resolved 2026-08-06 — the blog lives at `blog.flashfx.app`, so the
-footer link is now external, same as `/roadmap`. Open question 4 in the list
-below (whether to build a blog on this domain) is therefore moot: do not build
-one here.
+Resolved 2026-08-06:
+- `/blog` → `blog.flashfx.app`, external, same as `/roadmap`. Open question 4
+  below is moot: do not build a blog on this domain, one already exists.
+- `/status` → **link removed entirely.** No status page exists and none is
+  planned. If one is ever stood up it belongs on a hosted service at
+  `status.flashfx.app`, linked externally — a hand-written status page goes
+  stale silently during the first outage, which is the only time it matters.
+- `/changelog` → page built, with an empty `releases` array and an honest empty
+  state pointing at the roadmap, blog and X. Owner populates it.
+- `/flashfx-vs-capcut` and `/flashfx-vs-davinci` → replaced by a single page at
+  `/flashfx-vs-capcut-vs-davinci`, and the two footer entries consolidated into
+  one. See the note below on what was and was not published.
+
+### The benchmark document — what was published and what was not
+
+The owner supplied "FlashFX vs CapCut vs DaVinci Resolve", a benchmark
+*framework* v0.1. It tags every claim `[ARCH]` (structural, verifiable),
+`[SPEC]` (published vendor specification) or `[PRED]` (predicted band derived
+from architecture, **not measured**).
+
+**Only `[ARCH]` and `[SPEC]` reached the page.** Every `[PRED]` row — all RTR
+figures, fps bands, seek latencies and time-to-result estimates in that
+document's sections 4.1 and 5.1 — was deliberately excluded, because its own
+section 0 states that publishing predicted numbers as measured ones "is the one
+mistake that ends a benchmarking publication's credibility permanently", and
+section 7 says do not publish any FlashFX number that has not been measured.
+
+There is a second reason: comparative advertising naming a competitor must be
+objective and verifiable under EU rules, and FlashFX operates from Italy.
+Architecture and published specs clear that bar; predictions do not. This is the
+same exposure already noted for `PerformanceBenchmark.tsx` on the After Effects
+page, which still publishes uncited Adobe render-time and RAM figures.
+
+The page instead carries a section explaining why no speed numbers appear. When
+measurements exist — three runs, median, one machine, cold GPU — they go there
+with the method stated alongside, including the losses.
+
+**Held back pending confirmation:** the document credits FlashFX with
+expressions, repeaters and cloners, audio-reactive keyframing, adjustment layers
+and puppet warp. None appear in `editorFeatures.ts`, so they were left out of
+the capability matrix rather than published on a page that names competitors.
+Either that feature data is stale or those are planned — worth resolving.
 
 **Navbar — done 2026-08-06.** All six dropdown entries now scroll to a section
 that exists, verified against the built homepage HTML.
