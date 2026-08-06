@@ -35,7 +35,7 @@ export function WhatMakesSoftwareFree() {
             What Makes Software Truly Free?
           </h2>
           <p className="text-fx-text-secondary max-w-2xl leading-relaxed">
-            "Free" is one of the most abused words in software marketing. Most tools described as free motion graphics software are free in name only — they restrict output quality, add persistent watermarks, or lock essential features behind a subscription. Here is what genuine free access looks like.
+            &ldquo;Free&rdquo; is one of the most abused words in software marketing. Most tools described as free motion graphics software are free in name only — they restrict output quality, add persistent watermarks, or lock essential features behind a subscription. Here is what genuine free access looks like.
           </p>
         </motion.div>
 
@@ -68,7 +68,7 @@ export function WhatMakesSoftwareFree() {
           >
             <h3 className="font-display text-xl font-bold text-fx-text-primary mb-4 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-red-400 inline-block" />
-              Common "Free" Tricks to Watch Out For
+              Common &ldquo;Free&rdquo; Tricks to Watch Out For
             </h3>
             <div className="space-y-3">
               {commonTricks.map(({ trick, example }) => (

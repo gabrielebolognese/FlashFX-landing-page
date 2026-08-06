@@ -27,7 +27,7 @@ deferred note — do not touch them.
 | M5 | Close the metadata gaps | DONE |
 | M6 | Kill every dead internal link | IN_PROGRESS |
 | M7 | Asset cleanup | DONE |
-| M8 | Launch verification | NOT_STARTED |
+| M8 | Launch verification | IN_PROGRESS |
 
 Statuses: `NOT_STARTED` → `IN_PROGRESS` → `DONE`. Update both this table and the
 milestone's own `Status:` line when a milestone completes.
@@ -763,7 +763,60 @@ npm run build && npm run start   # then walk every page, confirm no broken image
 
 ## M8 — Launch verification
 
-**Status:** NOT_STARTED
+**Status:** IN_PROGRESS
+
+### Verified locally 2026-08-06
+
+Everything checkable without the live site passes. Five of six acceptance
+criteria are met; the sixth needs Google's tooling against a deployed URL.
+
+**Build gate — now actually meaningful.** `npm run lint` reports **no ESLint
+warnings or errors** and exits 0, for the first time in the project's history.
+The nine `react/no-unescaped-entities` errors were cleared in
+`FMGComparisonTable.tsx`, `FMGFinalCTA.tsx`, `WhatMakesSoftwareFree.tsx` and
+`LearningCurveComparison.tsx` (raw quotes and apostrophes in JSX text, replaced
+with `&ldquo;` / `&rdquo;` / `&rsquo;`). The `react-hooks/exhaustive-deps`
+warning in `TrollSection.tsx` was a real latent bug, not noise: the effect
+unobserved `videoSectionRef.current` at cleanup time rather than the node it
+observed on entry, so a changed ref would have leaked the observation. Fixed by
+capturing the node in a local. `npm run typecheck` and `npm run build` pass.
+
+Note the count differs from the audit's "13 errors in 6 files" — `HardwareTestimonials.tsx`
+and `BeginnerTestimonials.tsx` were deleted by M4, taking their errors with them.
+
+**Routes.** All 17 serve 200 under `npm run start`. A deliberate bad URL returns
+a real **404 status** with the branded page body, not a 200 soft-404.
+
+**Sitemap.** 17 URLs, `/about` among them. Regenerates correctly now that
+`netlify.toml` calls `npm run build` rather than `npx next build` — see the note
+in CLAUDE.md before touching that command.
+
+**Structured data, parsed from the built HTML.** 18 pages, **34 JSON-LD blocks,
+zero parse failures**. Both graph nodes are defined on `/` and `/about`, and
+every `@id` reference across the site resolves to one of them:
+
+- `https://flashfx.app/#organization` — referenced from 5 pages
+- `https://gabrielebolognese.blog/#person` — referenced from 2 pages
+
+The entity graph on `/` and `/about` is **byte-identical**, and the Person
+`sameAs` array is in the exact order this document specifies.
+
+**`rel="me"`** is present in the server-rendered HTML of **all 18 pages**, via
+the sitewide footer — not injected client-side.
+
+**Rating markup: none.** No `aggregateRating`, no `Review`, no `ratingValue`
+anywhere in the built output.
+
+### 🚧 Remaining — needs the live site, cannot be done from the repo
+
+1. **External structured-data validation** (criterion 4). Run the deployed URLs
+   through `https://validator.schema.org/` and Google's Rich Results Test. Local
+   parsing proves the JSON is well-formed and the graph is internally
+   consistent; it cannot prove Google accepts it.
+2. **Post-deploy checks.** Confirm `https://flashfx.app/about` returns 200,
+   confirm `https://flashfx.app/sitemap-0.xml` serves 17 URLs, resubmit the
+   sitemap in Search Console, and request indexing. Entity consolidation is slow
+   — expect weeks.
 
 ### Why
 

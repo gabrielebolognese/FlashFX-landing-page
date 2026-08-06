@@ -145,7 +145,7 @@ export function FMGComparisonTable() {
             Free Tier Comparison: FlashFX vs CapCut vs DaVinci vs Canva
           </h2>
           <p className="text-fx-text-secondary max-w-2xl leading-relaxed">
-            All four tools offer a free tier. But "free" means something different in each. This table compares what you actually get without paying.
+            All four tools offer a free tier. But &ldquo;free&rdquo; means something different in each. This table compares what you actually get without paying.
           </p>
         </motion.div>
 

@@ -18,13 +18,18 @@ export function TrollSection() {
       { threshold: 0.1 }
     );
 
-    if (videoSectionRef.current) {
-      observer.observe(videoSectionRef.current);
+    // Captured on entry: by the time cleanup runs, videoSectionRef.current may
+    // already point elsewhere (or be null), so unobserving it would silently
+    // leak the original observation. This is what react-hooks/exhaustive-deps
+    // was warning about.
+    const section = videoSectionRef.current;
+    if (section) {
+      observer.observe(section);
     }
 
     return () => {
-      if (videoSectionRef.current) {
-        observer.unobserve(videoSectionRef.current);
+      if (section) {
+        observer.unobserve(section);
       }
     };
   }, []);

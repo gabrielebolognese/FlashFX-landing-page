@@ -88,7 +88,7 @@ export function LearningCurveComparison() {
             Learning Curve Comparison
           </h2>
           <p className="text-fx-text-secondary max-w-2xl leading-relaxed">
-            "Time to first export" measures how long a complete beginner — with no prior video editing experience — takes to open the tool and successfully export their first animation. UI complexity is scored 1–10 based on panel count, menu depth, and onboarding quality.
+            &ldquo;Time to first export&rdquo; measures how long a complete beginner — with no prior video editing experience — takes to open the tool and successfully export their first animation. UI complexity is scored 1–10 based on panel count, menu depth, and onboarding quality.
           </p>
         </motion.div>
 
