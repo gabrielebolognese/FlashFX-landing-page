@@ -52,7 +52,7 @@ const footerLinks = {
       { text: 'Terms of Service', href: '/terms' },
       { text: 'Refund Policy', href: '/refund-policy' },
       { text: 'Acceptable Use', href: '/acceptable-use-policy' },
-      { text: 'Security', href: '/security' },
+      { text: 'Your Data in FlashFX', href: '/your-data' },
     ],
   },
   connect: {

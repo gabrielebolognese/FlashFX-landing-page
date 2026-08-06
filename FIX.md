@@ -25,7 +25,7 @@ deferred note — do not touch them.
 | M3 | Fix the footer | DONE |
 | M4 | Remove unverifiable trust signals | DONE |
 | M5 | Close the metadata gaps | DONE |
-| M6 | Kill every dead internal link | IN_PROGRESS |
+| M6 | Kill every dead internal link | DONE |
 | M7 | Asset cleanup | DONE |
 | M8 | Launch verification | IN_PROGRESS |
 
@@ -562,7 +562,7 @@ curl -sI https://flashfx.app/Screenshot_2026-03-01_183521.png | head -1   # expe
 
 ## M6 — Kill every dead internal link
 
-**Status:** IN_PROGRESS
+**Status:** DONE
 
 ### Progress as of 2026-08-06
 
@@ -586,10 +586,35 @@ were wrong even then, and the route count has since moved:
 `/acceptable-use-policy`. `/roadmap` repointed to `roadmap.flashfx.app`.
 Privacy and terms resolved via Termly, so criterion 4 is met.
 
-**Remaining — one dead footer href:** `/security`. Blocked on facts about what
-`editor.flashfx.app` does with user data, which is not in this repo. A security
-page that overstates the posture is a written commitment you can be held to, so
-it is not something to draft speculatively.
+**Every internal href now resolves. M6 acceptance criteria: 4 of 4.**
+
+`/security` resolved 2026-08-06 by replacing it rather than building it. The
+footer entry is now "Your Data in FlashFX" → `/your-data`, which reproduces the
+privacy notice in full, natively rendered from
+`components/sections/your-data/yourDataContent.ts` rather than through Termly's
+embed script — so it is in the server HTML, readable without JavaScript, and
+indexable. A speculative security page was never written, which was the right
+outcome: the facts to write one honestly are in the editor codebase, not here.
+
+⚠️ **Two things this created, both needing a decision:**
+
+1. **`/your-data` and `/privacy` now carry the same policy.** `/privacy` embeds
+   Termly document `3988d8e2-…` client-side; `/your-data` transcribes it. Two
+   URLs with identical legal text compete with each other. Options: canonicalise
+   one to the other, or reduce `/privacy` to a pointer. Left as-is pending a
+   decision — `/your-data` is currently the better page, because the embed
+   serves crawlers an empty shell.
+2. **Transcription drift.** Editing the policy in Termly updates `/privacy` and
+   *not* `/your-data`. `yourDataContent.ts` must be updated by hand and its
+   `lastUpdated` bumped. The file header says so; `/privacy` remains
+   authoritative if the two disagree.
+
+⚠️ **A contradiction inside the Termly document itself,** carried over
+faithfully rather than silently fixed: section 1 states that email addresses and
+passwords are collected, while the US "Categories of Personal Information We
+Collect" table marks category A (Identifiers — which explicitly includes email
+address and account name) as **NO**, along with every other category. Both
+cannot be true. This should be corrected in Termly, not on the page.
 
 Resolved 2026-08-06:
 - `/blog` → `blog.flashfx.app`, external, same as `/roadmap`. Open question 4

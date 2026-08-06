@@ -38,6 +38,9 @@ const ROUTES = {
   // Reference material. Indexed, but never the page we want to rank.
   '/brand': { priority: 0.4, changefreq: 'yearly' },
   '/careers': { priority: 0.4, changefreq: 'monthly' },
+  // Reproduces the privacy notice in server-rendered HTML rather than through
+  // Termly's client-side embed, so it is the version worth indexing.
+  '/your-data': { priority: 0.5, changefreq: 'yearly' },
   // Legal. Indexed so they can be found and cited, never optimised for.
   '/privacy': { priority: 0.3, changefreq: 'yearly' },
   '/terms': { priority: 0.3, changefreq: 'yearly' },
