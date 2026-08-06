@@ -1,7 +1,19 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+
+/*
+ * Five shapes per instance, and `VideoPlaceholder` renders this seven times on
+ * the homepage plus once in `LoadTime` — 40 elements each running an infinite
+ * float (performancemilestones.md P6).
+ *
+ * The float animates `y`, which is compositor-friendly, so this was never as
+ * costly as the SVG paths. What it did do was run for the entire session
+ * regardless of scroll position, and ignore reduced-motion. Both fixed below:
+ * `whileInView` stops the loop off-screen, and under reduced motion the shapes
+ * are placed once and left still.
+ */
 
 export function ElegantShape({
   className,
@@ -18,20 +30,28 @@ export function ElegantShape({
   rotate?: number;
   gradient?: string;
 }) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -150, rotate: rotate - 15 }}
-      animate={{ opacity: 1, y: 0, rotate: rotate }}
-      transition={{
-        duration: 2.4,
-        delay,
-        ease: [0.23, 0.86, 0.39, 0.96],
-        opacity: { duration: 1.2 },
-      }}
+      whileInView={{ opacity: 1, y: 0, rotate: rotate }}
+      viewport={{ once: true, amount: 0 }}
+      transition={
+        reduceMotion
+          ? { duration: 0 }
+          : {
+              duration: 2.4,
+              delay,
+              ease: [0.23, 0.86, 0.39, 0.96],
+              opacity: { duration: 1.2 },
+            }
+      }
       className={cn("absolute", className)}
     >
       <motion.div
-        animate={{ y: [0, 15, 0] }}
+        whileInView={reduceMotion ? undefined : { y: [0, 15, 0] }}
+        viewport={{ once: false, amount: 0 }}
         transition={{
           duration: 12,
           repeat: Number.POSITIVE_INFINITY,

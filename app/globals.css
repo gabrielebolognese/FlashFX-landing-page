@@ -138,3 +138,26 @@
     animation: none;
   }
 }
+
+/*
+ * Sitewide reduced-motion honouring (performancemilestones.md P6).
+ *
+ * There was none before this. For visitors with vestibular disorders that is an
+ * accessibility failure rather than a preference, and the setting is one the OS
+ * already knows — the site simply never asked.
+ *
+ * This neutralises CSS animation and transition. It cannot reach
+ * framer-motion, which drives animation from JavaScript, so components using it
+ * check `useReducedMotion()` separately — see background-paths.tsx and
+ * elegant-shapes.tsx.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

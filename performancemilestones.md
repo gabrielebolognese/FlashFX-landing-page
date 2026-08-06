@@ -30,7 +30,7 @@ it should arguably run first even though it is listed last.
 | P3 | Fix the 6.6 MB image payload | DONE |
 | P4 | One WebGL context, paused off-screen | DONE |
 | P5 | Code-split the heavy visual components | DONE |
-| P6 | Animation fluidity and reduced motion | NOT_STARTED |
+| P6 | Animation fluidity and reduced motion | DONE |
 | P7 | Trim the font payload | NOT_STARTED |
 | P8 | Measurement, budgets and regression guards | BASELINE DROPPED |
 
@@ -489,7 +489,53 @@ npm run build   # read the route table; / should be under 150 kB First Load
 
 ## P6 — Animation fluidity and reduced motion
 
-**Status:** NOT_STARTED
+**Status:** DONE — 2026-08-06
+
+> **Done.** The site honours `prefers-reduced-motion` for the first time, the
+> most expensive animation is two thirds smaller and stops off-screen, and the
+> one layout-triggering animation is now composited.
+>
+> **Reduced motion, sitewide.** A `@media (prefers-reduced-motion: reduce)` rule
+> in `globals.css` neutralises CSS animation and transition everywhere. It
+> cannot reach framer-motion, which drives animation from JavaScript, so
+> `background-paths` and `elegant-shapes` check `useReducedMotion()` directly.
+> There was no handling of any kind before this — for visitors with vestibular
+> disorders that is an accessibility failure, not a preference.
+>
+> **`background-paths`: 72 animated SVG paths → 24.** Each animated
+> `pathLength`, `pathOffset` and `opacity` on an infinite loop, forever,
+> on-screen or not. SVG stroke-dash animation is CPU work with no compositor
+> fast path, which made this the most expensive animation on the site. Now 12
+> per side rather than 36 — the geometry is spread so the spacing reads the
+> same, and they are layered translucent curves that were not separable by eye
+> at that density — and the loop is `whileInView`, so it stops when the section
+> is off screen.
+>
+> **The `Math.random()` in render is gone**, replaced by a deterministic
+> per-index duration. It produced a fresh value on every re-render and was a
+> server/client divergence waiting to happen.
+>
+> **`CreatorStories` no longer animates to nobody.** Its title used `animate`,
+> which fires on mount — so a 2s fade, a per-letter spring and two staggered
+> children all played out while the visitor was still looking at the hero, and
+> were finished before they scrolled down. All now `whileInView` with `once`.
+>
+> **`elegant-shapes` pauses off-screen.** `VideoPlaceholder` renders it seven
+> times on the homepage plus once in `LoadTime` — 40 elements each running an
+> infinite float for the whole session. The float animates `y`, so it was never
+> as costly as the paths, but it ran regardless of scroll position.
+>
+> **The one layout-triggering animation is fixed.** `PerformanceBenchmark`
+> animated `width` on its bars, forcing layout every frame; it now animates
+> `scaleX` from a left origin, which is visually identical for a flat-colour
+> pill and composited. A sweep confirms **zero** remaining `width`/`height`/
+> `top`/`left` animations across the codebase.
+>
+> Stagger delays were checked and left alone: the longest chains are
+> `index * 0.15` over short lists, which is not long enough to matter.
+>
+> Not verified: frame rate during scroll and long-task counts, which need a real
+> browser. The owner dropped formal measurement — see P8.
 
 ### Why
 

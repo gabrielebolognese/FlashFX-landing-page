@@ -115,11 +115,18 @@ function BenchmarkCard({ benchmark, isInView }: { benchmark: BenchmarkEntry; isI
                 </div>
               </div>
               <div className="w-full h-5 bg-fx-bg-raised border border-fx-border rounded-full overflow-hidden">
+                {/*
+                  Animates scaleX, not width. Animating `width` forces layout on
+                  every frame for each bar — several bars over 1.1s is a few
+                  hundred layout passes for a bar that could be composited.
+                  scaleX from a left origin is visually identical here because
+                  the bar is a flat colour with a pill radius.
+                */}
                 <motion.div
-                  className="h-full rounded-full"
-                  style={{ backgroundColor: tool.color }}
-                  initial={{ width: 0 }}
-                  animate={isInView ? { width: `${pct}%` } : { width: 0 }}
+                  className="h-full rounded-full origin-left"
+                  style={{ backgroundColor: tool.color, width: `${pct}%` }}
+                  initial={{ scaleX: 0 }}
+                  animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
                   transition={{ duration: 1.1, delay: 0.1 + i * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
                 />
               </div>
