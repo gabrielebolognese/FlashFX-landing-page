@@ -596,25 +596,32 @@ embed script — so it is in the server HTML, readable without JavaScript, and
 indexable. A speculative security page was never written, which was the right
 outcome: the facts to write one honestly are in the editor codebase, not here.
 
-⚠️ **Two things this created, both needing a decision:**
+**Canonicalisation resolved 2026-08-06: `/your-data` wins.** `/privacy` now
+carries `alternates.canonical` pointing at `/your-data` and is excluded from the
+sitemap, because listing a non-canonical URL contradicts its own canonical tag.
+`/privacy` stays live, linked from the footer as "Privacy Policy", and remains
+the authoritative copy — it updates automatically when the Termly document
+changes, which `/your-data` does not.
 
-1. **`/your-data` and `/privacy` now carry the same policy.** `/privacy` embeds
-   Termly document `3988d8e2-…` client-side; `/your-data` transcribes it. Two
-   URLs with identical legal text compete with each other. Options: canonicalise
-   one to the other, or reduce `/privacy` to a pointer. Left as-is pending a
-   decision — `/your-data` is currently the better page, because the embed
-   serves crawlers an empty shell.
-2. **Transcription drift.** Editing the policy in Termly updates `/privacy` and
-   *not* `/your-data`. `yourDataContent.ts` must be updated by hand and its
-   `lastUpdated` bumped. The file header says so; `/privacy` remains
-   authoritative if the two disagree.
+**Category A corrected to YES, 2026-08-06, on the owner's instruction.** The
+Termly document contradicted itself: section 1 states that email addresses and
+passwords are collected, while the US categories table marked category A —
+Identifiers, which explicitly covers email address and account name — as **NO**,
+along with every other category. `/your-data` now shows YES for Identifiers and
+NO for the remaining eleven.
 
-⚠️ **A contradiction inside the Termly document itself,** carried over
-faithfully rather than silently fixed: section 1 states that email addresses and
-passwords are collected, while the US "Categories of Personal Information We
-Collect" table marks category A (Identifiers — which explicitly includes email
-address and account name) as **NO**, along with every other category. Both
-cannot be true. This should be corrected in Termly, not on the page.
+🚧 **Still to do at the source.** The Termly document itself has not been
+changed, so `/privacy` continues to serve **NO** for category A. Two versions of
+a data-collection declaration disagreeing is worse than either being wrong
+alone, and the authoritative copy is the wrong one. Fix it in Termly.
+
+⚠️ **Transcription drift.** Editing the policy in Termly updates `/privacy` and
+*not* `/your-data`. `yourDataContent.ts` must be updated by hand and its
+`lastUpdated` bumped. The file header says so.
+
+⚠️ **Postal address.** The notice gives "xxv aprile, Pontecchio, RO 45030" —
+lowercase Roman numerals read like a placeholder or a transcription slip. Worth
+confirming against the registered address.
 
 Resolved 2026-08-06:
 - `/blog` → `blog.flashfx.app`, external, same as `/roadmap`. Open question 4

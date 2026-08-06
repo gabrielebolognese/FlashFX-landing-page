@@ -26,8 +26,19 @@ export const metadata: Metadata = {
     description: 'How FlashFX collects, uses, and stores your data, and what rights you have over it.',
     images: OG_IMAGES,
   },
+  /*
+   * Canonical points at /your-data, not at itself. Both URLs serve the same
+   * policy, but this one delivers it through Termly's embed script, which
+   * injects the text client-side — so a crawler sees an almost empty page.
+   * /your-data has the same content in server-rendered HTML. When two URLs
+   * carry one document, the indexable one should win.
+   *
+   * This page stays live and functional: it is the conventional URL, it is
+   * what the footer links as "Privacy Policy", and it is the authoritative
+   * copy because it updates automatically when the Termly document changes.
+   */
   alternates: {
-    canonical: 'https://flashfx.app/privacy',
+    canonical: 'https://flashfx.app/your-data',
   },
 };
 

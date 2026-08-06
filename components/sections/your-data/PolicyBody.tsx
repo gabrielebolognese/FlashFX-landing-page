@@ -2,16 +2,67 @@ import Link from 'next/link';
 import { RichText } from './RichText';
 import {
   contactEmail,
+  dataCategories,
   dsarUrl,
   postalAddress,
   sections,
   type Block,
 } from './yourDataContent';
 
+function CategoriesTable() {
+  return (
+    <div className="overflow-x-auto border border-fx-border rounded-card my-6">
+      <table className="w-full min-w-[560px] text-sm">
+        <caption className="sr-only">
+          Categories of personal information collected in the past twelve months
+        </caption>
+        <thead>
+          <tr className="border-b border-fx-border">
+            <th scope="col" className="px-4 py-3 text-left font-medium text-fx-text-secondary uppercase tracking-wider text-xs">
+              Category
+            </th>
+            <th scope="col" className="px-4 py-3 text-left font-medium text-fx-text-secondary uppercase tracking-wider text-xs">
+              Examples
+            </th>
+            <th scope="col" className="px-4 py-3 text-center font-medium text-fx-text-secondary uppercase tracking-wider text-xs">
+              Collected
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {dataCategories.map((category) => (
+            <tr key={category.letter} className="border-b border-fx-border last:border-b-0">
+              <th scope="row" className="px-4 py-3 text-left font-normal align-top">
+                <span className="font-mono text-xs mr-2 opacity-60">{category.letter}</span>
+                <span className="text-fx-text-primary">{category.name}</span>
+              </th>
+              <td className="px-4 py-3 text-fx-text-secondary align-top text-xs leading-relaxed">
+                {category.examples}
+              </td>
+              <td className="px-4 py-3 text-center align-top">
+                <span
+                  className="font-mono text-xs font-bold"
+                  style={{ color: category.collected ? '#4ade80' : undefined }}
+                >
+                  {category.collected ? 'YES' : 'NO'}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function Blocks({ blocks }: { blocks: Block[] }) {
   return (
     <>
       {blocks.map((block, i) => {
+        if (block.kind === 'categories') {
+          return <CategoriesTable key={i} />;
+        }
+
         if (block.kind === 'h3') {
           return (
             <h3

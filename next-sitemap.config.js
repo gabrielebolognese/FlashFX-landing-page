@@ -54,6 +54,14 @@ const DEFAULT_ROUTE = { priority: 0.7, changefreq: 'monthly' };
 module.exports = {
   siteUrl: process.env.SITE_URL || 'https://flashfx.app',
   generateRobotsTxt: true,
+  /*
+   * /privacy canonicalises to /your-data, which carries the same policy in
+   * server-rendered HTML. Listing a non-canonical URL in the sitemap sends
+   * Google two contradicting signals — "index this" from the sitemap, "index
+   * the other one" from the canonical tag. The page stays live and linked; it
+   * is just not advertised for indexing.
+   */
+  exclude: ['/privacy'],
   transform: async (config, path) => {
     const { priority, changefreq } = ROUTES[path] || DEFAULT_ROUTE;
 

@@ -28,7 +28,85 @@ export const dsarUrl = 'https://app.termly.io/dsar/3988d8e2-6a65-4a0e-b9ed-f9d69
 export type Block =
   | { kind: 'p'; text: string }
   | { kind: 'ul'; items: string[] }
-  | { kind: 'h3'; text: string };
+  | { kind: 'h3'; text: string }
+  | { kind: 'categories' };
+
+export interface DataCategory {
+  letter: string;
+  name: string;
+  examples: string;
+  collected: boolean;
+}
+
+/*
+ * The US state-law disclosure table.
+ *
+ * ⚠️ Category A is YES here and NO in the Termly source document. That is a
+ * deliberate correction, made on the owner's instruction 2026-08-06, because
+ * the source contradicted itself: its own section 1 states that email addresses
+ * and passwords are collected, and "Identifiers" explicitly covers email
+ * address and account name. Both could not be true.
+ *
+ * Until the Termly document is corrected, /privacy — which serves that document
+ * live — will still show NO for category A. Two versions of a data-collection
+ * declaration disagreeing is worse than either being wrong alone, so this needs
+ * fixing at the source, not just here.
+ */
+export const dataCategories: DataCategory[] = [
+  {
+    letter: 'A',
+    name: 'Identifiers',
+    examples:
+      'Contact details such as real name, alias, postal address, telephone number, unique personal identifier, online identifier, IP address, email address, and account name',
+    collected: true,
+  },
+  {
+    letter: 'B',
+    name: 'Personal information as defined in the California Customer Records statute',
+    examples: 'Name, contact information, education, employment, employment history, and financial information',
+    collected: false,
+  },
+  {
+    letter: 'C',
+    name: 'Protected classification characteristics under state or federal law',
+    examples: 'Gender, age, date of birth, race and ethnicity, national origin, marital status, and other demographic data',
+    collected: false,
+  },
+  {
+    letter: 'D',
+    name: 'Commercial information',
+    examples: 'Transaction information, purchase history, financial details, and payment information',
+    collected: false,
+  },
+  { letter: 'E', name: 'Biometric information', examples: 'Fingerprints and voiceprints', collected: false },
+  {
+    letter: 'F',
+    name: 'Internet or other similar network activity',
+    examples: 'Browsing history, search history, online behaviour, interest data, and interactions with our and other websites',
+    collected: false,
+  },
+  { letter: 'G', name: 'Geolocation data', examples: 'Device location', collected: false },
+  {
+    letter: 'H',
+    name: 'Audio, electronic, sensory, or similar information',
+    examples: 'Images and audio, video or call recordings created in connection with our business activities',
+    collected: false,
+  },
+  {
+    letter: 'I',
+    name: 'Professional or employment-related information',
+    examples: 'Business contact details, job title, work history, and professional qualifications',
+    collected: false,
+  },
+  { letter: 'J', name: 'Education information', examples: 'Student records and directory information', collected: false },
+  {
+    letter: 'K',
+    name: 'Inferences drawn from collected personal information',
+    examples: 'A profile or summary about an individual’s preferences and characteristics',
+    collected: false,
+  },
+  { letter: 'L', name: 'Sensitive personal information', examples: '—', collected: false },
+];
 
 export interface PolicySection {
   id: string;
@@ -278,6 +356,12 @@ export const sections: PolicySection[] = [
         kind: 'p',
         text: 'This applies if you live in California, Colorado, Connecticut, Delaware, Florida, Indiana, Iowa, Kentucky, Maryland, Minnesota, Montana, Nebraska, New Hampshire, New Jersey, Oregon, Rhode Island, Tennessee, Texas, Utah or Virginia. Those rights may be limited in some circumstances by applicable law.',
       },
+      { kind: 'h3', text: 'Categories of personal information we collect' },
+      {
+        kind: 'p',
+        text: 'The categories we have collected in the past twelve months. Examples are illustrative of each category and do not all describe information we hold about you.',
+      },
+      { kind: 'categories' },
       { kind: 'h3', text: 'Your rights' },
       {
         kind: 'ul',
