@@ -20,7 +20,8 @@ const footerLinks = {
     label: 'Resources',
     links: [
       { text: 'Documentation', href: 'https://documentation.flashfx.app', external: true },
-      { text: 'Blog', href: '/blog' },
+      // Own subdomain, not a route here — same as Roadmap above.
+      { text: 'Blog', href: 'https://blog.flashfx.app', external: true },
       { text: 'Beginner Guide', href: '/video-editing-software-for-beginners' },
       { text: 'YouTube Creators', href: '/motion-graphics-software-for-youtube' },
       { text: 'FAQ', href: '/faq' },

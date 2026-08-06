@@ -586,10 +586,15 @@ were wrong even then, and the route count has since moved:
 `/acceptable-use-policy`. `/roadmap` repointed to `roadmap.flashfx.app`.
 Privacy and terms resolved via Termly, so criterion 4 is met.
 
-**Remaining — six dead footer hrefs:**
-`/blog`, `/changelog`, `/security`, `/status` (blocked: need facts, or should
-not be static pages) and `/flashfx-vs-capcut`, `/flashfx-vs-davinci` (blocked:
-awaiting a verified benchmark table).
+**Remaining — five dead footer hrefs:**
+`/changelog`, `/security`, `/status` (blocked: need facts, or should not be
+static pages) and `/flashfx-vs-capcut`, `/flashfx-vs-davinci` (blocked: awaiting
+a verified benchmark table).
+
+`/blog` resolved 2026-08-06 — the blog lives at `blog.flashfx.app`, so the
+footer link is now external, same as `/roadmap`. Open question 4 in the list
+below (whether to build a blog on this domain) is therefore moot: do not build
+one here.
 
 **Navbar — done 2026-08-06.** All six dropdown entries now scroll to a section
 that exists, verified against the built homepage HTML.
