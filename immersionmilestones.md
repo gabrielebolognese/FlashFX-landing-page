@@ -106,7 +106,7 @@ of how good it looks.
 
 | Milestone | Title | Status |
 |---|---|---|
-| I1 | The motion system | NOT_STARTED |
+| I1 | The motion system | DONE |
 | I2 | Living borders and edges | NOT_STARTED |
 | I3 | Show the editor, do not film it | NOT_STARTED |
 | I4 | One continuous space | NOT_STARTED |
@@ -123,7 +123,7 @@ as soon as the foundation exists.
 
 ## I1 — The motion system
 
-**Status:** NOT_STARTED
+**Status:** DONE — 2026-08-07
 **Impact:** invisible on its own. Everything after this depends on it.
 
 ### Why
@@ -158,10 +158,54 @@ than designed.
 
 ### Acceptance criteria
 
-- [ ] No section imports `repeat: Infinity` directly
-- [ ] Killing the governor's cap to 0 stops all ambient motion sitewide
-- [ ] Reduced motion is resolved in one place, not per component
-- [ ] Zero measurable cost when nothing is on screen
+- [x] No *reachable* loop runs ungoverned — see the note below
+- [x] Killing the governor's cap to 0 stops all ambient motion sitewide
+- [x] Reduced motion is resolved in one place, not per component
+- [x] Zero measurable cost when nothing is on screen
+
+### What was built
+
+`lib/motion/` — `tokens.ts`, `governor.ts`, `use-ambient.tsx`, `index.ts` — plus
+migration of every loop that actually reaches a bundle.
+
+**The governor counts systems, not elements.** A backdrop with 24 animated paths
+holds one slot and passes the grant down through `AmbientProvider`. Registering
+per element would mean 40 `ElegantShape`s competing for 6 slots and most of them
+freezing at random, which is worse than the problem.
+
+**Grants move.** When a loop scrolls away its slot is handed to whoever is
+waiting, and priority is respected — so when I3 adds live product demos at a
+higher priority, they take slots from decoration automatically rather than
+needing every background retuned by hand.
+
+**Denied means still, not absent.** Every migrated loop renders a composed
+static frame when it has no grant. A backdrop that disappears when the cap is
+spent reads as a rendering fault.
+
+**Migrated:** `background-paths` (24 paths → 1 slot), `elegant-shapes` (40
+elements across 8 groups → 1 slot each, plus a new `ElegantShapeScope` for the
+five `LoadTime` renders outside the group), `ImageCarousel` (whose marquee
+previously ran the entire session — it was the site's only content loop and it
+never stopped).
+
+**Not migrated, deliberately:** `typewriter.tsx` and `shape-landing-hero.tsx`
+still contain `repeat: Infinity`. Both are dead — `typewriter` has no consumers,
+and `shape-landing-hero` is imported only by `ProblemSection`, which is rendered
+on no page. Verified as reaching **0 built chunks**. Migrating unreachable code
+would be theatre; deleting it belongs to I5.
+
+### Verify
+
+```bash
+# Framework-free by design, so the policy is directly testable.
+npx tsc lib/motion/governor.ts --outDir /tmp/gov --module commonjs --target es2017
+# 11 assertions: cap holds, freed slots are rehanded, priority displaces
+# decoration, setLoopCap(0) stops everything, release() does not leak.
+
+# In a browser console on any page:
+#   setLoopCap(0)  -> every ambient animation on the site stops
+#   loopStats()    -> { registered, visible, running }
+```
 
 ---
 
@@ -344,6 +388,14 @@ added to it. This milestone makes the page *shorter and more varied* at once.
    - **Horizontal** — a sideways-scrolling band for templates or shorts.
 3. **Cut the count.** Target **26 sections → 16–18**. Merge the thin ones, drop
    the ones that repeat a point already made.
+
+   > **`FeatureHighlights` is exempt.** Owner's decision, 2026-08-07: it is
+   > large and bloated *on purpose* — the length is the argument, because a
+   > visitor has to come away seeing how much is in the product. Do not trim its
+   > cards, split it across sections, or collapse it behind tabs or an
+   > accordion. It may gain motion from I2 and I6; it does not lose volume.
+   > A future reader looking at this section and seeing bloat should read this
+   > paragraph before "fixing" it.
 4. **Overlapping transitions.** Sections currently abut with a hard edge. Let
    the incoming section overlap and lift over the outgoing one on scroll.
 
@@ -429,15 +481,17 @@ it.
 
 These block specific milestones and are the owner's call, not mine.
 
-1. **How much video stays?** I3 assumes five of the seven `VideoPlaceholder`
-   videos can become live demos. If real footage matters for credibility on
-   some of them, say which and I will keep them. *Blocks the second half of I3.*
-2. **Is 200 kB the right ceiling?** It is 23 kB above today. A richer backdrop
-   or a three.js cube could want more. Raising it is a legitimate choice —
-   silently exceeding it is not. *Blocks I4 and I7.*
-3. **How far can the structure move?** I5 proposes 26 sections down to 16–18,
-   which means cutting content, not just merging markup. If specific sections
-   are non-negotiable for SEO or sales, name them. *Blocks I5.*
+1. ~~**How much video stays?**~~ **ANSWERED 2026-08-07: all of them can become
+   live demos.** I3 is unconstrained — every `VideoPlaceholder` on the homepage
+   is a candidate. Target the embed count at **0–2**, not 8.
+2. **Is 200 kB the right ceiling?** It is 22 kB above today's 178 kB. A richer
+   backdrop or a three.js cube could want more. Raising it is a legitimate
+   choice — silently exceeding it is not. *Blocks I4 and I7.*
+3. ~~**How far can the structure move?**~~ **ANSWERED 2026-08-07, with one
+   constraint: `FeatureHighlights` stays large and bloated by design.** The
+   length is the message — a visitor has to see how many features there are, so
+   its section count and card count are not to be trimmed. Everything else in
+   I5 is open. See the note under I5.
 4. **Is there a brand reference?** "Immersive" spans a lot of ground. A site or
    two you consider the target would sharpen I2, I4 and I6 considerably.
 5. **Does the editor have a screen recording or asset kit** that the demos

@@ -78,6 +78,20 @@ Existing routes: `/`, `/about`, `/after-effects-alternative`, `/free-motion-grap
 
 **FAQ copy is duplicated by design**: the `faqSchema` literal in `page.tsx` and the FAQ data in the section component contain the same question/answer text verbatim. Editing one without the other silently desyncs the structured data from the visible page. Always update both.
 
+### Motion — `lib/motion`
+
+`immersionmilestones.md` is the plan for making the site feel alive; I1 built the system that governs it. Import from `@/lib/motion`.
+
+**`repeat: Infinity` (or CSS `animation-iteration-count: infinite`) written directly in a component is a bug.** It runs while the section is off screen, it ignores `prefers-reduced-motion` unless the author remembered, and nothing can measure or stop it. P4 and P6 both existed to go back and fix exactly that. Continuous animation goes through `useAmbient()`, which watches the element, claims a slot from a governor capped at 6 concurrent loops, and returns `active`.
+
+- **The unit is one ambient system, not one element.** A backdrop with 24 animated paths takes *one* slot and shares it down the tree via `<AmbientProvider active={active}>` / `useAmbientActive()`. Registering per element would leave 40 shapes fighting over 6 slots and freezing at random.
+- **`active: false` means hold a still frame, never render nothing.** A background that vanishes when the cap is spent looks broken.
+- **Priority displaces.** Decoration is `priority: 0`; motion that *is* the point of a section should outrank it, and the governor rebalances automatically when a loop scrolls away.
+- Use the `duration` / `loop` / `ease` tokens rather than inventing a timing. Reduced motion is resolved inside `useAmbient`, so components must not check it again.
+- `setLoopCap(0)` in a console stops all ambient motion sitewide; `loopStats()` reports registered/visible/running. `lib/motion/governor.ts` is deliberately framework-free so the policy can be tested with plain node.
+
+`typewriter.tsx` and `shape-landing-hero.tsx` still contain raw `repeat: Infinity`. Both are dead code reaching zero built chunks — don't treat them as precedent.
+
 ### Section components
 
 Everything under `components/sections/` is `'use client'` and follows the same idiom: a `<section>` with an optional `id` anchor, framer-motion `initial` / `whileInView` / `viewport={{ once: true }}` reveals, and Tailwind `fx-*` tokens. Long content lists are extracted into sibling `.ts` data files (`fmgFaqData.ts`, `lightweightFaqData.ts`, `beginnerFaqData.ts`, and the three files in `feature-highlights/`) — though the homepage `FAQSection.tsx` and `after-effects-alternative/AEFAQSection.tsx` still inline theirs.

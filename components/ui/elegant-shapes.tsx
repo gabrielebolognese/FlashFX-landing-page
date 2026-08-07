@@ -1,18 +1,23 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { AmbientProvider, useAmbient, useAmbientActive, loop, ease, duration } from '@/lib/motion';
 
 /*
- * Five shapes per instance, and `VideoPlaceholder` renders this seven times on
- * the homepage plus once in `LoadTime` — 40 elements each running an infinite
- * float (performancemilestones.md P6).
+ * Five shapes per group. `VideoPlaceholder` renders a group seven times on the
+ * homepage and `LoadTime` renders five loose shapes of its own — 40 elements,
+ * each running an infinite float.
  *
- * The float animates `y`, which is compositor-friendly, so this was never as
- * costly as the SVG paths. What it did do was run for the entire session
- * regardless of scroll position, and ignore reduced-motion. Both fixed below:
- * `whileInView` stops the loop off-screen, and under reduced motion the shapes
- * are placed once and left still.
+ * P6 stopped those loops when off screen. I1 goes further: the float now runs
+ * only while the governor grants a slot, so eight groups visible at once on a
+ * tall monitor cannot all animate. The group holds the slot and the shapes
+ * inside read it, which is why `ElegantShape` consumes context rather than
+ * registering — 40 registrations against a cap of 6 would leave most of them
+ * frozen at random.
+ *
+ * A shape without a grant is still placed and still visible. It just does not
+ * move.
  */
 
 export function ElegantShape({
@@ -21,7 +26,7 @@ export function ElegantShape({
   width = 400,
   height = 100,
   rotate = 0,
-  gradient = "from-yellow-500/[0.15]",
+  gradient = 'from-yellow-500/[0.15]',
 }: {
   className?: string;
   delay?: number;
@@ -30,43 +35,38 @@ export function ElegantShape({
   rotate?: number;
   gradient?: string;
 }) {
-  const reduceMotion = useReducedMotion();
+  const active = useAmbientActive();
 
   return (
     <motion.div
       initial={{ opacity: 0, y: -150, rotate: rotate - 15 }}
-      whileInView={{ opacity: 1, y: 0, rotate: rotate }}
+      whileInView={{ opacity: 1, y: 0, rotate }}
       viewport={{ once: true, amount: 0 }}
-      transition={
-        reduceMotion
-          ? { duration: 0 }
-          : {
-              duration: 2.4,
-              delay,
-              ease: [0.23, 0.86, 0.39, 0.96],
-              opacity: { duration: 1.2 },
-            }
-      }
-      className={cn("absolute", className)}
+      transition={{
+        duration: 2.4,
+        delay,
+        ease: ease.entrance,
+        opacity: { duration: duration.reveal },
+      }}
+      className={cn('absolute', className)}
     >
       <motion.div
-        whileInView={reduceMotion ? undefined : { y: [0, 15, 0] }}
-        viewport={{ once: false, amount: 0 }}
-        transition={{
-          duration: 12,
-          repeat: Number.POSITIVE_INFINITY,
-          ease: "easeInOut",
-        }}
+        animate={active ? { y: [0, 15, 0] } : { y: 0 }}
+        transition={
+          active
+            ? { duration: loop.drift, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }
+            : { duration: 0 }
+        }
         style={{ width, height }}
         className="relative"
       >
         <div
           className={cn(
-            "absolute inset-0 rounded-full",
-            "bg-gradient-to-r to-transparent",
+            'absolute inset-0 rounded-full',
+            'bg-gradient-to-r to-transparent',
             gradient,
-            "backdrop-blur-[2px] border-2 border-yellow-500/[0.15]",
-            "shadow-[0_8px_32px_0_rgba(234,179,8,0.1)]"
+            'backdrop-blur-[2px] border-2 border-yellow-500/[0.15]',
+            'shadow-[0_8px_32px_0_rgba(234,179,8,0.1)]'
           )}
         />
       </motion.div>
@@ -74,9 +74,32 @@ export function ElegantShape({
   );
 }
 
+/**
+ * Wrap loose `ElegantShape`s in this to give them a shared grant.
+ *
+ * `LoadTime` renders its five shapes directly rather than through
+ * `ElegantShapesBackground`, and without a scope around them they would read
+ * `false` from the context default and never move.
+ */
+export function ElegantShapeScope({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const { ref, active } = useAmbient<HTMLDivElement>();
+
+  return (
+    <div ref={ref} className={cn('absolute inset-0 overflow-hidden pointer-events-none', className)}>
+      <AmbientProvider active={active}>{children}</AmbientProvider>
+    </div>
+  );
+}
+
 export function ElegantShapesBackground() {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <ElegantShapeScope>
       <div className="absolute inset-0 bg-gradient-to-br from-fx-accent-yellow/[0.05] via-transparent to-orange-500/[0.05] blur-3xl" />
       <ElegantShape
         delay={0.3}
@@ -118,6 +141,6 @@ export function ElegantShapesBackground() {
         gradient="from-yellow-300/[0.15]"
         className="left-[22%] top-[5%]"
       />
-    </div>
+    </ElegantShapeScope>
   );
 }

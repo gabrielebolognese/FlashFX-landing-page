@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { AmbientProvider, useAmbient, useAmbientActive, loop } from "@/lib/motion";
 
 /*
  * Was 36 paths per side, 72 in total, each animating pathLength, pathOffset and
@@ -21,7 +22,13 @@ import { motion, useReducedMotion } from "framer-motion";
 const PATHS_PER_SIDE = 12;
 
 function FloatingPaths({ position }: { position: number }) {
-    const reduceMotion = useReducedMotion();
+    /*
+     * Both FloatingPaths instances read one grant from the AmbientProvider
+     * below, so this whole backdrop — 24 animated paths across two SVGs —
+     * costs the governor a single slot rather than 24
+     * (immersionmilestones.md I1).
+     */
+    const active = useAmbientActive();
 
     const paths = Array.from({ length: PATHS_PER_SIDE }, (_, i) => {
         // Spread the original 36-path geometry across 12 so the spacing reads
@@ -38,8 +45,9 @@ function FloatingPaths({ position }: { position: number }) {
             } ${875 - g * 6} ${684 - g * 5 * position} ${875 - g * 6}`,
             color: `rgba(245,197,24,${0.04 + g * 0.012})`,
             width: 0.5 + g * 0.03,
-            // Deterministic stand-in for the old Math.random() spread.
-            duration: 20 + ((i * 7) % 10),
+            // Deterministic stand-in for the old Math.random() spread,
+            // scattered around the shared `sweep` period.
+            duration: loop.sweep - 4 + ((i * 7) % 10),
         };
     });
 
@@ -59,24 +67,26 @@ function FloatingPaths({ position }: { position: number }) {
                         strokeWidth={path.width}
                         strokeOpacity={0.08 + path.id * 0.06}
                         initial={{ pathLength: 0.3, opacity: 0.6 }}
-                        whileInView={
-                            reduceMotion
-                                ? { pathLength: 1, opacity: 0.5 }
-                                : {
+                        animate={
+                            active
+                                ? {
                                       pathLength: 1,
                                       opacity: [0.3, 0.6, 0.3],
                                       pathOffset: [0, 1, 0],
                                   }
+                                : // Not "nothing" — a composed still frame. A
+                                  // backdrop that vanishes when a slot is
+                                  // denied reads as a rendering fault.
+                                  { pathLength: 1, opacity: 0.5 }
                         }
-                        viewport={{ once: reduceMotion === true }}
                         transition={
-                            reduceMotion
-                                ? { duration: 0 }
-                                : {
+                            active
+                                ? {
                                       duration: path.duration,
                                       repeat: Number.POSITIVE_INFINITY,
                                       ease: "linear",
                                   }
+                                : { duration: 0 }
                         }
                     />
                 ))}
@@ -96,11 +106,19 @@ export function BackgroundPaths({
 }) {
     const words = title.split(" ");
 
+    /*
+     * One slot for the whole backdrop. `priority: 0` — this is decoration, and
+     * should lose its slot to a live product demo without argument.
+     */
+    const { ref, active } = useAmbient<HTMLDivElement>();
+
     return (
         <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-fx-bg-base">
-            <div className="absolute inset-0">
-                <FloatingPaths position={1} />
-                <FloatingPaths position={-1} />
+            <div ref={ref} className="absolute inset-0">
+                <AmbientProvider active={active}>
+                    <FloatingPaths position={1} />
+                    <FloatingPaths position={-1} />
+                </AmbientProvider>
             </div>
 
             <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">

@@ -2,14 +2,19 @@
 
 import { motion } from 'framer-motion';
 import { LazyYouTube } from '@/components/ui/lazy-youtube';
-import { ElegantShape } from '@/components/ui/elegant-shapes';
+import { ElegantShape, ElegantShapeScope } from '@/components/ui/elegant-shapes';
 
 export function LoadTime() {
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-fx-bg-base">
       <div className="absolute inset-0 bg-gradient-to-br from-fx-accent-yellow/[0.05] via-transparent to-orange-500/[0.05] blur-3xl" />
 
-      <div className="absolute inset-0 overflow-hidden">
+      {/*
+        These five are rendered loose rather than through
+        ElegantShapesBackground, so they need their own scope to receive a
+        grant — without one they read the context default and never move.
+      */}
+      <ElegantShapeScope>
         <ElegantShape
           delay={0.3}
           width={600}
@@ -54,7 +59,7 @@ export function LoadTime() {
           gradient="from-yellow-300/[0.15]"
           className="left-[20%] md:left-[25%] top-[5%] md:top-[10%]"
         />
-      </div>
+      </ElegantShapeScope>
 
       <div className="relative z-10 container mx-auto px-6 text-center">
         <motion.div

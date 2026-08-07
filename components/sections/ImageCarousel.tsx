@@ -3,7 +3,8 @@
 import dynamic from 'next/dynamic';
 import { motion, useAnimationControls } from 'framer-motion';
 import Image from 'next/image';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useAmbient, loop } from '@/lib/motion';
 
 /*
  * three.js is loaded on demand rather than in the initial bundle
@@ -66,31 +67,36 @@ export function ImageCarousel() {
   const [isDragging, setIsDragging] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const controls = useAnimationControls();
-  const constraintsRef = useRef(null);
+
+  /*
+   * The marquee used to run whenever the visitor was neither dragging nor
+   * hovering — which includes the entire time this section is nowhere near the
+   * viewport. It was the only continuously running animation in content on the
+   * site, and it ran for the whole session (immersionmilestones.md I1).
+   *
+   * `constraintsRef` and the ambient ref are the same element, so the drag
+   * bounds are unchanged.
+   */
+  const { ref: constraintsRef, active } = useAmbient<HTMLDivElement>();
 
   const imageWidth = 490; // 700 * 0.7 = 490px (30% smaller)
   const gap = 24; // 6 * 4 = 24px
   const totalWidth = (imageWidth + gap) * images.length;
 
   useEffect(() => {
-    if (!isDragging && !isHovering) {
-      // Auto-scroll animation
-      const animateScroll = async () => {
-        await controls.start({
-          x: -totalWidth,
-          transition: {
-            duration: 40,
-            ease: 'linear',
-            repeat: Infinity,
-          },
-        });
-      };
-
-      animateScroll();
+    if (active && !isDragging && !isHovering) {
+      controls.start({
+        x: -totalWidth,
+        transition: {
+          duration: loop.crawl,
+          ease: 'linear',
+          repeat: Infinity,
+        },
+      });
     } else {
       controls.stop();
     }
-  }, [isDragging, isHovering, controls, totalWidth]);
+  }, [active, isDragging, isHovering, controls, totalWidth]);
 
   return (
     <section className="relative w-full py-20 overflow-hidden">
