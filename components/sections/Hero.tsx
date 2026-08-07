@@ -34,8 +34,19 @@ const LogoAssembly = dynamic(
 /** When the light rays arrive, measured from mount. */
 const RAYS_AT = 2700;
 
+/**
+ * Longest we will wait for the cubes to report landing before showing the
+ * button anyway.
+ *
+ * The button is the hero's only call to action, so unlike the rays it cannot be
+ * allowed to depend on whether the animation ran — no WebGL, a blocked font or
+ * a failed image would otherwise leave the hero with nothing to click.
+ */
+const CTA_FALLBACK = 6500;
+
 export function Hero() {
   const [raysOn, setRaysOn] = useState(false);
+  const [landed, setLanded] = useState(false);
 
   /*
    * A plain timer from mount, not a callback from the animation.
@@ -49,6 +60,12 @@ export function Hero() {
     const id = window.setTimeout(() => setRaysOn(true), RAYS_AT);
     return () => window.clearTimeout(id);
   }, []);
+
+  useEffect(() => {
+    if (landed) return;
+    const id = window.setTimeout(() => setLanded(true), CTA_FALLBACK);
+    return () => window.clearTimeout(id);
+  }, [landed]);
 
   return (
     /*
@@ -83,7 +100,11 @@ export function Hero() {
         `pointer-events-none` so it cannot swallow clicks on the button that
         sits over it.
       */}
-      <LogoAssembly className="absolute inset-0 pointer-events-none" duration={3.5} />
+      <LogoAssembly
+        className="absolute inset-0 pointer-events-none"
+        duration={3.5}
+        onDone={() => setLanded(true)}
+      />
 
       <div className="absolute inset-x-0 bottom-[9vh] z-10 flex flex-col items-center text-center px-6">
         {/*
@@ -94,27 +115,31 @@ export function Hero() {
           server-rendered, and out of the way visually.
 
           With the sub-heading gone too, the button below is the only text the
-          hero paints, so LCP is now the button. It is server-rendered and not
-          gated on the animation (performancemilestones.md P1, which exists
-          because a gate here once kept the LCP element out of the DOM entirely).
+          hero paints — see the note on its own gating there.
         */}
         <h1 className="sr-only">Make Animations with FlashFX</h1>
 
         {/*
-          One button, and it is now the only text the hero paints — which makes
-          it the LCP element. It is server-rendered and not gated on the cube
-          animation, so it is there at first paint whatever the WebGL chunk is
-          doing (performancemilestones.md P1).
+          Held back until the cubes have landed, on the owner's instruction, so
+          the button does not compete with the animation.
+
+          The cost is worth stating: this is the only text the hero paints, so
+          it is the LCP element — and an element that is invisible does not
+          count as painted. Homepage LCP is therefore roughly the moment the
+          animation finishes, around 3.5 s after the chunk mounts, rather than
+          first paint. Everything else P1 protects still holds (the hero is not
+          gated, nothing blocks render); this is a deliberate design trade, not
+          a regression that crept in.
         */}
         <motion.a
           href="https://editor.flashfx.app"
           target="_blank"
           rel="noopener noreferrer"
           initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: 'easeOut', delay: 0.25 }}
+          animate={landed ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
           className="fx-cta group inline-flex items-center gap-3 sm:gap-4 rounded-full px-8 sm:px-12 py-4 sm:py-6 text-fx-bg-base font-semibold text-lg sm:text-2xl md:text-[26px] tracking-tight"
-          style={{ fontFamily: 'var(--font-inter), sans-serif' }}
+          style={{ fontFamily: 'var(--font-inter), sans-serif', pointerEvents: landed ? 'auto' : 'none' }}
         >
           Open the editor, it&rsquo;s free
           <ArrowRight

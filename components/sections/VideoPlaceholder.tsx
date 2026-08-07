@@ -152,7 +152,14 @@ export function VideoPlaceholder({ title, description, isMainDemo, gridBackgroun
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="relative z-10 mb-5 text-center font-mono text-xs md:text-sm uppercase tracking-[0.35em] text-fx-text-secondary"
+          /*
+            Styled as a section title rather than a mono eyebrow — same face and
+            weight as "Organized workflow" above it, a step smaller, and all
+            white with no accent word, so the two read as its subheadings rather
+            than as three competing titles.
+          */
+          className="relative z-10 mb-6 md:mb-8 text-center text-3xl sm:text-4xl md:text-5xl leading-[1.06] text-white"
+          style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 700, letterSpacing: '-0.035em' }}
         >
           {heading}
         </motion.h3>
