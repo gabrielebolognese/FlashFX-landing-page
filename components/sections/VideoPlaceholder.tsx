@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
-import { ElegantShapesBackground } from '@/components/ui/elegant-shapes';
 import { VideoLoading, useVideoEmbed } from '@/components/ui/video-loading';
 import { Demo, demoFrame, type DemoKind } from '@/components/demos';
 
@@ -128,8 +127,13 @@ export function VideoPlaceholder({ title, description, isMainDemo, gridBackgroun
       className={`relative w-full px-6 overflow-hidden ${isMainDemo ? 'flex flex-col justify-center' : 'py-12 md:py-20'} ${gridBackground ? 'bg-fx-bg-base' : ''}`}
       style={isMainDemo ? { height: '100vh', minHeight: '100vh' } : undefined}
     >
-      <ElegantShapesBackground />
-
+      {/*
+        The floating shapes are gone (immersionmilestones.md I4). Five copies of
+        this section each drew five of them — twenty-five elements and five
+        governed loops — behind demos that are now full-bleed and edge-faded,
+        where a drifting yellow blob under a timeline is just noise. The site
+        backdrop supplies the ambient depth they were there for.
+      */}
       {gridBackground && (
         <div
           className="absolute inset-0 pointer-events-none z-[1]"

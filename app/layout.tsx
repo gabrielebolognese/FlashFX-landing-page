@@ -4,6 +4,7 @@ import { Outfit, JetBrains_Mono, Inter } from 'next/font/google';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { PageLoader } from '@/components/PageLoader';
+import { SiteBackdrop } from '@/components/ui/site-backdrop';
 import { OG_IMAGES } from '@/lib/seo';
 
 /*
@@ -115,6 +116,13 @@ export default function RootLayout({
           component to provide state that no longer exists — PageLoader is now a
           server component and Hero renders unconditionally.
         */}
+        {/*
+          One field of light behind every page (immersionmilestones.md I4).
+          A client component rather than a dynamic import: `ssr: false` is not
+          available inside a Server Component, and this renders its CSS
+          fallback on the server anyway.
+        */}
+        <SiteBackdrop />
         <PageLoader />
         <Navbar />
         {children}

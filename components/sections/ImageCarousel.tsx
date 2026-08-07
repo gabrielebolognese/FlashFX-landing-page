@@ -1,24 +1,9 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { motion, useAnimationControls } from 'framer-motion';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useAmbient, loop } from '@/lib/motion';
-
-/*
- * three.js is loaded on demand rather than in the initial bundle
- * (performancemilestones.md P5). Decorative background only, so `ssr: false`
- * costs nothing a crawler cares about, and the placeholder matches the
- * shader's own clear colour so nothing flashes or shifts.
- */
-const WebGLShader = dynamic(
-  () => import('@/components/ui/web-gl-shader').then((m) => m.WebGLShader),
-  {
-    ssr: false,
-    loading: () => <div className="absolute inset-0" style={{ background: '#0a1628' }} />,
-  }
-);
 
 
 const images = [
@@ -100,10 +85,6 @@ export function ImageCarousel() {
 
   return (
     <section className="relative w-full py-20 overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <WebGLShader />
-      </div>
-
       <div className="relative z-10 max-w-7xl mx-auto px-6 mb-12">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
