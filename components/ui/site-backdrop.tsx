@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { cappedPixelRatio } from '@/lib/render-gate';
-import { isReducedTier } from '@/lib/motion';
+import { isReducedTier, subscribePointer } from '@/lib/motion';
 
 /*
  * One field of light behind the whole site (immersionmilestones.md I4).
@@ -48,6 +48,7 @@ uniform vec2 uRes;
 uniform float uTime;
 uniform float uScroll;
 uniform float uAmp;
+uniform vec2 uPointer;
 
 /* A soft pool of light. Cheap on purpose — this runs behind every page. */
 float pool(vec2 p, vec2 c, float r) {
@@ -72,10 +73,18 @@ void main() {
   vec3 base = mix(coolA, warmA, uScroll);
   vec3 lift = mix(coolB, warmB, uScroll);
 
+  /*
+   * The pointer slides the pools, each by a different amount, so the field has
+   * depth rather than sitting flat behind the page (immersionmilestones.md I6).
+   * The offsets are small — this should register as the light being aware of
+   * you, not as a layer being dragged around.
+   */
+  vec2 par = vec2(uPointer.x * ar, uPointer.y);
+
   float f = 0.0;
-  f += pool(p, vec2(ar * (0.28 + sin(t * 0.9) * 0.06), 0.74 + cos(t * 0.7) * 0.05), 0.55) * 0.9;
-  f += pool(p, vec2(ar * (0.76 + cos(t * 0.6) * 0.07), 0.28 + sin(t * 1.1) * 0.06), 0.50) * 0.7;
-  f += pool(p, vec2(ar * (0.52 + sin(t * 1.3) * 0.08), 0.52 + cos(t * 0.5) * 0.07), 0.62) * 0.5;
+  f += pool(p, vec2(ar * (0.28 + sin(t * 0.9) * 0.06), 0.74 + cos(t * 0.7) * 0.05) + par * 0.10, 0.55) * 0.9;
+  f += pool(p, vec2(ar * (0.76 + cos(t * 0.6) * 0.07), 0.28 + sin(t * 1.1) * 0.06) + par * 0.05, 0.50) * 0.7;
+  f += pool(p, vec2(ar * (0.52 + sin(t * 1.3) * 0.08), 0.52 + cos(t * 0.5) * 0.07) + par * 0.17, 0.62) * 0.5;
 
   vec3 col = base + lift * f * 0.55;
 
@@ -155,6 +164,7 @@ export function SiteBackdrop() {
     const uTime = gl.getUniformLocation(prog, 'uTime');
     const uScroll = gl.getUniformLocation(prog, 'uScroll');
     const uAmp = gl.getUniformLocation(prog, 'uAmp');
+    const uPointer = gl.getUniformLocation(prog, 'uPointer');
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -182,6 +192,24 @@ export function SiteBackdrop() {
     readScroll();
     window.addEventListener('scroll', readScroll, { passive: true });
 
+    /*
+     * Where the pointer is, and where the light has got to on its way there.
+     *
+     * The gap between the two is the point: easing `now` toward `target` a
+     * fraction each frame gives the field weight, so it drifts after the
+     * pointer rather than snapping to it. A flat -0.5..0.5 across the viewport
+     * keeps the shader's arithmetic in the same space as its pool positions.
+     */
+    let targetX = 0;
+    let targetY = 0;
+    let nowX = 0;
+    let nowY = 0;
+
+    const unsubscribePointer = subscribePointer((px, py) => {
+      targetX = px / window.innerWidth - 0.5;
+      targetY = 0.5 - py / window.innerHeight;
+    });
+
     let frame = 0;
     let start = 0;
     let running = false;
@@ -190,10 +218,14 @@ export function SiteBackdrop() {
       if (!start) start = now;
       const elapsed = now - start;
 
+      nowX += (targetX - nowX) * 0.045;
+      nowY += (targetY - nowY) * 0.045;
+
       gl.uniform2f(uRes, w, h);
       gl.uniform1f(uTime, reduced.matches ? 0 : elapsed / 1000);
       gl.uniform1f(uScroll, scroll);
       gl.uniform1f(uAmp, Math.min(1, elapsed / RAMP_MS));
+      gl.uniform2f(uPointer, nowX, nowY);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
 
@@ -237,6 +269,7 @@ export function SiteBackdrop() {
 
     return () => {
       stop();
+      unsubscribePointer();
       window.removeEventListener('resize', resize);
       window.removeEventListener('scroll', readScroll);
       document.removeEventListener('visibilitychange', visibility);

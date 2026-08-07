@@ -111,7 +111,7 @@ of how good it looks.
 | I3 | Show the editor, do not film it | DONE (embeds 13 → 8; see *What remains*) |
 | I4 | One continuous space | DONE |
 | I5 | Break the rhythm | NOT_STARTED |
-| I6 | Ambient motion and cursor presence | NOT_STARTED |
+| I6 | Ambient motion and cursor presence | DONE |
 | I7 | Guardrails, mobile and re-verification | DONE |
 | I8 | The morph sequence — cube to aeroplane | DONE |
 
@@ -597,7 +597,7 @@ added to it. This milestone makes the page *shorter and more varied* at once.
 
 ## I6 — Ambient motion and cursor presence
 
-**Status:** NOT_STARTED
+**Status:** DONE — 2026-08-07
 **Impact:** the last 15%. Do not start here — it is garnish on the other six.
 
 ### Why
@@ -605,25 +605,69 @@ added to it. This milestone makes the page *shorter and more varied* at once.
 Once the structure and the demos are right, this is what makes the page feel
 responsive to *you* specifically rather than playing the same film for everyone.
 
-### Changes
+### What shipped
 
-1. **Cursor-reactive parallax.** Panels and the backdrop shift subtly against
-   pointer position. Pointer-driven only, `pointer: fine` only — never on touch.
-2. **Magnetic CTAs.** The primary buttons lean toward the cursor as it
-   approaches.
-3. **Numbers that count** when their section arrives — file sizes, load times,
-   the figures in `LoadTime` and `ComparisonTeaser`.
-4. **Idle life.** Icons with slow individual loops, headline text with a
-   travelling gradient, staggered breathing on card grids — all through the I1
-   governor so they cannot pile up.
-5. **Scroll velocity.** Fast scrolling stretches or blurs elements slightly and
-   settles when you stop.
+**`lib/motion/pointer.ts` — one pointer, read once per frame.** Every
+pointer-reactive thing subscribes here instead of adding its own listener. It is
+inert on coarse pointers and on the reduced tier, so nothing below runs on a
+phone or on a machine that has declared itself weak.
+
+The coalescing is the substance of this milestone. `mousemove` fires far more
+often than the screen refreshes — a 1000 Hz mouse delivers roughly sixteen
+events per frame — so any handler that writes a style is doing fifteen writes
+nobody will ever see, for every one they will.
+
+1. **Cursor-reactive parallax** — the three light pools in `SiteBackdrop` slide
+   by different amounts against the pointer, so the field reads as having depth
+   rather than sitting flat. The shader eases toward the pointer at 0.045 per
+   frame rather than tracking it exactly, which gives the light weight.
+2. **Magnetic CTAs** — all four `CtaButton`s lean toward the cursor within 110px
+   of their edge, capped at 12px of travel. Measured against the button's *edge*
+   rather than its centre, so a wide button pulls along its whole length. Gated
+   by an IntersectionObserver so only an on-screen button measures anything.
+
+   The offset goes on a `.fx-magnet` wrapper, never the button: `.fx-cta:hover`
+   sets its own `transform`, and an inline transform on the same element wins
+   silently and kills the lift.
+3. **The 179-card spotlight, fixed.** `FeatureHighlights` was building a fresh
+   `radial-gradient(...)` string and assigning it to `style.background` straight
+   out of the mousemove handler — re-parsing a gradient and invalidating the
+   paint of a card behind a `backdrop-filter: blur(16px)`, sixteen times a
+   frame. Repainting a backdrop-filtered layer is among the more expensive
+   things a compositor can be asked to do. The handler now records a position
+   and one `requestAnimationFrame` writes two custom properties; the gradient is
+   declared once in `.fx-spotlight`. Identical on screen.
+
+### Not done, and why
+
+**Counting numbers.** There are none to count. `LoadTime` and `ComparisonTeaser`
+are feature checklists — "Free to use", "Runs in browser" — not figures, and the
+pricing numbers already animate on cycle change. Inventing statistics to animate
+would breach the standing rule in CLAUDE.md against fabricating metrics.
+
+**Scroll-velocity stretch and blur.** Skipped deliberately. Blurring text
+mid-scroll fights the reading it interrupts, and it is the effect most likely to
+read as a rendering fault rather than a flourish on a site whose whole argument
+is that it is fast.
 
 ### Acceptance criteria
 
-- [ ] All pointer effects behind `(pointer: fine)` and `(hover: hover)`
-- [ ] Loop count still within the I1 cap with every section on screen
-- [ ] No pointer handler runs outside `requestAnimationFrame`
+- [x] All pointer effects behind `(pointer: fine)` and `(hover: hover)` — both
+      enforced centrally in `pointerIsFine()`, so a new consumer cannot forget
+- [x] Loop count still within the I1 cap — no new ambient loops. The magnet is
+      event-driven with a CSS transition; the backdrop's loop already existed
+- [x] No pointer handler runs outside `requestAnimationFrame` — the one
+      violation on the site is fixed
+
+  One deliberate exception: `PlaneViewer`'s drag handler stays per-event. It
+  writes no styles and touches no layout — it accumulates deltas into rotation
+  and momentum, and coalescing would throw away the samples a flick is made of.
+  Its own rAF loop does the drawing. It is also correctly *not* pointer-gated:
+  dragging the plane has to work on touch.
+
+  `components/ui/spotlight.tsx` has an unthrottled `mousemove` listener and is
+  imported by nothing — the 3D section uses `spotlight-aceternity`, a different
+  file. Dead code, so it never runs; a candidate for FIX.md M7.
 
 ---
 

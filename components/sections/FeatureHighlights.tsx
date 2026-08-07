@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { BeamBorder } from '@/components/ui/beam-border';
 import { editorFeatures, FeatureItem } from './feature-highlights/editorFeatures';
@@ -18,17 +18,55 @@ function FeatureCard({ item, index, showCategory }: { item: CardItem; index: num
   const { Icon } = item as { Icon: LucideIcon };
   const category = 'category' in item ? (item as AnimationPresetItem).category : undefined;
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
+  /*
+   * The spotlight follow, coalesced into one write per frame
+   * (immersionmilestones.md I6).
+   *
+   * This used to assign a freshly built `radial-gradient(...)` string to
+   * `style.background` straight out of the mousemove handler. Two problems, and
+   * they compound:
+   *
+   *   `mousemove` fires far more often than the screen refreshes — a 1000 Hz
+   *   mouse delivers roughly sixteen events per frame — so fifteen out of every
+   *   sixteen writes were painted over before anyone saw them.
+   *
+   *   Each one re-parsed a gradient and invalidated the paint of a card sitting
+   *   in a 179-card grid, behind a `backdrop-filter: blur(16px)`. Repainting a
+   *   backdrop-filtered layer is one of the more expensive things a compositor
+   *   can be asked to do.
+   *
+   * Now the handler only records the position; a single `requestAnimationFrame`
+   * writes two custom properties, and the gradient itself is declared once in
+   * `.fx-spotlight`. The visible behaviour is identical.
+   */
+  const pending = useRef<{ x: number; y: number } | null>(null);
+  const frame = useRef(0);
+
+  const flush = useCallback(() => {
+    frame.current = 0;
     const spotlight = spotlightRef.current;
-    if (!card || !spotlight) return;
-    const rect = card.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    spotlight.style.background = `radial-gradient(260px circle at ${x}% ${y}%, rgba(245, 197, 24, 0.14), transparent 70%)`;
+    const point = pending.current;
+    if (!spotlight || !point) return;
+    spotlight.style.setProperty('--fx-sx', `${point.x}%`);
+    spotlight.style.setProperty('--fx-sy', `${point.y}%`);
   }, []);
 
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const card = cardRef.current;
+      if (!card) return;
+      const rect = card.getBoundingClientRect();
+      pending.current = {
+        x: ((e.clientX - rect.left) / rect.width) * 100,
+        y: ((e.clientY - rect.top) / rect.height) * 100,
+      };
+      if (!frame.current) frame.current = requestAnimationFrame(flush);
+    },
+    [flush]
+  );
+
   const handleMouseEnter = useCallback(() => {
+    if (spotlightRef.current) spotlightRef.current.dataset.on = '1';
     if (iconRef.current) {
       iconRef.current.style.transform = 'translateY(-5px)';
       iconRef.current.style.filter = 'drop-shadow(0 8px 16px rgba(245, 197, 24, 0.4))';
@@ -36,12 +74,20 @@ function FeatureCard({ item, index, showCategory }: { item: CardItem; index: num
   }, []);
 
   const handleMouseLeave = useCallback(() => {
-    if (spotlightRef.current) spotlightRef.current.style.background = 'transparent';
+    // Drop any frame still queued, so it cannot repaint the spotlight after the
+    // pointer has already left.
+    if (frame.current) {
+      cancelAnimationFrame(frame.current);
+      frame.current = 0;
+    }
+    if (spotlightRef.current) spotlightRef.current.dataset.on = '0';
     if (iconRef.current) {
       iconRef.current.style.transform = 'translateY(0px)';
       iconRef.current.style.filter = 'none';
     }
   }, []);
+
+  useEffect(() => () => cancelAnimationFrame(frame.current), []);
 
   return (
     <motion.div
@@ -77,8 +123,9 @@ function FeatureCard({ item, index, showCategory }: { item: CardItem; index: num
 
         <div
           ref={spotlightRef}
-          className="absolute inset-0 pointer-events-none z-10 transition-none"
-          style={{ background: 'transparent', borderRadius: 'inherit' }}
+          data-on="0"
+          className="fx-spotlight absolute inset-0 pointer-events-none z-10"
+          style={{ borderRadius: 'inherit' }}
         />
 
         <div className="relative z-20 p-5 h-full flex flex-col">
