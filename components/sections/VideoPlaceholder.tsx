@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { ElegantShapesBackground } from '@/components/ui/elegant-shapes';
+import { VideoLoading, useVideoEmbed } from '@/components/ui/video-loading';
 
 interface VideoPlaceholderProps {
   title: string;
@@ -34,34 +35,19 @@ interface VideoPlaceholderProps {
  * third-party code before anything below the fold had been looked at, and it
  * held `window.load` open, which the old PageLoader was waiting on.
  *
- * `rootMargin: 400px` starts the load just before the section scrolls into
- * view, so it is ready by the time it is on screen. The play/pause observer is
- * only attached once the iframe exists.
+ * The lead distance and the placeholder both live in `useVideoEmbed` so all
+ * three embed sites behave identically. The play/pause observer is only
+ * attached once the iframe exists.
+ *
+ * The iframe stays mounted underneath the placeholder from the moment it is
+ * created — it is the placeholder that fades out, not the video that fades in,
+ * so the handover never shows a gap.
  */
 function YouTubeEmbed({ youtubeId, title }: { youtubeId: string; title: string }) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const { containerRef, shouldLoad, phase, onLoad } = useVideoEmbed<HTMLDivElement>();
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [shouldLoad, setShouldLoad] = useState(false);
 
   const src = `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&mute=1&loop=1&playlist=${youtubeId}&controls=0&modestbranding=1&rel=0&showinfo=0&disablekb=1&iv_load_policy=3&playsinline=1&enablejsapi=1`;
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container || shouldLoad) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setShouldLoad(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '400px' }
-    );
-
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, [shouldLoad]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -86,17 +72,20 @@ function YouTubeEmbed({ youtubeId, title }: { youtubeId: string; title: string }
 
     observer.observe(container);
     return () => observer.disconnect();
-  }, [shouldLoad]);
+    // containerRef comes from useVideoEmbed, so the linter cannot see that it
+    // is a ref and therefore stable. Listing it is a no-op that keeps it quiet.
+  }, [shouldLoad, containerRef]);
 
   return (
     <div ref={containerRef} className="absolute inset-0 w-full h-full overflow-hidden">
-      {shouldLoad ? (
+      {shouldLoad && (
         <iframe
           ref={iframeRef}
           src={src}
           title={title}
           loading="lazy"
           allow="autoplay; encrypted-media"
+          onLoad={onLoad}
           style={{
             border: 'none',
             pointerEvents: 'none',
@@ -108,9 +97,8 @@ function YouTubeEmbed({ youtubeId, title }: { youtubeId: string; title: string }
             transform: 'translate(-50%, -50%)',
           }}
         />
-      ) : (
-        <div className="absolute inset-0 w-full h-full bg-fx-bg-base" />
       )}
+      <VideoLoading phase={phase} />
     </div>
   );
 }

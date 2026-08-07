@@ -161,3 +161,308 @@
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Video loading placeholder — components/ui/video-loading.tsx.
+ *
+ * Every YouTube embed is created on approach rather than up front, which is
+ * what took the homepage from ten eager iframes to zero. The cost is a window,
+ * usually a second or two, where the visitor is looking at the box while
+ * YouTube's player boots. That window used to show a flat empty rectangle.
+ *
+ * Written as CSS animations rather than framer-motion on purpose. Up to ten of
+ * these exist on the homepage; a keyframe animation runs on the compositor and
+ * ships no per-frame JavaScript, and the sitewide reduced-motion block above
+ * already neutralises it for anyone who asked for less motion. Everything
+ * animated here is transform or opacity, per P6 — nothing triggers layout.
+ *
+ * `.fx-vl--idle` kills every animation. Placeholders far from the viewport
+ * render in that state, so nothing animates until the section is actually being
+ * approached.
+ */
+.fx-vl {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 50% 42%, rgba(245, 197, 24, 0.09) 0%, rgba(20, 31, 64, 0) 62%),
+    var(--color-bg-base);
+  transition: opacity 450ms ease-out;
+}
+
+/* Faint grid, echoing the editor's canvas. */
+.fx-vl::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+
+/* A single sheen crossing the whole box. */
+.fx-vl-sheen {
+  position: absolute;
+  top: -60%;
+  bottom: -60%;
+  left: -35%;
+  width: 28%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.06),
+    transparent
+  );
+  animation: fx-vl-sweep 2600ms cubic-bezier(0.45, 0, 0.3, 1) infinite;
+}
+
+@keyframes fx-vl-sweep {
+  0% {
+    transform: translateX(0) skewX(-14deg);
+  }
+  100% {
+    transform: translateX(500%) skewX(-14deg);
+  }
+}
+
+.fx-vl-core {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(74%, 440px);
+  gap: clamp(14px, 2.4vw, 26px);
+}
+
+/* ---- The ring: a sweeping arc over a static track ---- */
+
+.fx-vl-ring {
+  position: relative;
+  width: clamp(58px, 7.5vw, 98px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+.fx-vl-ring::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.07);
+}
+
+.fx-vl-arc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(245, 197, 24, 0) 0deg,
+    rgba(245, 197, 24, 0) 205deg,
+    rgba(245, 197, 24, 0.55) 310deg,
+    var(--color-accent-yellow) 358deg,
+    var(--color-accent-yellow) 360deg
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  animation: fx-vl-spin 1150ms linear infinite;
+}
+
+@keyframes fx-vl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fx-vl-play {
+  position: relative;
+  z-index: 1;
+  width: 34%;
+  height: 34%;
+  color: var(--color-accent-yellow);
+  animation: fx-vl-beat 1600ms ease-in-out infinite;
+}
+
+@keyframes fx-vl-beat {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.14);
+    opacity: 1;
+  }
+}
+
+/* ---- The timeline: a playhead sweeping past keyframes ---- */
+
+.fx-vl-track {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.fx-vl-kf {
+  position: absolute;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.16);
+  animation: fx-vl-kf 2200ms ease-in-out infinite;
+}
+
+/*
+ * Each diamond's delay matches the moment the playhead reaches it, so they pop
+ * in sequence as it passes rather than blinking together.
+ */
+@keyframes fx-vl-kf {
+  0%,
+  76%,
+  100% {
+    transform: rotate(45deg) scale(1);
+    background: rgba(255, 255, 255, 0.16);
+  }
+  8% {
+    transform: rotate(45deg) scale(1.65);
+    background: var(--color-accent-yellow);
+  }
+  30% {
+    transform: rotate(45deg) scale(1);
+    background: rgba(245, 197, 24, 0.4);
+  }
+}
+
+/*
+ * The playhead is pinned to the left edge of a full-width wrapper, and the
+ * wrapper is what moves. translateX(100%) of a wrapper spanning the track is
+ * exactly the track's width — so the playhead travels edge to edge without
+ * animating `left`, which would force layout on every frame.
+ */
+.fx-vl-headwrap {
+  position: absolute;
+  inset: 0;
+  animation: fx-vl-head 2200ms cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+@keyframes fx-vl-head {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.fx-vl-head {
+  position: absolute;
+  left: -1px;
+  top: -9px;
+  bottom: -9px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--color-accent-yellow) 22%,
+    var(--color-accent-yellow) 78%,
+    transparent
+  );
+  box-shadow: 0 0 14px 2px rgba(245, 197, 24, 0.5);
+}
+
+/* ---- The label ---- */
+
+.fx-vl-label {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: clamp(9px, 0.85vw, 12px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: linear-gradient(
+    90deg,
+    rgba(230, 237, 243, 0.3) 0%,
+    rgba(230, 237, 243, 0.3) 38%,
+    var(--color-accent-yellow) 50%,
+    rgba(230, 237, 243, 0.3) 62%,
+    rgba(230, 237, 243, 0.3) 100%
+  );
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: fx-vl-shimmer 2600ms linear infinite;
+}
+
+@keyframes fx-vl-shimmer {
+  0% {
+    background-position: 130% 0;
+  }
+  100% {
+    background-position: -30% 0;
+  }
+}
+
+/* ---- Compact variant, for the 9:16 shorts ---- */
+
+.fx-vl--sm .fx-vl-core {
+  width: min(80%, 200px);
+  gap: clamp(10px, 1.6vw, 16px);
+}
+
+.fx-vl--sm .fx-vl-ring {
+  width: clamp(34px, 4.2vw, 54px);
+}
+
+.fx-vl--sm .fx-vl-label {
+  font-size: clamp(8px, 0.6vw, 10px);
+  letter-spacing: 0.22em;
+}
+
+/*
+ * Off-screen and finished states. Both stop every animation — a placeholder
+ * that nobody is looking at must not keep a compositor thread warm.
+ */
+.fx-vl--idle .fx-vl-sheen,
+.fx-vl--idle .fx-vl-arc,
+.fx-vl--idle .fx-vl-play,
+.fx-vl--idle .fx-vl-kf,
+.fx-vl--idle .fx-vl-headwrap,
+.fx-vl--idle .fx-vl-label,
+.fx-vl--done .fx-vl-sheen,
+.fx-vl--done .fx-vl-arc,
+.fx-vl--done .fx-vl-play,
+.fx-vl--done .fx-vl-kf,
+.fx-vl--done .fx-vl-headwrap,
+.fx-vl--done .fx-vl-label {
+  animation: none;
+}
+
+.fx-vl--done {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/*
+ * With motion off the sweep, spin and shimmer are all neutralised by the block
+ * above, which would leave the label mid-gradient and invisible. Pin it to a
+ * flat readable colour instead.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .fx-vl-label {
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: var(--color-text-secondary);
+  }
+}

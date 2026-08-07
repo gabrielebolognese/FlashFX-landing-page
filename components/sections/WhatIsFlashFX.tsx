@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { VideoLoading, useVideoEmbed } from '@/components/ui/video-loading';
 
 const shorts = [
   { id: 'm0-8jXv6rLU' },
@@ -18,28 +18,9 @@ const shorts = [
  * host is youtube-nocookie to match VideoPlaceholder.
  */
 function ShortEmbed({ id, index }: { id: string; index: number }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [shouldLoad, setShouldLoad] = useState(false);
+  const { containerRef, shouldLoad, phase, onLoad } = useVideoEmbed<HTMLDivElement>();
 
   const src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&rel=0&showinfo=0&disablekb=1&iv_load_policy=3&fs=0&cc_load_policy=0`;
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container || shouldLoad) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setShouldLoad(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '400px' }
-    );
-
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, [shouldLoad]);
 
   return (
     <motion.div
@@ -58,6 +39,7 @@ function ShortEmbed({ id, index }: { id: string; index: number }) {
             title={`FlashFX short ${index + 1}`}
             loading="lazy"
             allow="autoplay; encrypted-media"
+            onLoad={onLoad}
             style={{
               position: 'absolute',
               top: '-2%',
@@ -70,6 +52,8 @@ function ShortEmbed({ id, index }: { id: string; index: number }) {
             }}
           />
         )}
+        {/* 9:16 is far too narrow for the timeline to read — compact drops it. */}
+        <VideoLoading phase={phase} compact />
       </div>
     </motion.div>
   );
