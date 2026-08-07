@@ -240,30 +240,6 @@
   opacity: 1;
 }
 
-/*
- * The magnet wrapper for `.fx-cta` (immersionmilestones.md I6).
- *
- * The offset is applied to this wrapper and never to the button itself:
- * `.fx-cta:hover` sets its own `transform`, and an inline transform on the same
- * element would silently win and kill the lift.
- *
- * The transition is what makes it feel magnetic rather than glued — the button
- * trails the pointer by a beat instead of tracking it exactly, and returns to
- * rest on the same curve when the pointer leaves.
- */
-.fx-magnet {
-  display: inline-block;
-  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .fx-magnet {
-    transition: none;
-    transform: none !important;
-  }
-}
-
 .fx-cta {
   position: relative;
   overflow: hidden;

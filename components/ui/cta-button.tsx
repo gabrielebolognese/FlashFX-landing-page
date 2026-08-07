@@ -1,25 +1,27 @@
-'use client';
-
-import { useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { subscribePointer } from '@/lib/motion';
 
 /*
  * The filled call to action. Styling lives in `.fx-cta` in globals.css.
  *
  * Deliberately not `ShimmerButton`: that is the dark outline chip used a dozen
- * times across the site, and these are the two moments the page actually asks
- * for the click. They should not look like the others.
+ * times across the site, and these are the moments the page actually asks for
+ * the click. They should not look like the others.
  *
  * Extracted from the hero on 2026-08-07 when the 3D section gained one too —
  * two copies of a gradient, three shadows and a sheen would drift apart.
+ *
+ * It held a pointer-magnet from immersionmilestones.md I6 for a few hours and
+ * no longer does (owner's call, 2026-08-07): these buttons stay still. That
+ * removed the only reason this file needed to be a client component, so the
+ * 'use client' directive is gone with it and the button now renders on the
+ * server. `lib/motion/pointer.ts` stays — the backdrop parallax still uses it.
  */
 
 interface CtaButtonProps {
   href: string;
   children: React.ReactNode;
-  /** `lg` is the hero. `md` is 80% of it, for sections further down. */
+  /** `lg` is the hero and the closing CTA. `md` is 80% of it, for sections in between. */
   size?: 'lg' | 'md';
   className?: string;
 }
@@ -35,104 +37,34 @@ const SIZES = {
   },
 } as const;
 
-/*
- * How far outside the button the pull begins, how hard it pulls, and how far it
- * is ever allowed to move (immersionmilestones.md I6).
- *
- * `MAX` is deliberately small. A button that chases the pointer across the
- * screen is a toy; one that leans a few pixels reads as responsive without ever
- * moving out from under the click that is coming.
- */
-const RANGE = 110;
-const PULL = 0.24;
-const MAX = 12;
-
-/**
- * Lean toward the pointer as it approaches.
- *
- * Gated three ways: `subscribePointer` is inert on coarse pointers and on the
- * reduced tier, the observer means only an on-screen button computes anything,
- * and the CSS kills the transform outright under reduced motion.
- */
-function useMagnet() {
-  const ref = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    let onScreen = false;
-
-    // Without this, all four buttons on the page would measure themselves every
-    // frame the pointer moved, including the three nobody can see.
-    const observer = new IntersectionObserver(
-      (records) => {
-        onScreen = records.some((r) => r.isIntersecting);
-        if (!onScreen) el.style.transform = '';
-      },
-      { rootMargin: '100px' }
-    );
-    observer.observe(el);
-
-    const unsubscribe = subscribePointer((px, py) => {
-      if (!onScreen) return;
-
-      const r = el.getBoundingClientRect();
-      const dx = px - (r.left + r.width / 2);
-      const dy = py - (r.top + r.height / 2);
-
-      /*
-       * Distance from the button's *edge*, not its centre, so a wide button
-       * pulls along its whole length rather than only near the middle.
-       */
-      const ox = Math.max(0, Math.abs(dx) - r.width / 2);
-      const oy = Math.max(0, Math.abs(dy) - r.height / 2);
-      const outside = Math.hypot(ox, oy);
-
-      if (outside > RANGE) {
-        // Assigning the same empty string repeatedly is free; the browser
-        // discards a write that does not change the computed value.
-        el.style.transform = '';
-        return;
-      }
-
-      const falloff = 1 - outside / RANGE;
-      const tx = Math.max(-MAX, Math.min(MAX, dx * PULL * falloff));
-      const ty = Math.max(-MAX, Math.min(MAX, dy * PULL * falloff));
-      el.style.transform = `translate3d(${tx.toFixed(2)}px, ${ty.toFixed(2)}px, 0)`;
-    });
-
-    return () => {
-      observer.disconnect();
-      unsubscribe();
-    };
-  }, []);
-
-  return ref;
-}
-
 export function CtaButton({ href, children, size = 'lg', className }: CtaButtonProps) {
   const s = SIZES[size];
-  const magnet = useMagnet();
+
+  /*
+   * Most of these point at editor.flashfx.app and should open a new tab —
+   * losing the marketing page to navigate to the editor is not what anyone
+   * wants. An internal link must not: sending a visitor to another page of this
+   * same site in a new tab is disorienting, and `rel="noopener"` on it is noise.
+   */
+  const external = /^https?:\/\//i.test(href);
+
   return (
-    <span ref={magnet} className="fx-magnet">
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={cn(
-          'fx-cta group inline-flex items-center rounded-full text-fx-bg-base font-semibold tracking-tight',
-          s.box,
-          className
-        )}
-        style={{ fontFamily: 'var(--font-inter), sans-serif' }}
-      >
-        {children}
-        <ArrowRight
-          className={cn('flex-shrink-0 transition-transform duration-200 group-hover:translate-x-1', s.arrow)}
-          strokeWidth={2.5}
-        />
-      </a>
-    </span>
+    <a
+      href={href}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener noreferrer' : undefined}
+      className={cn(
+        'fx-cta group inline-flex items-center rounded-full text-fx-bg-base font-semibold tracking-tight',
+        s.box,
+        className
+      )}
+      style={{ fontFamily: 'var(--font-inter), sans-serif' }}
+    >
+      {children}
+      <ArrowRight
+        className={cn('flex-shrink-0 transition-transform duration-200 group-hover:translate-x-1', s.arrow)}
+        strokeWidth={2.5}
+      />
+    </a>
   );
 }

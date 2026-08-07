@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import ShimmerButton from '@/components/ui/shimmer-button';
+import { CtaButton } from '@/components/ui/cta-button';
 import { LazyYouTube } from '@/components/ui/lazy-youtube';
 
 /*
@@ -56,9 +56,18 @@ export function SolutionSection() {
           transition={{ duration: 0.5, delay: 0.25 }}
           className="mt-10"
         >
-          <a href="/after-effects-alternative">
-            <ShimmerButton>Explore all features</ShimmerButton>
-          </a>
+          {/*
+            `md`, not the hero's `lg`. This sits directly under the hero, and two
+            full-size buttons a screen apart would read as the page asking twice
+            and dilute the one above it. Same treatment, one step down — the same
+            call every other section CTA makes.
+
+            `CtaButton` omits target="_blank" for internal hrefs, so this stays
+            in the tab as an internal link should.
+          */}
+          <CtaButton href="/after-effects-alternative" size="md">
+            Explore all features
+          </CtaButton>
         </motion.div>
       </div>
     </section>

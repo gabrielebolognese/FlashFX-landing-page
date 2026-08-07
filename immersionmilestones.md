@@ -621,14 +621,20 @@ nobody will ever see, for every one they will.
    by different amounts against the pointer, so the field reads as having depth
    rather than sitting flat. The shader eases toward the pointer at 0.045 per
    frame rather than tracking it exactly, which gives the light weight.
-2. **Magnetic CTAs** — all four `CtaButton`s lean toward the cursor within 110px
-   of their edge, capped at 12px of travel. Measured against the button's *edge*
-   rather than its centre, so a wide button pulls along its whole length. Gated
-   by an IntersectionObserver so only an on-screen button measures anything.
+2. ~~**Magnetic CTAs**~~ — **removed the same day (owner's call, 2026-08-07).**
+   The buttons stay still.
 
-   The offset goes on a `.fx-magnet` wrapper, never the button: `.fx-cta:hover`
-   sets its own `transform`, and an inline transform on the same element wins
-   silently and kills the lift.
+   Shipped and reverted within hours: all four `CtaButton`s leaned toward the
+   cursor within 110px of their edge, capped at 12px of travel, on a
+   `.fx-magnet` wrapper. Do not rebuild it. If some future version of this is
+   ever wanted, two things from the first attempt are worth keeping: the offset
+   must go on a wrapper rather than the button, because `.fx-cta:hover` sets its
+   own `transform` and an inline one on the same element wins silently and kills
+   the lift; and the measurement should be from the button's *edge*, not its
+   centre, so a wide button pulls along its whole length.
+
+   Removing it took the last client-side behaviour out of `cta-button.tsx`, so
+   that file dropped `'use client'` and renders on the server again.
 3. **The 179-card spotlight, fixed.** `FeatureHighlights` was building a fresh
    `radial-gradient(...)` string and assigning it to `style.background` straight
    out of the mousemove handler — re-parsing a gradient and invalidating the
