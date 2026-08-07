@@ -9,8 +9,11 @@ export const metadata: Metadata = {
     // Describes the document, not its headings — the text lives in Termly and
     // can change without this repo being touched.
     'When a FlashFX subscription can be refunded and when it cannot, how to request one, and how long a refund takes to process once it has been approved.',
+  // noindex, follow — Termly injects this page's text client-side, so a crawler
+  // sees ~250 characters of chrome. See the full reasoning in app/terms/page.tsx
+  // and the matching exclude in next-sitemap.config.js.
   robots: {
-    index: true,
+    index: false,
     follow: true,
   },
   openGraph: {

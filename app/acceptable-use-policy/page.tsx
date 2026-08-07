@@ -10,8 +10,11 @@ export const metadata: Metadata = {
     // text is served by Termly and can be edited outside this repo, so any
     // section list here would eventually describe a page that no longer exists.
     'The rules for using FlashFX: what counts as acceptable use of the editor and the work you export, what is prohibited, and what happens to accounts that break these rules.',
+  // noindex, follow — Termly injects this page's text client-side, so a crawler
+  // sees ~250 characters of chrome. See the full reasoning in app/terms/page.tsx
+  // and the matching exclude in next-sitemap.config.js.
   robots: {
-    index: true,
+    index: false,
     follow: true,
   },
   openGraph: {

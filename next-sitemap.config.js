@@ -39,13 +39,14 @@ const ROUTES = {
   '/brand': { priority: 0.4, changefreq: 'yearly' },
   '/careers': { priority: 0.4, changefreq: 'monthly' },
   // Reproduces the privacy notice in server-rendered HTML rather than through
-  // Termly's client-side embed, so it is the version worth indexing.
+  // Termly's client-side embed, so it is the version worth indexing — and the
+  // only one of the five legal URLs that appears in the sitemap at all.
   '/your-data': { priority: 0.5, changefreq: 'yearly' },
-  // Legal. Indexed so they can be found and cited, never optimised for.
-  '/privacy': { priority: 0.3, changefreq: 'yearly' },
-  '/terms': { priority: 0.3, changefreq: 'yearly' },
-  '/refund-policy': { priority: 0.3, changefreq: 'yearly' },
-  '/acceptable-use-policy': { priority: 0.3, changefreq: 'yearly' },
+  /*
+   * The four Termly-backed legal pages are deliberately absent from this table.
+   * None of them is emitted, so an entry here would be dead config that reads
+   * as though it still applies — see `exclude` below for why each is out.
+   */
 };
 
 const DEFAULT_ROUTE = { priority: 0.7, changefreq: 'monthly' };
@@ -55,13 +56,27 @@ module.exports = {
   siteUrl: process.env.SITE_URL || 'https://flashfx.app',
   generateRobotsTxt: true,
   /*
-   * /privacy canonicalises to /your-data, which carries the same policy in
-   * server-rendered HTML. Listing a non-canonical URL in the sitemap sends
-   * Google two contradicting signals — "index this" from the sitemap, "index
-   * the other one" from the canonical tag. The page stays live and linked; it
-   * is just not advertised for indexing.
+   * The sitemap is a list of URLs we are asking Google to index. Anything we
+   * have told Google not to index must not appear on it, or the two signals
+   * contradict each other — which is precisely what Search Console reports as
+   * "Submitted URL marked 'noindex'".
+   *
+   * All four Termly-backed legal pages are out, for two different reasons:
+   *
+   *   /privacy canonicalises to /your-data, which carries the same policy in
+   *   server-rendered HTML. Listing a non-canonical URL would say "index this"
+   *   from the sitemap and "index the other one" from the canonical tag.
+   *
+   *   /terms, /refund-policy and /acceptable-use-policy are noindex as of
+   *   2026-08-07. Termly injects their text client-side, so server-rendered
+   *   HTML is ~250 characters of chrome and nothing more. They have no
+   *   server-rendered twin to canonicalise to, so the noindex is the right
+   *   instrument. Reasoning in full in app/terms/page.tsx.
+   *
+   * All four stay live, linked from the footer, and readable. They are simply
+   * not advertised for indexing.
    */
-  exclude: ['/privacy'],
+  exclude: ['/privacy', '/terms', '/refund-policy', '/acceptable-use-policy'],
   transform: async (config, path) => {
     const { priority, changefreq } = ROUTES[path] || DEFAULT_ROUTE;
 
