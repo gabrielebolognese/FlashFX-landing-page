@@ -1,0 +1,468 @@
+# immersionmilestones.md — Making flashfx.app feel alive
+
+Plan for turning the marketing site from a page you scroll past into a space you
+move through. Derived from a structural audit of the homepage on 2026-08-07.
+
+**This is a plan. No code has been written for it yet.**
+
+---
+
+## The problem, stated plainly
+
+The brief was "more looping animations — borders, cubes, editing". Those are the
+right instincts, but they are treatments for a symptom. The audit found three
+compounding causes, and adding loops without addressing the first two would
+decorate the monotony rather than remove it.
+
+### 1. The page has one rhythm, and it repeats thirteen times
+
+The homepage is **26 sections**. Seven of them are `VideoPlaceholder` — the same
+component, the same rounded rectangle, the same muted clip. Six more sections
+carry a YouTube embed of their own. The structure reads:
+
+> feature copy → video. feature copy → video. feature copy → video. ×6
+
+Worse, three of the "feature copy" sections — `AllWebEditing`, `DualTimeline`,
+`EasyAnimations` — are **the same 91-line component with seven lines changed**
+(heading, sub-heading, button label, image, id). A visitor is not imagining the
+repetition; they are looking at literal copies.
+
+### 2. Nothing moves unless you are scrolling
+
+Every animation on the site is `whileInView` with `viewport={{ once: true }}`.
+It plays once on arrival and then stops forever. Scroll past a section and it is
+a still image for the rest of the session.
+
+Across all 26 sections there is **exactly one** continuously running animation in
+content — the `ImageCarousel` marquee. Everything else that loops is background
+decoration: the shader in the hero, the SVG paths behind *Earn with FlashFX*,
+the floating shapes. None of it is attached to anything the page is saying.
+
+### 3. A motion graphics tool whose website does not do motion graphics
+
+This is the real one. FlashFX makes animation, and every demonstration of it on
+the site is **a video of someone else's screen inside a rounded box**. The page
+never once animates the thing it is selling.
+
+Two of those boxes do not even have a video — `3D Support` and
+`Templates & Presets` render a "Video Coming Soon" placeholder. They are dead
+rectangles occupying a full section each.
+
+A site for an animation tool should be the best argument for the tool. Right now
+it is an argument against it.
+
+### Evidence
+
+| # | Finding | Evidence |
+|---|---|---|
+| 1 | 26 sections on the homepage | `app/page.tsx` |
+| 2 | 7 of them are the same `VideoPlaceholder` component | `app/page.tsx` lines 152–172 |
+| 3 | 13 YouTube embeds in total | 7 `VideoPlaceholder` + 5 shorts + 3 `LazyYouTube` |
+| 4 | `AllWebEditing` / `DualTimeline` / `EasyAnimations` differ by **7 lines of 91** | `diff` across the three |
+| 5 | **One** looping animation in content, sitewide | grep `POSITIVE_INFINITY` in `components/sections/` |
+| 6 | Two sections are empty "Video Coming Soon" boxes | `3D Support`, `Templates & Presets` |
+| 7 | Zero `<svg>` and zero `<canvas>` in 10 of 12 content sections | per-file grep |
+| 8 | Three separate WebGL contexts, none related to each other | Hero, `ImageCarousel`, `FeaturesIntro` |
+
+---
+
+## The constraint that shapes all of this
+
+P1–P7 took the homepage from a 30-second load to **177 kB of First Load JS**,
+zero eager iframes, images at 0.45 MB, WebGL paused off-screen and reduced
+motion honoured. Immersion must not undo that. It would be very easy to spend
+all of it here.
+
+**But the trade is better than it looks.** Every YouTube embed costs roughly
+1–2 MB of third-party JavaScript and its own rendering context. A hand-built
+animated timeline costs a few kB of our own code. Replacing five embeds with
+live in-page demos removes **several megabytes** and adds perhaps 40 kB.
+
+> The immersion pays for itself. Done in this order, the page ends up more
+> alive **and** lighter than it is today.
+
+That is the thesis of this document. If a milestone below cannot be built inside
+the budget, it does not ship.
+
+### Hard budget
+
+These are not guidelines. A change that breaks one of them is wrong regardless
+of how good it looks.
+
+| Rule | Limit |
+|---|---|
+| Homepage First Load JS | **≤ 200 kB** (today 177 kB) |
+| Iframes in served HTML | **0**, every route |
+| WebGL contexts alive at once | **≤ 1** (today 3) |
+| Continuous loops running per viewport | **≤ 6** |
+| Loops running while off-screen | **0**, no exceptions |
+| Animatable properties | `transform` and `opacity` only |
+| `prefers-reduced-motion: reduce` | resolved in the primitive, never per-component |
+| Image payload | no regression past 0.6 MB |
+
+---
+
+## Progress
+
+| Milestone | Title | Status |
+|---|---|---|
+| I1 | The motion system | NOT_STARTED |
+| I2 | Living borders and edges | NOT_STARTED |
+| I3 | Show the editor, do not film it | NOT_STARTED |
+| I4 | One continuous space | NOT_STARTED |
+| I5 | Break the rhythm | NOT_STARTED |
+| I6 | Ambient motion and cursor presence | NOT_STARTED |
+| I7 | Guardrails, mobile and re-verification | NOT_STARTED |
+
+Order matters. **I1 is a hard prerequisite** — it is the difference between
+"immersive" and "forty uncoordinated infinite loops", which is precisely the
+problem P6 was created to fix. I3 is the biggest visible win and should follow
+as soon as the foundation exists.
+
+---
+
+## I1 — The motion system
+
+**Status:** NOT_STARTED
+**Impact:** invisible on its own. Everything after this depends on it.
+
+### Why
+
+P6 cut 72 always-running SVG paths down to 24 that pause off-screen, and gave
+the site its first `prefers-reduced-motion` handling. If each new section
+invents its own `repeat: Infinity`, that work is undone within a week and nobody
+notices until the site is slow again.
+
+The site also has no shared sense of timing. Durations across existing sections
+range from 0.4 s to 2.4 s with four different easing curves, chosen ad hoc. That
+is a large part of why the motion that *does* exist reads as incidental rather
+than designed.
+
+### Changes
+
+1. **`lib/motion/tokens.ts`** — a small set of named durations and easings
+   (`instant`, `quick`, `settle`, `drift`, `ambient`) with one signature easing
+   curve for entrances and one for loops. Every animation uses these.
+2. **`lib/motion/use-ambient.ts`** — the only sanctioned way to run a loop.
+   Returns `{ ref, active }`, gated on an IntersectionObserver, already
+   reduced-motion aware, already capped. A loop that is not registered through
+   it is a bug.
+3. **A concurrency governor.** The hook registers with a module-level counter;
+   past the cap, further loops stay paused until a slot frees. Protects against
+   a long page where twelve sections are technically "in view" on a tall
+   monitor.
+4. **`components/ui/ambient.tsx`** — a wrapper component for the common case, so
+   sections do not each wire up the hook by hand.
+5. **A note in CLAUDE.md** stating that `repeat: Infinity` and CSS
+   `animation-iteration-count: infinite` outside `lib/motion` are not allowed.
+
+### Acceptance criteria
+
+- [ ] No section imports `repeat: Infinity` directly
+- [ ] Killing the governor's cap to 0 stops all ambient motion sitewide
+- [ ] Reduced motion is resolved in one place, not per component
+- [ ] Zero measurable cost when nothing is on screen
+
+---
+
+## I2 — Living borders and edges
+
+**Status:** NOT_STARTED
+**Impact:** high visibility, very low cost. The cheapest immersion on the list.
+
+### Why
+
+Directly requested, and the technique is already proven in this codebase: the
+video loader's ring is a rotating `conic-gradient` masked to a ring
+(`.fx-vl-arc` in `globals.css`). It is one element, one transform animation,
+runs on the compositor, and ships no JavaScript. The same trick generalises to
+every card and panel edge on the site.
+
+Right now every border on the site is a static 1px line of `--color-border`.
+There are well over a hundred of them.
+
+### Changes
+
+1. **`components/ui/beam-border.tsx`** — a light travelling around an element's
+   edge. Three variants:
+   - `ambient` — slow, always on while in view. For hero cards and the primary
+     CTA panels.
+   - `trace` — fires once on hover, races around the border and stops. For grid
+     cards, where a hundred always-on beams would be noise.
+   - `pulse` — a soft edge glow that breathes. For the "Available now" style
+     states.
+2. **Section seams.** A thin light that sweeps horizontally along the divider as
+   a section enters the viewport, so sections feel joined rather than stacked.
+3. **Corner brackets** on feature panels that draw themselves in on entry —
+   an editor-viewport visual, on-brand for the product.
+4. **Apply to:** `FeatureHighlights` cards, `PricingSection` tiers,
+   `CreatorStories` earn cards, `ComparisonTeaser`, `FAQSection` accordion rows,
+   `AllLinks`.
+
+### Acceptance criteria
+
+- [ ] Border animation is CSS, not framer-motion
+- [ ] Grid cards use `trace`, not `ambient` — no more than 6 always-on beams in a viewport
+- [ ] Zero added First Load JS (CSS only)
+- [ ] Static, visible borders under reduced motion
+
+---
+
+## I3 — Show the editor, do not film it
+
+**Status:** NOT_STARTED
+**Impact:** the largest of the seven, for both feel and weight.
+
+### Why
+
+This is the milestone that fixes cause 3, and it is the one that pays for the
+rest. It replaces third-party video rectangles with the product itself, moving,
+in the page — and each replacement deletes 1–2 MB of YouTube JavaScript.
+
+It also covers the "cubes moving, editing" part of the brief literally.
+
+**Start with the two dead boxes.** `3D Support` and `Templates & Presets`
+currently render "Video Coming Soon". There is no video to lose, no risk, and
+two full sections of prime space sitting empty.
+
+### Changes
+
+Build a `components/demos/` directory. Each is self-contained, loops through
+`useAmbient`, and is `dynamic()`-imported so it costs nothing until approached.
+
+1. **`TimelineDemo`** — the flagship. Layer rows, a playhead sweeping left to
+   right, keyframe diamonds that pop as it passes, a property value ticking in
+   sync, an easing curve in the corner. A miniature of the actual editor,
+   looping. *(The video loader already contains a crude version of this — the
+   playhead-and-keyframes idea is proven and liked.)*
+2. **`CubeDemo`** — a rotating 3D cube with shaded faces and a soft ground
+   shadow, for `3D Support`. Pure CSS 3D transforms first; only reach for
+   three.js if the look demands it, since the budget allows one WebGL context
+   and I4 wants it.
+3. **`EasingCurveDemo`** — a bezier curve that morphs between easing presets
+   while a dot travels along it and a shape below follows the resulting motion.
+   For `KeyframeInterpolation`, which is the one section already trying to
+   explain something visual.
+4. **`TemplateWallDemo`** — a slow drifting wall of animated template cards for
+   `Templates & Presets`, each a tiny looping composition.
+5. **`ExportDemo`** — a progress ring and format chips resolving, for the
+   render/export story.
+
+**Then convert.** Once the two empty boxes prove the pattern, replace three of
+the five remaining `VideoPlaceholder` videos with demos, keeping the two that
+show something a recreation genuinely cannot.
+
+### Acceptance criteria
+
+- [ ] The two empty "Video Coming Soon" boxes are gone
+- [ ] YouTube embeds on the homepage drop from 13 to **8 or fewer**
+- [ ] Each demo is `dynamic()`-imported with `ssr: false` and a sized placeholder
+- [ ] Each demo pauses fully off-screen
+- [ ] Homepage First Load JS still under 200 kB
+- [ ] Under reduced motion each demo shows a composed still frame, not a blank
+
+### Verify
+
+```bash
+grep -o '<iframe' .next/server/app/index.html | wc -l   # must stay 0
+curl -s https://flashfx.app/ | grep -c 'Video Coming Soon'  # must be 0
+```
+
+---
+
+## I4 — One continuous space
+
+**Status:** NOT_STARTED
+**Impact:** the difference between "a page with effects on it" and "immersive".
+
+### Why
+
+Immersion is mostly continuity. Today each section paints its own background and
+none of them relate: the hero runs a shader, `ImageCarousel` and `FeaturesIntro`
+each run a *different* WebGL shader, `VideoPlaceholder` scatters floating
+shapes, `CreatorStories` draws SVG paths. Scrolling feels like flipping through
+26 unrelated slides because, visually, it is.
+
+Three WebGL contexts that know nothing about each other is also the most
+expensive possible way to achieve that.
+
+### Changes
+
+1. **One persistent backdrop.** A single fixed full-viewport canvas behind the
+   entire page, mounted once in `app/layout.tsx` or at the top of `page.tsx`.
+   Sections become transparent windows onto it instead of each painting its own.
+2. **Drive it with scroll progress.** Colour temperature, drift speed and
+   density shift as the visitor descends, so the page reads as one continuous
+   journey with a beginning and an end rather than a stack of boxes. Hero is
+   cool and open; the middle warms toward the accent yellow; the CTA is the
+   brightest point on the page.
+3. **Retire the per-section backgrounds** it replaces — the two `WebGLShader`
+   instances go, and `ElegantShapesBackground` (currently instantiated 8 times,
+   40 elements) is either dropped or reduced to a foreground accent.
+4. **Parallax depth.** Two or three layers moving at different rates against the
+   scroll, which is what actually produces the feeling of moving *through*
+   something.
+
+Net WebGL contexts: **3 → 1.** This milestone should be roughly cost-neutral or
+cheaper, despite looking like the most expensive one here.
+
+### Acceptance criteria
+
+- [ ] Exactly one WebGL context alive at any time
+- [ ] Backdrop pauses when the tab is hidden (`visibilitychange`), not just off-screen
+- [ ] Pixel ratio still capped at 1.5 (`lib/render-gate.ts`)
+- [ ] Static gradient fallback under reduced motion and on low-power devices
+- [ ] No regression in First Load JS — the retired shaders offset the new one
+
+---
+
+## I5 — Break the rhythm
+
+**Status:** NOT_STARTED
+**Impact:** fixes cause 1. Nothing else on this list addresses it.
+
+### Why
+
+Three sections that differ by seven lines, and seven sections that are the same
+video box, produce a page that feels long and samey no matter how much motion is
+added to it. This milestone makes the page *shorter and more varied* at once.
+
+### Changes
+
+1. **Collapse the clones.** `AllWebEditing`, `DualTimeline` and `EasyAnimations`
+   become one `<FeatureSplit>` component driven by a data file — the same
+   pattern the codebase already uses for FAQ data. Three files of duplicated
+   markup become one component plus three entries.
+2. **Vary the section shapes.** Introduce four distinct layouts and alternate
+   them deliberately instead of repeating one:
+   - **Sticky scrollytelling** — the visual pins while copy scrolls past it.
+     One of these, used well, is worth five ordinary sections. Best candidate:
+     the timeline demo, with the copy explaining each part as the playhead
+     reaches it.
+   - **Full-bleed** — edge to edge, no container, for the 3D and export moments.
+   - **Offset split** — asymmetric, overlapping panels rather than a clean 50/50.
+   - **Horizontal** — a sideways-scrolling band for templates or shorts.
+3. **Cut the count.** Target **26 sections → 16–18**. Merge the thin ones, drop
+   the ones that repeat a point already made.
+4. **Overlapping transitions.** Sections currently abut with a hard edge. Let
+   the incoming section overlap and lift over the outgoing one on scroll.
+
+### Acceptance criteria
+
+- [ ] `AllWebEditing`, `DualTimeline`, `EasyAnimations` are one component
+- [ ] Homepage section count is 18 or fewer
+- [ ] No layout shape repeats more than three times consecutively
+- [ ] The `#dual-timeline` and `#share-projects` anchors still resolve — the
+      Navbar Features dropdown scrolls to them
+
+---
+
+## I6 — Ambient motion and cursor presence
+
+**Status:** NOT_STARTED
+**Impact:** the last 15%. Do not start here — it is garnish on the other six.
+
+### Why
+
+Once the structure and the demos are right, this is what makes the page feel
+responsive to *you* specifically rather than playing the same film for everyone.
+
+### Changes
+
+1. **Cursor-reactive parallax.** Panels and the backdrop shift subtly against
+   pointer position. Pointer-driven only, `pointer: fine` only — never on touch.
+2. **Magnetic CTAs.** The primary buttons lean toward the cursor as it
+   approaches.
+3. **Numbers that count** when their section arrives — file sizes, load times,
+   the figures in `LoadTime` and `ComparisonTeaser`.
+4. **Idle life.** Icons with slow individual loops, headline text with a
+   travelling gradient, staggered breathing on card grids — all through the I1
+   governor so they cannot pile up.
+5. **Scroll velocity.** Fast scrolling stretches or blurs elements slightly and
+   settles when you stop.
+
+### Acceptance criteria
+
+- [ ] All pointer effects behind `(pointer: fine)` and `(hover: hover)`
+- [ ] Loop count still within the I1 cap with every section on screen
+- [ ] No pointer handler runs outside `requestAnimationFrame`
+
+---
+
+## I7 — Guardrails, mobile and re-verification
+
+**Status:** NOT_STARTED
+**Impact:** the milestone that stops this becoming the next `performancemilestones.md`.
+
+### Why
+
+Seven milestones of added motion is exactly how a fast site becomes a slow one
+again. The budget at the top of this file is worth nothing if nothing enforces
+it.
+
+### Changes
+
+1. **A device tier.** Read `navigator.hardwareConcurrency` and `deviceMemory`
+   once; below a threshold, drop to a reduced tier — no backdrop shader, fewer
+   loops, static demos. Most visitors on weak hardware are the ones this site is
+   *for*, which makes this more important here than on most sites.
+2. **Mobile profile.** Cursor effects off, parallax off, loop cap lowered,
+   heavy demos replaced with their still frames. Phones do not have a hover
+   state and do have a battery.
+3. **The two P8 guards, finally built** — a First Load JS ceiling and a
+   `public/` asset-size check that fail the build rather than warn.
+4. **A reduced-motion pass** over everything I1–I6 added, checked with the
+   emulation setting on, not by reading the code.
+5. **Re-verify the P1–P7 wins** against the deployed site: iframe count, font
+   preloads, image payload, WebGL context count.
+
+### Acceptance criteria
+
+- [ ] Build fails if homepage First Load JS exceeds 200 kB
+- [ ] Build fails if any file over 200 kB lands in `public/`
+- [ ] Low-tier path verified with `hardwareConcurrency` throttled
+- [ ] Every P1–P7 structural win still holds on the deployed site
+
+---
+
+## Open questions
+
+These block specific milestones and are the owner's call, not mine.
+
+1. **How much video stays?** I3 assumes five of the seven `VideoPlaceholder`
+   videos can become live demos. If real footage matters for credibility on
+   some of them, say which and I will keep them. *Blocks the second half of I3.*
+2. **Is 200 kB the right ceiling?** It is 23 kB above today. A richer backdrop
+   or a three.js cube could want more. Raising it is a legitimate choice —
+   silently exceeding it is not. *Blocks I4 and I7.*
+3. **How far can the structure move?** I5 proposes 26 sections down to 16–18,
+   which means cutting content, not just merging markup. If specific sections
+   are non-negotiable for SEO or sales, name them. *Blocks I5.*
+4. **Is there a brand reference?** "Immersive" spans a lot of ground. A site or
+   two you consider the target would sharpen I2, I4 and I6 considerably.
+5. **Does the editor have a screen recording or asset kit** that the demos
+   should match visually, so the site's timeline looks like the real one?
+   *Affects I3 fidelity.*
+
+---
+
+## Expected outcome
+
+If I1–I5 land:
+
+| | Today | After |
+|---|---|---|
+| Homepage sections | 26 | 16–18 |
+| YouTube embeds | 13 | ≤ 8 |
+| Looping animations in content | 1 | live demos in 5+ sections |
+| WebGL contexts | 3 | 1 |
+| Duplicate feature sections | 3 | 1 component |
+| Dead "Video Coming Soon" boxes | 2 | 0 |
+| First Load JS | 177 kB | ≤ 200 kB |
+| Third-party JS on the homepage | ~13–26 MB of embeds | roughly half |
+
+The page should end up **shorter, more varied, visibly alive, demonstrating the
+product instead of describing it — and lighter than it is today.**
+
+That last part is the test of whether this plan was executed properly. If
+immersion cost megabytes, it was done wrong.
