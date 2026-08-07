@@ -144,7 +144,12 @@ export function KeyframeInterpolation() {
     bed.current?.setAttribute('d', d);
 
     if (pillars.current) {
-      const ground = yOf(V_MAX) * 1000;
+      /*
+       * Pulled up from the very bottom of the viewBox. At y=1000 the ground
+       * line would sit on the edge with half its stroke clipped away, which is
+       * what made the supports look sawn off rather than standing on anything.
+       */
+      const ground = 988;
       let g = '';
       for (let k = 0; k <= 30; k++) {
         const t = k / 30;
@@ -152,6 +157,8 @@ export function KeyframeInterpolation() {
         const y = (yOf(valueAt(t)) * 1000).toFixed(2);
         g += `<line x1="${x}" y1="${y}" x2="${x}" y2="${ground}" stroke="rgba(245,197,24,0.15)" stroke-width="2" vector-effect="non-scaling-stroke" />`;
       }
+      // The ground the supports stand on, drawn last so it caps them.
+      g += `<line x1="0" y1="${ground}" x2="1000" y2="${ground}" stroke="rgba(245,197,24,0.42)" stroke-width="2.5" vector-effect="non-scaling-stroke" />`;
       pillars.current.innerHTML = g;
     }
   }, [valueAt]);

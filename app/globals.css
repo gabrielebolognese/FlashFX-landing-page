@@ -163,6 +163,50 @@
 }
 
 /*
+ * Browser icons on the "All on web" section.
+ *
+ * The rotation lives in a custom property rather than an inline transform,
+ * which is the only way hover can cancel it: an inline `style` beats any class,
+ * so `scale + rotate(0)` written as a utility would simply lose. With the angle
+ * as `--fx-rot`, the hover rule owns the whole transform and can zero it.
+ *
+ * A dedicated host class, not Tailwind's `group` — `group` is used all over the
+ * site and a descendant selector on it would fire from any ancestor that
+ * happens to carry one.
+ */
+.fx-browser {
+  transform: rotate(var(--fx-rot, 0deg));
+  transition:
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 380ms ease-out;
+}
+
+.fx-browser-host:hover .fx-browser {
+  transform: rotate(0deg) scale(1.3);
+  filter: drop-shadow(0 14px 34px rgba(245, 197, 24, 0.45));
+}
+
+/* The glow sits behind the icon and grows into place with it. */
+.fx-browser-glow {
+  opacity: 0;
+  transform: scale(0.65);
+  background: radial-gradient(
+    circle,
+    rgba(245, 197, 24, 0.5) 0%,
+    rgba(245, 197, 24, 0.18) 42%,
+    transparent 70%
+  );
+  transition:
+    opacity 380ms ease-out,
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fx-browser-host:hover .fx-browser-glow {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/*
  * The hero's single call to action.
  *
  * Deliberately not `ShimmerButton`: that one is a dark outline chip used a
