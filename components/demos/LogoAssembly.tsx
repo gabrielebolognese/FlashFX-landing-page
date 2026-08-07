@@ -217,13 +217,10 @@ function sampleText(text: string, rows: number, fontFamily: string): Grid {
 export function LogoAssembly({
   className,
   duration = BUILD,
-  onDone,
 }: {
   className?: string;
   /** Seconds for the whole flight. */
   duration?: number;
-  /** Fired once, when the last cube has landed. */
-  onDone?: () => void;
 }) {
   /*
    * Priority 10, above every other demo. This is the hero: if the governor
@@ -234,8 +231,6 @@ export function LogoAssembly({
   const host = useRef<HTMLDivElement>(null);
   const activeRef = useRef(active);
   const wake = useRef<(() => void) | null>(null);
-  const doneRef = useRef(onDone);
-  doneRef.current = onDone;
   const durationRef = useRef(duration);
   durationRef.current = duration;
   activeRef.current = active;
@@ -474,10 +469,7 @@ export function LogoAssembly({
         const dt = Math.min(0.05, (now - last) / 1000);
         last = now;
 
-        if (progress < 1) {
-          progress = Math.min(1, progress + dt / durationRef.current);
-          if (progress >= 1) doneRef.current?.();
-        }
+        if (progress < 1) progress = Math.min(1, progress + dt / durationRef.current);
         // The turn eases in as the logo finishes arriving, so its cubes are not
         // flying toward a moving target.
         spin += dt * 0.55 * smoothstep(0.55, 1, progress);
@@ -524,7 +516,6 @@ export function LogoAssembly({
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         progress = 1;
         spin = 0;
-        doneRef.current?.();
       }
 
       draw();
