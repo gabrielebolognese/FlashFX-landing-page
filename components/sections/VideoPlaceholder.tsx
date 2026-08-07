@@ -150,7 +150,16 @@ export function VideoPlaceholder({ title, description, isMainDemo, gridBackgroun
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className={`relative w-full rounded-[32px] bg-fx-bg-surface border border-fx-border overflow-hidden group ${youtubeId ? '' : 'cursor-pointer'} ${
+          className={`relative w-full overflow-hidden group ${
+            /*
+              A `bare` demo gets no card at all — no surface, no border, no
+              radius — so it blends into the section instead of sitting in a
+              box. Everything else keeps the panel.
+            */
+            demo && demoFrame[demo].bare
+              ? ''
+              : 'rounded-[32px] bg-fx-bg-surface border border-fx-border'
+          } ${/* only the empty "coming soon" state is clickable */ !demo && !youtubeId ? 'cursor-pointer' : ''} ${
             isMainDemo ? 'flex-1 min-h-0' : demo ? demoFrame[demo].aspect : 'aspect-video'
           }`}
         >

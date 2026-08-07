@@ -54,11 +54,17 @@ export type DemoKind = 'timeline' | 'clips' | 'cube' | 'easing' | 'presets' | 's
  * wider than the default and appreciably taller. Everything else keeps the
  * original frame.
  */
-export const demoFrame: Record<DemoKind, { width: string; aspect: string }> = {
+export const demoFrame: Record<DemoKind, { width: string; aspect: string; bare?: boolean }> = {
   // 64rem + 20%.
   timeline: { width: 'max-w-[76.8rem]', aspect: 'aspect-[16/11]' },
   clips: { width: 'max-w-[76.8rem]', aspect: 'aspect-[16/10]' },
-  cube: { width: 'max-w-5xl', aspect: 'aspect-video' },
+  /*
+   * `bare` — no card surface, no border, no radius. The 3D viewport is meant to
+   * blend into the section rather than sit in a box, so `VideoPlaceholder`
+   * paints nothing behind it. `CubeDemo` passes `bare` to `DemoShell` to match;
+   * the two have to agree or you get a headerless panel with a visible edge.
+   */
+  cube: { width: 'max-w-[76.8rem]', aspect: 'aspect-[16/9]', bare: true },
   easing: { width: 'max-w-5xl', aspect: 'aspect-video' },
   presets: { width: 'max-w-5xl', aspect: 'aspect-video' },
   share: { width: 'max-w-5xl', aspect: 'aspect-video' },

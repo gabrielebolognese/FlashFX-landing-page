@@ -113,6 +113,7 @@ of how good it looks.
 | I5 | Break the rhythm | NOT_STARTED |
 | I6 | Ambient motion and cursor presence | NOT_STARTED |
 | I7 | Guardrails, mobile and re-verification | NOT_STARTED |
+| I8 | The morph sequence — cube to aeroplane | PLANNED, NOT STARTED |
 
 Order matters. **I1 is a hard prerequisite** — it is the difference between
 "immersive" and "forty uncoordinated infinite loops", which is precisely the
@@ -616,6 +617,143 @@ it.
 - [ ] Build fails if any file over 200 kB lands in `public/`
 - [ ] Low-tier path verified with `hardwareConcurrency` throttled
 - [ ] Every P1–P7 structural win still holds on the deployed site
+
+---
+
+## I8 — The morph sequence: cube to aeroplane
+
+**Status:** PLANNED, NOT STARTED — 2026-08-07. Planning only; the viewport
+blending shipped separately.
+**Impact:** the single most memorable thing on the site, if it lands.
+
+### The brief
+
+> A cube that duplicates itself, condenses into a sphere, stretches, grows
+> wings, and morphs into a 3D aeroplane — in the same faceted style as the cube,
+> with differently coloured faces.
+
+### The one thing that has to be said first
+
+**The current cube cannot do this, and neither can any amount of CSS.**
+
+`CubeDemo` is six `<div>`s with `preserve-3d`. CSS 3D transforms move, rotate
+and scale flat planes; they have no vertices to interpolate. There is no
+sequence of CSS properties that turns a cube into a sphere, because the sphere
+is not a transformed cube — it is different geometry.
+
+So this milestone needs real 3D. That is a budget decision before it is a design
+one, and it is question 1 below.
+
+### The approach: a swarm, not a shapeshifter
+
+There are two ways to build a morph like this, and the obvious one is worse.
+
+**Vertex morphing** — one mesh whose vertices lerp between a cube, a sphere and
+an aeroplane. This is the textbook answer and it is a trap here. Morph targets
+require *identical vertex counts and ordering* across every shape, so the
+aeroplane has to be authored to match a sphere's topology. That means Blender, a
+retopology pass, and a shape that will look like a melted sphere rather than a
+plane. It also throws away the faceted look, because a smoothly interpolating
+mesh does not read as flat-shaded blocks.
+
+**A swarm of cubes** — a few hundred small cubes whose *positions* lerp between
+target point clouds. This is the right answer, and it is what the brief actually
+describes: *"a cube that duplicated itself"*. Every stage is nothing more than a
+list of target positions for the same N cubes.
+
+| Stage | What the swarm does |
+|---|---|
+| 1. One cube | All N cubes coincident at the origin, reading as a single solid cube |
+| 2. Duplication | They separate outward on a lattice — visibly *becoming many* |
+| 3. Sphere | Positions lerp to points distributed on a sphere (Fibonacci spiral, so the spacing is even) |
+| 4. Stretch | The same sphere scaled along one axis into a capsule — the fuselage |
+| 5. Wings | A subset peels off to sweep out from the body |
+| 6. Aeroplane | Every cube lands on its position in the final silhouette |
+
+The advantages compound:
+
+- Each stage is a `Float32Array` of positions. Morphing is one lerp. No mesh
+  surgery, no Blender, no topology matching.
+- **The faceted style survives**, because the units *are* cubes. The
+  multi-coloured faces the brief asks to keep are the same six colours already
+  in `CubeDemo`.
+- One `InstancedMesh` draws all of them in a **single draw call**, so a few
+  hundred cubes cost about what one costs.
+- The aeroplane can be defined by hand as a list of blocks — fuselage, wings,
+  tail, fin — and sampled into points. No modelling tool in the loop.
+- It degrades: on a weak device, drop N from 400 to 120 and the whole thing
+  still works.
+
+### Files
+
+- `components/demos/MorphDemo.tsx` — the new demo
+- `components/demos/morph-shapes.ts` — the point-cloud generators
+- `components/demos/index.tsx` — register as a `DemoKind`
+- `lib/render-gate.ts` — reuse `cappedPixelRatio`
+
+### Sketch
+
+```ts
+// One target per stage: N points each, same N throughout.
+const COUNT = 400;
+type Stage = { name: string; points: Float32Array; hold: number };
+
+// Even distribution — the naive random-on-sphere clumps at the poles.
+function fibonacciSphere(n: number, radius: number): Float32Array
+
+// Sampled from hand-authored boxes: fuselage, two wings, tailplane, fin.
+function aeroplane(n: number): Float32Array
+
+// Per frame: lerp current -> target, with a per-cube delay so the swarm
+// arrives in a wave rather than snapping together as one.
+```
+
+### Cost, honestly
+
+three.js is **already a dependency** and already lazily loaded for the hero
+shader (P5), so this adds no new library — only the demo's own code, a few kB,
+code-split like every other demo.
+
+The real cost is a **WebGL context**, and I4's budget says one. See question 1.
+
+### Acceptance criteria
+
+- [ ] Reads as one cube becoming many, not as particles that were always there
+- [ ] Faceted multi-coloured style preserved — same palette as `CubeDemo`
+- [ ] One `InstancedMesh`, one draw call
+- [ ] Runs through `useAmbient`; frozen on the aeroplane stage without a slot
+- [ ] Context released, not merely paused, when far off screen
+- [ ] Pixel ratio capped at 1.5 via `lib/render-gate.ts`
+- [ ] Cube count drops on low-tier devices (I7's device tier)
+- [ ] Homepage First Load JS unchanged — demo code split out
+- [ ] Under reduced motion: the aeroplane, still, no sequence
+
+### What I need from you
+
+The plan is blocked on these. Numbers 1 and 2 matter most.
+
+1. **The WebGL budget.** This needs a context, and I4 reserves the single
+   allowed one for the page-wide backdrop. Three ways out:
+   - **(a)** Let the homepage run two contexts — the backdrop and this. Simple,
+     and 2 is still far below the browser's limit of ~8–16. Costs a rule I
+     wrote, not a real constraint. *My recommendation.*
+   - **(b)** One shared renderer, drawing both through scissor viewports. Most
+     efficient, considerably more machinery.
+   - **(c)** Drop the I4 backdrop to canvas2D or CSS and give WebGL to this.
+2. **What aeroplane?** The silhouette drives the point cloud. A swept-wing jet,
+   a straight-wing light aircraft, an airliner, a paper plane? A reference image
+   or even a rough sketch is enough — I need the proportions, not a model.
+3. **Where does it live?** Replacing `CubeDemo` in *3D Support* is the obvious
+   home. But a sequence this long may deserve a section of its own, possibly the
+   sticky scrollytelling treatment from I5 — where the stages advance as you
+   scroll rather than on a timer, so the visitor drives the morph. That is more
+   striking and more work.
+4. **Timed or scrolled?** A ~12 s loop, or bound to scroll position?
+5. **Does FlashFX actually do this?** If the product can produce this kind of
+   sequence, it should be framed as a demonstration and the copy should say so.
+   If it cannot, it stays decoration and the copy must not imply otherwise —
+   `CLAUDE.md` forbids inventing product claims, and this is exactly the kind of
+   thing a visitor would read as one.
 
 ---
 

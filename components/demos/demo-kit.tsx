@@ -39,16 +39,37 @@ export function useDemo() {
 export function DemoShell({
   label,
   chrome,
+  bare,
   children,
   className,
   innerRef,
 }: {
   label: string;
   chrome?: 'editor' | 'browser';
+  /**
+   * Drop the panel entirely — no surface, no header, no edge.
+   *
+   * For demos that should read as part of the page rather than as something
+   * shown inside a window. The 3D viewport uses it: a cube in a bordered box
+   * looks like a screenshot of a viewport, while the same cube floating on the
+   * section's own background looks like it is in the page.
+   *
+   * `demoFrame[kind].bare` must be set to match, or `VideoPlaceholder` will
+   * still paint the card surface underneath this.
+   */
+  bare?: boolean;
   children: React.ReactNode;
   className?: string;
   innerRef?: React.Ref<HTMLDivElement>;
 }) {
+  if (bare) {
+    return (
+      <div ref={innerRef} className={cn('absolute inset-0 overflow-hidden select-none', className)}>
+        {children}
+      </div>
+    );
+  }
+
   return (
     <div
       ref={innerRef}

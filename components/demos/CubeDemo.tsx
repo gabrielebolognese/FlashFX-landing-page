@@ -35,18 +35,23 @@ export function CubeDemo() {
   const { ref, active } = useDemo();
 
   return (
-    <DemoShell innerRef={ref} label="3D viewport">
-      {/* Ground grid, to give the rotation something to sit on. */}
+    /*
+     * `bare`: no panel, no border, no header. The cube sits directly on the
+     * section's own background so it reads as part of the page rather than a
+     * screenshot of a viewport shown inside a window.
+     *
+     * The section already supplies a grid (`gridBackground` on the
+     * VideoPlaceholder), so this no longer draws its own — two grids at
+     * different pitches would moiré against each other, and the section's is
+     * what makes the blend seamless. What remains is a soft pool of light under
+     * the cube, so it is grounded rather than floating in nothing.
+     */
+    <DemoShell innerRef={ref} label="3D viewport" bare>
       <div
-        className="absolute inset-0 opacity-[0.18]"
+        className="absolute left-1/2 top-1/2 w-[62%] h-[44%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         style={{
-          backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.35) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px)
-          `,
-          backgroundSize: '32px 32px',
-          maskImage: 'radial-gradient(ellipse 70% 60% at 50% 55%, #000, transparent)',
-          WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 55%, #000, transparent)',
+          background:
+            'radial-gradient(ellipse at center, rgba(245,197,24,0.10) 0%, rgba(124,92,191,0.06) 42%, transparent 72%)',
         }}
       />
 
