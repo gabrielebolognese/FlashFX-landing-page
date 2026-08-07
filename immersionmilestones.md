@@ -749,6 +749,47 @@ The real cost is a **WebGL context**, and I4's budget says one. See question 1.
    under "3D capability", including the limit: **it is not a sculpting or
    modelling application**, and copy must never imply you create geometry in it.
 
+### Revision, 2026-08-07 — a real mesh morph, and the empty scene removed
+
+The swarm is gone. The owner supplied `AirbusA380.obj` and asked for a genuine
+morph: cube → sphere → the model. `morph-shapes.ts` was deleted.
+
+**The 107 MB problem.** The OBJ is a Roblox export: 880,253 vertices, 642,655
+triangles, and **untracked in git** — so it would never reach Netlify even if
+the browser could load it. The geometry is therefore baked into the bundle.
+`scratchpad/bake-a380.js` decimates by grid vertex-clustering to **2,324
+triangles / 818 vertices**, 42 kB of source in a lazy chunk. `public/*.obj` is
+now gitignored so the source can never be committed by accident.
+
+**Orientation was wrong on the first pass.** The script assumed the longest axis
+was the fuselage. An A380 is *wider than it is long* — 79.8 m span against
+72.7 m length — so that laid the aircraft down sideways. Fixed by mapping
+longest → span, middle → length, shortest → height. Verified against the real
+aircraft: span:length 1.108 (real 1.098), height:length 0.325 (real 0.331).
+
+**The model contains 192 literal `-nan(ind)` vertices.** They surfaced as
+`null` in the JSON output and a TypeScript error. They are now dropped, along
+with every face referencing them, and the script refuses to emit a non-finite
+value.
+
+**Which topology to morph from was measured, not guessed.** Two options:
+sphere-topology shrink-wrapped onto the aircraft gives a perfect sphere and
+ruined wings — they are thin and near-horizontal, so a ray from the centre
+misses them above ~3° of elevation. Aircraft-topology projected onto a sphere
+gives a perfect aeroplane and a sphere only as good as the vertex distribution.
+
+The second was chosen after measuring the projection: the aircraft's triangles
+cover the unit sphere **2.19× over** with 6 degenerate triangles out of 2,324.
+Over-coverage means no holes. A first check — 819 vertex directions filling only
+36% of angular bins — looked disqualifying, but that measures vertices, and
+triangles span between them.
+
+**The empty 3D scene is gone.** `ThreeDSupport`'s right-hand column held a
+`SplineScene` pointing at a `prod.spline.design` URL, and that component is a
+stub that renders the words "3D scene unavailable" on a black square. Removed;
+the section is now a single centred column, retitled *"FlashFX has 3 dimensions,
+on the web!"*, and demoted from `<h1>` to `<h2>` — the page's h1 is the hero.
+
 ### What shipped
 
 `components/demos/morph-shapes.ts` — pure arithmetic, no three.js and no React,

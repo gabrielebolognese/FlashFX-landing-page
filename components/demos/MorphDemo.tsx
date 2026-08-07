@@ -4,114 +4,158 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { cappedPixelRatio } from '@/lib/render-gate';
 import { DemoShell, useDemo } from './demo-kit';
-import { buildSequence, MORPH_COUNT, type Stage } from './morph-shapes';
+import { A380_POSITIONS, A380_INDICES } from './a380-geometry';
 
 /*
- * The morph sequence: one cube duplicates, condenses into a sphere, stretches,
- * grows wings and becomes a Boeing 747 (immersionmilestones.md I8).
+ * Cube → sphere → Airbus A380, as one mesh morphing (immersionmilestones.md I8).
  *
- * This is a recreation of an animation the founder actually built in FlashFX —
- * see FIX.md *Canonical facts*, "3D capability". FlashFX imports and animates
- * 3D objects and runs morph animations that modify them; it is not a sculpting
- * tool, and no copy around this demo may imply that it is.
+ * A recreation of an animation the founder built in FlashFX — see FIX.md
+ * *Canonical facts*, "3D capability". FlashFX imports and animates 3D objects
+ * and runs morph animations that modify them. It is **not** a sculpting tool,
+ * and no copy around this demo may imply otherwise.
  *
- * A swarm, not a shapeshifter. Every stage is a list of target positions for
- * the same 512 cubes, so morphing is a lerp — no vertex-count matching, no
- * modelling tool, and the faceted multi-coloured style survives because the
- * units really are cubes. One InstancedMesh draws all 512 in a single call.
+ * ── Why the aircraft's own topology is the base ──────────────────────────────
+ *
+ * A vertex morph needs one vertex set shared by every stage. There were two
+ * candidates and the choice was measured, not guessed:
+ *
+ *   Sphere topology, shrink-wrapped onto the aircraft — gives a perfect sphere
+ *   and a ruined aeroplane. Wings are thin and nearly horizontal, so a ray cast
+ *   outward from the centre misses them above about 3° of elevation; the wings
+ *   collapse to stubs.
+ *
+ *   Aircraft topology, projected onto a sphere — gives a perfect aeroplane, and
+ *   the sphere is only as good as the vertex distribution allows.
+ *
+ * The second was chosen after measuring the projection: the aircraft's 2324
+ * triangles cover the unit sphere **2.19 times over**, with 6 degenerate
+ * triangles out of 2324. Over-coverage means no holes — the ball is closed —
+ * and the overlapping layers are what give it depth at low opacity. (A vertex
+ * count of 819 across 36% of direction bins looked alarming until the triangles
+ * were measured rather than the vertices; triangles span between vertices.)
+ *
+ * The cube is the same projection taken one step further: normalise, then
+ * divide by the largest component to land on a cube face.
  */
 
-/** Edge length of each cube. Small enough that 512 of them read as a surface. */
-const CUBE = 0.30;
+/** Radius of the sphere stage, and half-extent of the cube stage. */
+const SPHERE_R = 3.2;
+const CUBE_H = 2.55;
 
-/**
- * How much of the morph is spent staggering arrivals.
- *
- * With every cube on the same clock the swarm snaps between shapes as one rigid
- * object, which looks like a slideshow. Offsetting each cube's start across
- * 40% of the window makes the shape assemble as a wave.
- */
-const WAVE = 0.4;
+/** Same palette as the cube demo, applied per face by dominant normal axis. */
+const FACES = ['#F5C518', '#7C5CBF', '#E6EDF3', '#2D6BE4', '#4ADE80', '#F97362'];
 
-/** Face colours, matching CubeDemo so the two read as the same material. */
-const FACES = [
-  '#F5C518', // +x
-  '#7C5CBF', // -x
-  '#E6EDF3', // +y
-  '#2D6BE4', // -y
-  '#4ADE80', // +z
-  '#F97362', // -z
-];
+/** Low, as asked — the faceted layers should read through one another. */
+const OPACITY = 0.42;
+
+interface Phase {
+  name: string;
+  target: Float32Array;
+  morph: number;
+  hold: number;
+}
 
 function easeInOutCubic(t: number): number {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
-/** Paint each of the box's six faces a different colour, once, at build time. */
-function facedBox(size: number): THREE.BoxGeometry {
-  const geometry = new THREE.BoxGeometry(size, size, size);
-  const colours = new Float32Array(24 * 3);
-  const c = new THREE.Color();
-
-  // BoxGeometry lays out 6 faces of 4 vertices, in +x −x +y −y +z −z order.
-  for (let face = 0; face < 6; face++) {
-    c.set(FACES[face]);
-    for (let v = 0; v < 4; v++) {
-      const i = (face * 4 + v) * 3;
-      colours[i] = c.r;
-      colours[i + 1] = c.g;
-      colours[i + 2] = c.b;
-    }
-  }
-
-  geometry.setAttribute('color', new THREE.BufferAttribute(colours, 3));
-  return geometry;
-}
-
-/** Where we are in the loop: which stage, and how far into it. */
-function resolve(stages: Stage[], elapsed: number) {
-  const cycle = stages.reduce((sum, s) => sum + s.morph + s.hold, 0);
-  let t = elapsed % cycle;
-
-  for (let i = 0; i < stages.length; i++) {
-    const stage = stages[i];
-    if (t < stage.morph) {
-      // Morphing out of the previous stage, wrapping at the start of the loop.
-      const from = stages[(i - 1 + stages.length) % stages.length];
-      return { from: from.points, to: stage.points, progress: t / stage.morph };
-    }
-    t -= stage.morph;
-    if (t < stage.hold) {
-      return { from: stage.points, to: stage.points, progress: 1 };
-    }
-    t -= stage.hold;
-  }
-
-  const last = stages[stages.length - 1];
-  return { from: last.points, to: last.points, progress: 1 };
-}
-
 export function MorphDemo() {
   const { ref, active } = useDemo();
   const host = useRef<HTMLDivElement>(null);
-  /** Set up by the mount effect, driven by the `active` effect below. */
   const controls = useRef<{ start: () => void; stop: () => void } | null>(null);
 
   useEffect(() => {
     const container = host.current;
     if (!container) return;
 
-    const stages = buildSequence(MORPH_COUNT);
+    // ── Geometry ────────────────────────────────────────────────────────────
+    const indexed = new THREE.BufferGeometry();
+    indexed.setAttribute('position', new THREE.Float32BufferAttribute(A380_POSITIONS, 3));
+    indexed.setIndex(A380_INDICES);
+    // Non-indexed so every triangle owns its three vertices — that is what lets
+    // each face take a flat colour of its own.
+    const geometry = indexed.toNonIndexed();
+    indexed.dispose();
+
+    const plane = (geometry.getAttribute('position') as THREE.BufferAttribute).array as Float32Array;
+    const count = plane.length / 3;
+
+    const sphere = new Float32Array(plane.length);
+    const cube = new Float32Array(plane.length);
+    for (let i = 0; i < plane.length; i += 3) {
+      const x = plane[i], y = plane[i + 1], z = plane[i + 2];
+      const r = Math.hypot(x, y, z) || 1;
+      const nx = x / r, ny = y / r, nz = z / r;
+
+      sphere[i] = nx * SPHERE_R;
+      sphere[i + 1] = ny * SPHERE_R;
+      sphere[i + 2] = nz * SPHERE_R;
+
+      // Largest component to 1 ⇒ the point lands on a cube face.
+      const m = Math.max(Math.abs(nx), Math.abs(ny), Math.abs(nz)) || 1;
+      cube[i] = (nx / m) * CUBE_H;
+      cube[i + 1] = (ny / m) * CUBE_H;
+      cube[i + 2] = (nz / m) * CUBE_H;
+    }
+
+    // ── Colour, per triangle, by the aircraft's own face normals ─────────────
+    const colours = new Float32Array(plane.length);
+    const c = new THREE.Color();
+    for (let t = 0; t < count; t += 3) {
+      const i = t * 3;
+      const ax = plane[i + 3] - plane[i], ay = plane[i + 4] - plane[i + 1], az = plane[i + 5] - plane[i + 2];
+      const bx = plane[i + 6] - plane[i], by = plane[i + 7] - plane[i + 1], bz = plane[i + 8] - plane[i + 2];
+      const nx = ay * bz - az * by, ny = az * bx - ax * bz, nz = ax * by - ay * bx;
+
+      // Dominant axis and sign pick one of the six colours, so the aircraft's
+      // top, sides and underside each read differently — the same idea as the
+      // cube's six faces, generalised to an arbitrary mesh.
+      const ex = Math.abs(nx), ey = Math.abs(ny), ez = Math.abs(nz);
+      const face = ex >= ey && ex >= ez ? (nx >= 0 ? 0 : 1) : ey >= ez ? (ny >= 0 ? 2 : 3) : nz >= 0 ? 4 : 5;
+      c.set(FACES[face]);
+      for (let v = 0; v < 3; v++) {
+        colours[i + v * 3] = c.r;
+        colours[i + v * 3 + 1] = c.g;
+        colours[i + v * 3 + 2] = c.b;
+      }
+    }
+    geometry.setAttribute('color', new THREE.BufferAttribute(colours, 3));
+
+    const material = new THREE.MeshBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      opacity: OPACITY,
+      // The mesh is not watertight and the sphere stage self-overlaps, so back
+      // faces must draw. Without depthWrite the layers blend evenly instead of
+      // fighting over who is in front.
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+
+    const mesh = new THREE.Mesh(geometry, material);
+    const group = new THREE.Group();
+    group.add(mesh);
+
+    // A faint wire over the top, so the facets stay legible at 42% opacity.
+    const wire = new THREE.Mesh(
+      geometry,
+      new THREE.MeshBasicMaterial({
+        color: 0xf5c518,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.06,
+        depthWrite: false,
+      })
+    );
+    group.add(wire);
+
     const scene = new THREE.Scene();
+    scene.add(group);
+
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    camera.position.set(0, 3.1, 13.5);
+    camera.position.set(0, 2.6, 14.5);
     camera.lookAt(0, 0, 0);
 
-    /*
-     * `alpha` with a fully transparent clear colour: the viewport is blended
-     * into the section rather than sitting in a panel, so the canvas must not
-     * paint its own background.
-     */
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(cappedPixelRatio());
@@ -120,47 +164,44 @@ export function MorphDemo() {
     renderer.domElement.style.height = '100%';
     renderer.domElement.style.display = 'block';
 
-    const geometry = facedBox(CUBE);
-    const material = new THREE.MeshBasicMaterial({ vertexColors: true });
-    const mesh = new THREE.InstancedMesh(geometry, material, MORPH_COUNT);
-    mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    const phases: Phase[] = [
+      { name: 'cube', target: cube, morph: 1.6, hold: 1.4 },
+      { name: 'sphere', target: sphere, morph: 1.5, hold: 1.2 },
+      { name: 'a380', target: plane.slice(), morph: 1.8, hold: 3.2 },
+    ];
+    const cycle = phases.reduce((s, p) => s + p.morph + p.hold, 0);
 
-    // A little per-cube brightness variation, so 512 identical cubes read as a
-    // volume with depth rather than a flat sheet of one colour.
-    const tint = new THREE.Color();
-    for (let i = 0; i < MORPH_COUNT; i++) {
-      const shade = 0.78 + ((i * 37) % 100) / 100 * 0.42;
-      tint.setRGB(shade, shade, shade);
-      mesh.setColorAt(i, tint);
-    }
-    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-
-    const group = new THREE.Group();
-    group.add(mesh);
-    scene.add(group);
-
-    const dummy = new THREE.Object3D();
+    const attribute = geometry.getAttribute('position') as THREE.BufferAttribute;
+    const live = attribute.array as Float32Array;
 
     const paint = (elapsed: number) => {
-      const { from, to, progress } = resolve(stages, elapsed);
+      let t = elapsed % cycle;
+      let from = phases[phases.length - 1].target;
+      let to = phases[0].target;
+      let progress = 1;
 
-      for (let i = 0; i < MORPH_COUNT; i++) {
-        // Stagger: cube 0 leaves first, the last cube leaves WAVE later.
-        const offset = (i / MORPH_COUNT) * WAVE;
-        const local = Math.min(1, Math.max(0, (progress - offset) / (1 - WAVE)));
-        const e = easeInOutCubic(local);
-
-        const j = i * 3;
-        dummy.position.set(
-          from[j] + (to[j] - from[j]) * e,
-          from[j + 1] + (to[j + 1] - from[j + 1]) * e,
-          from[j + 2] + (to[j + 2] - from[j + 2]) * e
-        );
-        dummy.updateMatrix();
-        mesh.setMatrixAt(i, dummy.matrix);
+      for (let i = 0; i < phases.length; i++) {
+        const p = phases[i];
+        if (t < p.morph) {
+          from = phases[(i - 1 + phases.length) % phases.length].target;
+          to = p.target;
+          progress = easeInOutCubic(t / p.morph);
+          break;
+        }
+        t -= p.morph;
+        if (t < p.hold) {
+          from = p.target;
+          to = p.target;
+          progress = 1;
+          break;
+        }
+        t -= p.hold;
       }
 
-      mesh.instanceMatrix.needsUpdate = true;
+      for (let i = 0; i < live.length; i++) {
+        live[i] = from[i] + (to[i] - from[i]) * progress;
+      }
+      attribute.needsUpdate = true;
       renderer.render(scene, camera);
     };
 
@@ -171,33 +212,22 @@ export function MorphDemo() {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
     };
-
     const observer = new ResizeObserver(resize);
     observer.observe(container);
     resize();
 
-    /*
-     * The still frame is the finished aeroplane, held at a three-quarter angle.
-     * Used when the governor denies a slot and when reduced motion is set —
-     * never a blank canvas, and never the sequence half-finished.
-     */
-    const cycle = stages.reduce((sum, s) => sum + s.morph + s.hold, 0);
-    const restingAt = cycle - stages[stages.length - 1].hold / 2;
-
+    /** The still frame: the finished aircraft, three-quarter view. */
+    const restingAt = cycle - phases[phases.length - 1].hold / 2;
     const still = () => {
-      group.rotation.set(0.08, -0.72, 0);
+      group.rotation.set(0.16, -0.62, 0);
       paint(restingAt);
     };
 
     let frame = 0;
     let last = 0;
     let running = false;
-    /*
-     * Elapsed time is accumulated rather than read from the clock, so the
-     * sequence starts on the cube and resumes where it paused. Using
-     * `now / 1000` directly would enter at an arbitrary point in the loop —
-     * usually mid-morph, which is the one thing that never reads well.
-     */
+    // Accumulated, not read from the clock, so the loop always begins on the
+    // cube rather than entering at an arbitrary point mid-morph.
     let elapsed = 0;
 
     const loop = (now: number) => {
@@ -207,8 +237,8 @@ export function MorphDemo() {
       last = now;
       elapsed += dt;
 
-      group.rotation.y += dt * 0.28;
-      group.rotation.x = 0.08 + Math.sin(elapsed / 4.2) * 0.06;
+      group.rotation.y += dt * 0.32;
+      group.rotation.x = 0.16 + Math.sin(elapsed / 5) * 0.07;
       paint(elapsed);
     };
 
@@ -235,9 +265,7 @@ export function MorphDemo() {
       observer.disconnect();
       geometry.dispose();
       material.dispose();
-      mesh.dispose();
-      // Hand the WebGL context back rather than leaving it for the browser to
-      // reclaim — contexts are a limited per-page resource.
+      (wire.material as THREE.Material).dispose();
       renderer.dispose();
       renderer.forceContextLoss();
       if (renderer.domElement.parentNode === container) {
@@ -246,8 +274,6 @@ export function MorphDemo() {
     };
   }, []);
 
-  // The governor decides whether this may run; `useAmbient` already folds in
-  // reduced motion and off-screen, so there is nothing else to check here.
   useEffect(() => {
     if (active) controls.current?.start();
     else controls.current?.stop();
@@ -256,7 +282,7 @@ export function MorphDemo() {
   return (
     <DemoShell innerRef={ref} label="3D viewport" bare>
       <div
-        className="absolute left-1/2 top-1/2 w-[68%] h-[48%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+        className="absolute left-1/2 top-1/2 w-[70%] h-[50%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         style={{
           background:
             'radial-gradient(ellipse at center, rgba(245,197,24,0.10) 0%, rgba(124,92,191,0.06) 42%, transparent 72%)',

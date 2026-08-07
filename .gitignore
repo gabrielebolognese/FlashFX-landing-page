@@ -34,3 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 107 MB Roblox export, baked into components/demos/a380-geometry.ts.
+# Never commit: it would never reach Netlify and is four orders of magnitude
+# too large to fetch in a browser. Re-bake with scratchpad/bake-a380.js.
+public/*.obj
+public/*.mtl
