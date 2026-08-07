@@ -327,8 +327,18 @@ export function PricingSection() {
             featureGroups={tableGroups}
             billingCycle={cycle}
             onCycleChange={setCycle}
-            onPlanSelect={(planId, currentCycle) => {
-              console.log(`Selected: ${planId} / ${currentCycle}`);
+            /*
+             * All three tiers open the editor. They previously only
+             * `console.log`ed, so every button in the pricing section was dead:
+             * three calls to action on the page most likely to convert, none of
+             * which went anywhere.
+             *
+             * There is no checkout on this site — every CTA points at
+             * editor.flashfx.app — so that is where these go too until there is
+             * something else to point them at.
+             */
+            onPlanSelect={() => {
+              window.open('https://editor.flashfx.app', '_blank', 'noopener,noreferrer');
             }}
           />
         </motion.div>

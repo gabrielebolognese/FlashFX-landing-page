@@ -1,8 +1,25 @@
 'use client';
 
 import * as React from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Check, X, Minus } from 'lucide-react';
+import { Check, X } from 'lucide-react';
+import { BeamBorder } from '@/components/ui/beam-border';
+import { useAmbient } from '@/lib/motion';
+
+/*
+ * Restyled 2026-08-07 to match the rest of the site.
+ *
+ * The cards were `rounded-card` — a 4px radius from the original design
+ * tokens — with flat static borders, which left this the last section still
+ * looking like the old site. They are now 2xl-radius panels carrying the same
+ * beam borders as everything else: `trace` on the two standard tiers, and the
+ * one continuously circling `ambient` beam on the popular tier, which is the
+ * only card that earns it.
+ *
+ * Prices animate between billing cycles rather than swapping instantly, and
+ * features stagger in on arrival.
+ */
 
 type BillingCycle = 'monthly' | 'annually';
 
@@ -38,10 +55,67 @@ interface PricingComponentProps extends React.HTMLAttributes<HTMLDivElement> {
   onPlanSelect: (planId: string, cycle: BillingCycle) => void;
 }
 
-const FeatureItem: React.FC<{ feature: Feature }> = ({ feature }) => {
+/**
+ * The card shell.
+ *
+ * `group` is required by `trace` beams, and `relative` by all of them. The
+ * popular tier gets the continuously circling `ambient` beam plus a glow that
+ * breathes — both governed, so neither runs while the section is off screen.
+ */
+function PlanCard({ plan, children }: { plan: PriceTier; children: React.ReactNode }) {
+  const { ref, active } = useAmbient<HTMLDivElement>({ priority: 1 });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 26 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      className={cn(
+        'group relative flex flex-col rounded-2xl border transition-transform duration-300',
+        plan.isPopular ? 'md:scale-[1.04] shadow-2xl' : 'hover:-translate-y-1'
+      )}
+      style={{
+        backgroundColor: plan.isPopular ? '#1c2e63' : '#1c2952',
+        borderColor: plan.isPopular ? 'rgba(245,197,24,0.45)' : '#243060',
+      }}
+    >
+      {plan.isPopular ? (
+        <>
+          {/* The one card on the page that keeps a light running round it. */}
+          <BeamBorder variant="ambient" priority={1} />
+          <motion.span
+            aria-hidden="true"
+            className="absolute -inset-4 rounded-[28px] pointer-events-none -z-10"
+            style={{
+              background:
+                'radial-gradient(ellipse at center, rgba(245,197,24,0.20) 0%, rgba(245,197,24,0.05) 45%, transparent 72%)',
+            }}
+            animate={active ? { opacity: [0.55, 1, 0.55], scale: [0.98, 1.02, 0.98] } : { opacity: 0.8, scale: 1 }}
+            transition={
+              active ? { duration: 5.5, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' } : { duration: 0 }
+            }
+          />
+        </>
+      ) : (
+        <BeamBorder />
+      )}
+      {children}
+    </motion.div>
+  );
+}
+
+const FeatureItem: React.FC<{ feature: Feature; index: number }> = ({ feature, index }) => {
   const Icon = feature.isIncluded ? Check : X;
   return (
-    <li className="flex items-start space-x-3 py-1.5">
+    <motion.li
+      className="flex items-start space-x-3 py-1.5"
+      initial={{ opacity: 0, x: -10 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.35, delay: 0.15 + index * 0.035 }}
+    >
       <Icon
         className={cn('h-4 w-4 flex-shrink-0 mt-0.5', feature.isIncluded ? 'text-fx-accent-yellow' : 'text-fx-text-secondary opacity-40')}
         aria-hidden="true"
@@ -49,7 +123,7 @@ const FeatureItem: React.FC<{ feature: Feature }> = ({ feature }) => {
       <span className={cn('text-sm', feature.isIncluded ? 'text-fx-text-primary' : 'text-fx-text-secondary opacity-50')}>
         {feature.value ? <><span className="font-semibold text-fx-accent-yellow">{feature.value}</span> {feature.name}</> : feature.name}
       </span>
-    </li>
+    </motion.li>
   );
 };
 
@@ -87,22 +161,29 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
 
   return (
     <div className={cn('w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8', className)} {...props}>
-      <div className="flex justify-center mb-10 mt-2">
+      <div className="flex justify-center mb-12 mt-2">
         <div
-          className="flex border border-fx-border rounded-card p-1 gap-1"
+          className="relative flex border border-fx-border rounded-full p-1 gap-1"
           style={{ backgroundColor: 'rgba(28, 41, 82, 0.8)' }}
         >
           {(['monthly', 'annually'] as BillingCycle[]).map((option) => (
             <button
               key={option}
               onClick={() => onCycleChange(option)}
-              className="relative px-6 py-1.5 text-sm font-medium rounded-card transition-all duration-200"
-              style={{
-                backgroundColor: billingCycle === option ? '#F5C518' : 'transparent',
-                color: billingCycle === option ? '#141f40' : '#8B949E',
-              }}
+              className="relative px-6 py-2 text-sm font-medium rounded-full transition-colors duration-200 z-10"
+              style={{ color: billingCycle === option ? '#141f40' : '#8B949E' }}
               aria-label={option === 'monthly' ? 'Monthly Billing' : 'Annual Billing'}
             >
+              {/* One shared element that slides between the two, rather than two
+                  backgrounds cross-fading — the movement is the affordance. */}
+              {billingCycle === option && (
+                <motion.span
+                  layoutId="fx-cycle-pill"
+                  className="absolute inset-0 rounded-full -z-10"
+                  style={{ backgroundColor: '#F5C518' }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                />
+              )}
               {option === 'monthly' ? 'Monthly' : 'Annually'}
               {option === 'annually' && (
                 <span
@@ -123,21 +204,15 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
           const isFree = currentPrice === 0;
 
           return (
-            <div
-              key={plan.id}
-              className={cn(
-                'flex flex-col rounded-card border transition-all duration-300',
-                plan.isPopular ? 'md:scale-[1.03] shadow-2xl' : 'border-fx-border'
-              )}
-              style={{
-                backgroundColor: plan.isPopular ? '#1c2e63' : '#1c2952',
-                borderColor: plan.isPopular ? '#F5C518' : '#243060',
-                boxShadow: plan.isPopular ? '0 0 40px rgba(245, 197, 24, 0.12)' : undefined,
-              }}
-            >
+            <PlanCard key={plan.id} plan={plan}>
               <div className="p-6 pb-4">
                 <div className="flex justify-between items-start mb-1">
-                  <h3 className="text-xl font-bold text-fx-text-primary">{plan.name}</h3>
+                  <h3
+                    className="text-2xl font-bold text-fx-text-primary"
+                    style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.02em' }}
+                  >
+                    {plan.name}
+                  </h3>
                   {plan.isPopular && (
                     <span
                       className="text-xs font-semibold px-3 py-1 rounded-full"
@@ -150,14 +225,29 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
                 <p className="text-sm text-fx-text-secondary mb-4">{plan.description}</p>
                 <div>
                   {isFree ? (
-                    <p className="text-4xl font-extrabold text-fx-text-primary">
+                    <p
+                      className="text-5xl font-extrabold text-fx-text-primary"
+                      style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.03em' }}
+                    >
                       Free
                     </p>
                   ) : (
-                    <p className="text-4xl font-extrabold text-fx-text-primary">
+                    /*
+                     * Keyed on the cycle so the figure slides out and the new
+                     * one slides in. Swapping the text in place makes the
+                     * toggle feel like it did nothing.
+                     */
+                    <motion.p
+                      key={billingCycle}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                      className="text-5xl font-extrabold text-fx-text-primary"
+                      style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.03em' }}
+                    >
                       ${billingCycle === 'monthly' ? plan.priceMonthly : Math.round(plan.priceAnnually / 12)}
                       <span className="text-base font-normal text-fx-text-secondary ml-1">/mo</span>
-                    </p>
+                    </motion.p>
                   )}
                   {billingCycle === 'annually' && !isFree && (
                     <p className="text-xs text-fx-text-secondary mt-1 opacity-60">
@@ -173,8 +263,8 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
               <div className="flex-grow px-6 pb-4">
                 <p className="text-xs font-semibold uppercase tracking-widest text-fx-text-secondary mb-2">Includes</p>
                 <ul className="list-none">
-                  {plan.features.map((feature) => (
-                    <FeatureItem key={feature.name} feature={feature} />
+                  {plan.features.map((feature, i) => (
+                    <FeatureItem key={feature.name} feature={feature} index={i} />
                   ))}
                 </ul>
               </div>
@@ -183,10 +273,10 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
                 <button
                   onClick={() => onPlanSelect(plan.id, billingCycle)}
                   className={cn(
-                    'w-full py-3 px-6 rounded-card text-sm font-semibold transition-all duration-200',
+                    'w-full py-3.5 px-6 rounded-full text-sm font-semibold transition-all duration-200',
                     plan.isPopular
-                      ? 'text-fx-bg-base hover:opacity-90'
-                      : 'border border-fx-border text-fx-text-primary hover:border-fx-accent-yellow hover:text-fx-accent-yellow'
+                      ? 'text-fx-bg-base hover:brightness-110 shadow-[0_10px_30px_-8px_rgba(245,197,24,0.55)]'
+                      : 'border border-fx-border text-fx-text-primary hover:border-fx-accent-yellow hover:text-fx-accent-yellow hover:bg-fx-accent-yellow/[0.06]'
                   )}
                   style={plan.isPopular ? { backgroundColor: '#F5C518' } : { backgroundColor: 'transparent' }}
                   aria-label={`Select ${plan.name} plan`}
@@ -194,12 +284,13 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
                   {plan.buttonLabel}
                 </button>
               </div>
-            </div>
+            </PlanCard>
           );
         })}
       </div>
 
-      <div className="mt-16 hidden md:block border border-fx-border rounded-card overflow-x-auto">
+      <div className="mt-20 hidden md:block border border-fx-border rounded-2xl overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="min-w-full">
           <thead>
             <tr style={{ backgroundColor: '#1c2952' }}>
@@ -261,6 +352,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
