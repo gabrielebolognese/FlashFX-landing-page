@@ -54,7 +54,6 @@ const T = {
   lineUp: [9600, 10600],
   exit: [10600, 11300],
   ret: [11800, 12900],
-  button: [12000, 13000],
   END: 14200,
 } as const;
 
@@ -64,6 +63,12 @@ const T = {
  */
 const LOGO = { x: 33, y: 45 };
 const BAR = { x0: 58, x1: 78, y: 15 };
+
+/*
+ * How far above the carrying cursor the button rides, in percent of the stage.
+ * The cursors settle at y=92, so the button lands at 80.
+ */
+const CTA_LIFT = 12;
 
 interface Point { t: number; x: number; y: number; o: number; r?: number }
 
@@ -273,10 +278,23 @@ export function ShareDemo() {
     typed(head.current, headCaret.current, HEADLINE, T.headline);
     typed(sub.current, subCaret.current, SUBLINE, T.subline);
 
+    /*
+     * The button rides the middle cursor rather than fading in on its own
+     * clock. Its vertical position is that cursor's sampled y less a fixed
+     * gap, so it travels on exactly the same spline, at exactly the same
+     * moment — which is what makes it look carried up rather than merely
+     * appearing while three cursors happen to be nearby.
+     *
+     * `cta` is a full-stage layer, so a percentage translate is a percentage OF
+     * THE STAGE. Translating the button itself would move it a fraction of its
+     * own height, and — the bug this replaces — would also overwrite the
+     * `-translate-x-1/2` that centres it, leaving its left edge on the midline.
+     */
     if (cta.current) {
-      const u = ease(seg(t, T.button));
+      const carrier = sample(CURSORS[1].path, t);
+      const u = ease(seg(t, T.ret));
+      cta.current.style.transform = `translateY(${carrier.y - CTA_LIFT}%)`;
       cta.current.style.opacity = String(u);
-      cta.current.style.transform = `translateY(${mix(30, 0, u)}px) scale(${mix(0.94, 1, u)})`;
       cta.current.style.pointerEvents = u > 0.9 ? 'auto' : 'none';
     }
   }, []);
@@ -416,19 +434,17 @@ export function ShareDemo() {
           </div>
         </div>
 
-        <div
-          ref={cta}
-          className="absolute left-1/2 -translate-x-1/2 w-[40%] min-w-[230px]"
-          style={{ top: '80%', opacity: 0 }}
-        >
-          <a
-            href={DISCORD_INVITE}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center w-full py-4 rounded-full bg-fx-accent-yellow text-fx-bg-base font-semibold text-lg tracking-wide shadow-[0_10px_40px_rgba(245,197,24,0.35)] hover:brightness-110 transition-[filter] duration-200"
-          >
-            Join now
-          </a>
+        <div ref={cta} className="absolute inset-0 pointer-events-none" style={{ opacity: 0 }}>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] min-w-[230px]">
+            <a
+              href={DISCORD_INVITE}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center w-full py-4 rounded-full bg-fx-accent-yellow text-fx-bg-base font-semibold text-lg tracking-wide shadow-[0_10px_40px_rgba(245,197,24,0.35)] hover:brightness-110 transition-[filter] duration-200"
+            >
+              Join now
+            </a>
+          </div>
         </div>
 
         {CURSORS.map((c, i) => (
