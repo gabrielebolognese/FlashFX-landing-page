@@ -16,4 +16,6 @@ export { duration, loop, ease, reveal, revealTransition } from './tokens';
 export { DEFAULT_CAP, setLoopCap, getLoopCap, loopStats } from './governor';
 export type { LoopHandle } from './governor';
 export { useAmbient, useAmbientActive, AmbientProvider } from './use-ambient';
+export { deviceTier, isReducedTier, scaleForTier } from './device-tier';
+export type { Tier } from './device-tier';
 export type { UseAmbientOptions } from './use-ambient';

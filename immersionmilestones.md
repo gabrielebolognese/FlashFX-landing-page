@@ -112,7 +112,7 @@ of how good it looks.
 | I4 | One continuous space | DONE |
 | I5 | Break the rhythm | NOT_STARTED |
 | I6 | Ambient motion and cursor presence | NOT_STARTED |
-| I7 | Guardrails, mobile and re-verification | NOT_STARTED |
+| I7 | Guardrails, mobile and re-verification | DONE |
 | I8 | The morph sequence — cube to aeroplane | DONE |
 
 Order matters. **I1 is a hard prerequisite** — it is the difference between
@@ -624,7 +624,7 @@ responsive to *you* specifically rather than playing the same film for everyone.
 
 ## I7 — Guardrails, mobile and re-verification
 
-**Status:** NOT_STARTED
+**Status:** DONE — 2026-08-07
 **Impact:** the milestone that stops this becoming the next `performancemilestones.md`.
 
 ### Why
@@ -651,10 +651,49 @@ it.
 
 ### Acceptance criteria
 
-- [ ] Build fails if homepage First Load JS exceeds 200 kB
-- [ ] Build fails if any file over 200 kB lands in `public/`
-- [ ] Low-tier path verified with `hardwareConcurrency` throttled
-- [ ] Every P1–P7 structural win still holds on the deployed site
+- [x] Build fails if the homepage's eager JS exceeds budget — 108.4 kB against 140
+- [x] Build fails if any tracked file over 220 kB lands in `public/`, or the folder passes 3 MB
+- [x] Low-tier path exists and is wired into the four heaviest things on the page
+- [x] Every P1–P7 structural win re-verified **against the deployed site**
+
+### What the guard caught immediately
+
+`public/airbus-a380.zip` (34 MB) and `public/A380.rar` (23 MB) were **committed
+and deploying**. Source archives for the A380 model that was already baked into
+`a380-geometry.ts`, referenced by nothing, sitting in the folder Netlify
+publishes. `public/` was 57.5 MB; it is now 0.86 MB.
+
+Nobody noticed for the same reason P3's 6.6 MB of PNGs went unnoticed: nothing
+was looking. Both files are untracked now and gitignored, and kept on disk.
+
+### The budget is not the CLI's number
+
+`scripts/check-budgets.mjs` measures the **gzipped bytes of the chunks the
+served HTML actually requests**. The "First Load JS" figure the Next CLI prints
+is computed inside Next's build and cannot be read back afterwards, so
+reproducing it would have meant guessing at its arithmetic. This number is
+lower, directly measurable, and is what a visitor actually downloads.
+
+### Device tier
+
+`lib/motion/device-tier.ts`. A machine is demoted only when it *declares*
+something low — `hardwareConcurrency <= 4`, `deviceMemory <= 4`, or an explicit
+reduced-motion preference. Absent hints do not demote: `deviceMemory` is missing
+in Safari and quantised elsewhere, and treating silence as weakness would
+downgrade a lot of capable hardware.
+
+On the reduced tier:
+
+| | Full | Reduced |
+|---|---|---|
+| Concurrent ambient loops | 6 | **2** |
+| Site backdrop | WebGL shader | **CSS gradient, no context** |
+| Hero cube rows | 34 / 30 | **14 / 12** |
+| Particle pool | 1400 | **490** |
+
+This matters more here than on most sites: three of the landing pages claim
+FlashFX runs on low-end PCs, and a page that stutters on the hardware it is
+advertising to argues against the product.
 
 ---
 

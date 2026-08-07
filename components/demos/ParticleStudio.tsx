@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cappedPixelRatio } from '@/lib/render-gate';
-import { useAmbient } from '@/lib/motion';
+import { useAmbient, scaleForTier } from '@/lib/motion';
 import { DEMO_PRIORITY } from './demo-kit';
 import type { Controls, Preset, Shape } from './particle-config';
 
@@ -97,6 +97,7 @@ interface Particle {
   seed: number;
 }
 
+/** Cap on live particles. Scaled down on weak hardware — see device-tier. */
 const MAX_PARTICLES = 1400;
 
 function drawShape(ctx: CanvasRenderingContext2D, shape: Shape, s: number, seed: number) {
@@ -179,6 +180,7 @@ export function ParticleStudio({
     ro.observe(el);
     resize();
 
+    const cap = scaleForTier(MAX_PARTICLES, 220);
     const pool: Particle[] = [];
     let carry = 0;
     let frame = 0;
@@ -186,7 +188,7 @@ export function ParticleStudio({
     let running = false;
 
     const spawn = (c: Controls, r: Recipe) => {
-      if (pool.length >= MAX_PARTICLES) return;
+      if (pool.length >= cap) return;
       const seed = pool.length + Math.floor(carry * 1000);
       // A cone opening upward: 90° is straight up in screen terms.
       const half = (c.spread * Math.PI) / 180 / 2;

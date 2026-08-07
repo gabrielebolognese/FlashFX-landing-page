@@ -1,7 +1,8 @@
 'use client';
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { registerLoop } from './governor';
+import { registerLoop, setLoopCap, DEFAULT_CAP } from './governor';
+import { isReducedTier } from './device-tier';
 
 /*
  * The only sanctioned way to run a continuous animation on this site
@@ -20,6 +21,19 @@ import { registerLoop } from './governor';
  *   AmbientProvider   — broadcasts one grant to a subtree, so a background with
  *   useAmbientActive()  24 animated paths costs one slot rather than 24.
  */
+
+/*
+ * Set once, on the first hook to run in the browser. A weak machine gets two
+ * concurrent loops instead of six — enough that the section being looked at
+ * still moves, few enough that a dozen do not compete for a slow compositor.
+ */
+let capApplied = false;
+function applyTierCap() {
+  if (capApplied || typeof window === 'undefined') return;
+  capApplied = true;
+  if (isReducedTier()) setLoopCap(2);
+  else setLoopCap(DEFAULT_CAP);
+}
 
 const AmbientContext = createContext(false);
 
@@ -74,6 +88,8 @@ export function useAmbient<T extends HTMLElement = HTMLDivElement>({
   const [active, setActive] = useState(false);
 
   useEffect(() => {
+    applyTierCap();
+
     const element = ref.current;
     if (!element) return;
 

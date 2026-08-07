@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { cappedPixelRatio } from '@/lib/render-gate';
-import { useAmbient } from '@/lib/motion';
+import { useAmbient, scaleForTier } from '@/lib/motion';
 import { DEMO_PRIORITY } from './demo-kit';
 
 /*
@@ -269,8 +269,10 @@ export function LogoAssembly({
       });
       if (disposed) return;
 
-      const logo = sampleLogo(image, LOGO_ROWS);
-      const text = sampleText('FlashFX', TEXT_ROWS, fontFamily);
+      // Fewer, larger cubes on weak hardware; the lockup still reads.
+      const rows = scaleForTier(LOGO_ROWS, 14);
+      const logo = sampleLogo(image, rows);
+      const text = sampleText('FlashFX', scaleForTier(TEXT_ROWS, 12), fontFamily);
       if (!logo.cells.length || !text.cells.length) return;
 
       const logoCells = logo.cells;

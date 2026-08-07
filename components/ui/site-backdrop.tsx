@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { cappedPixelRatio } from '@/lib/render-gate';
+import { isReducedTier } from '@/lib/motion';
 
 /*
  * One field of light behind the whole site (immersionmilestones.md I4).
@@ -116,6 +117,14 @@ export function SiteBackdrop() {
   useEffect(() => {
     const cv = canvas.current;
     if (!cv) return;
+
+    /*
+     * A full-screen fragment shader every frame is the most expensive thing on
+     * this page for a weak GPU, and it is pure decoration. On the reduced tier
+     * it never starts at all — the CSS gradient underneath is a perfectly good
+     * backdrop, and it costs nothing (immersionmilestones.md I7).
+     */
+    if (isReducedTier()) return;
 
     const gl = cv.getContext('webgl', {
       alpha: false,

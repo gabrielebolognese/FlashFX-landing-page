@@ -45,3 +45,9 @@ public/*.mtl
 # public/browsers/*.webp (55 kB total) by the AllOnWeb section. Untracked, so
 # they would never reach Netlify anyway — this makes that explicit.
 public/browser icons/
+
+# Source archives for the A380, already baked into
+# components/demos/a380-geometry.ts. 57 MB, referenced by nothing, and they
+# were deploying to Netlify inside public/. Kept on disk, out of the repo.
+public/*.zip
+public/*.rar
