@@ -403,12 +403,14 @@ Eight embeds are still on the homepage, none of them in `VideoPlaceholder`:
 - **5 shorts** in `WhatIsFlashFX`
 - **3 `LazyYouTube`** in `SolutionSection`, `LoadTime`, `SplitHero`
 
-Reaching the owner's 0–2 target means converting these, but they are a
-different proposition from the seven above: those were *videos of the editor's
-UI*, which a recreation can show more directly. The shorts are **real output** —
-finished work made with the product. Replacing genuine results with a simulation
-is a different kind of claim, and worth an explicit decision rather than an
-assumption. Recorded as open question 6.
+**The five shorts are settled: they stay as video.** Owner's decision,
+2026-08-07. They are real finished output rather than footage of the editor's
+UI, and the proof that the tool produces good work has to be the work itself,
+not a mock-up of it. Do not convert them, and do not treat the embed count as a
+number to drive to zero — see open question 6 for the standing rule.
+
+The three `LazyYouTube` embeds are still open. Whichever of them show the
+interface rather than finished output remain fair game.
 
 ### Verify
 
@@ -612,13 +614,30 @@ These block specific milestones and are the owner's call, not mine.
 5. **Does the editor have a screen recording or asset kit** that the demos
    should match visually, so the site's timeline looks like the real one?
    *Affects I3 fidelity.*
-6. **Should the five shorts in `WhatIsFlashFX` become demos too?** They are the
-   difference between 8 embeds and 3. Unlike the seven already converted — which
-   were videos of the editor's own UI, and so a recreation shows the same thing
-   more directly — the shorts are **real finished output**. Swapping genuine
-   results for a simulation is a different kind of claim. The three `LazyYouTube`
-   embeds in `SolutionSection`, `LoadTime` and `SplitHero` are the same
-   question. *Blocks reaching the 0–2 target.*
+6. ~~**Should the five shorts in `WhatIsFlashFX` become demos too?**~~
+   **ANSWERED 2026-08-07: no. The shorts stay as real video.**
+
+   > **This is a standing rule, not a one-off.** There is a line between two
+   > kinds of video on this site, and only one side may become a demo:
+   >
+   > - **Footage of the editor's UI** — timeline, curves, 3D viewport, sharing.
+   >   Convert freely. A recreation shows the same thing more directly and
+   >   deletes 1–2 MB of third-party JavaScript.
+   > - **Real finished output** — the five shorts are actual work made with the
+   >   product. **Leave them alone.**
+   >
+   > Showing a simulation where a visitor believes they are seeing genuine
+   > results is a different kind of claim from illustrating an interface. The
+   > proof that the tool produces good work has to be the work.
+   >
+   > When reducing embeds for performance, ask what each one is evidence *of*.
+   > UI demonstration → convert. Product output, customer results, testimonials
+   > → find the bytes elsewhere.
+
+   **The 0–2 target is therefore retired.** The floor is **5** — the shorts.
+   The three `LazyYouTube` embeds in `SolutionSection`, `LoadTime` and
+   `SplitHero` have not been classified yet; whichever of them show UI rather
+   than output can still be converted, taking the homepage to 5–8.
 
 ---
 
