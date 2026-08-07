@@ -5,6 +5,7 @@ import { ImageCarousel } from '@/components/sections/ImageCarousel';
 import { SolutionSection } from '@/components/sections/SolutionSection';
 import { OrganizeWorkflow } from '@/components/sections/OrganizeWorkflow';
 import { InteractiveCanvas } from '@/components/sections/InteractiveCanvas';
+import { ParticleGeneration } from '@/components/sections/ParticleGeneration';
 import { AllOnWeb } from '@/components/sections/AllOnWeb';
 import { ThreeDSupport } from '@/components/sections/ThreeDSupport';
 import { KeyframeInterpolation } from '@/components/sections/KeyframeInterpolation';
@@ -158,6 +159,7 @@ export default function Home() {
         <VideoPlaceholder heading="Animation timeline" title="Animation Timeline" description="Keyframe animation made simple for everyone" demo="timeline" youtubeId="bHdIvt_lUrE" sectionHeading="Animation Timeline" />
         <InteractiveCanvas />
         <ThreeDSupport />
+        <ParticleGeneration />
         <AllOnWeb />
         <ImageCarousel />
         <WhatIsFlashFX />

@@ -70,6 +70,10 @@ and ask.
   which is the claim to make. It is **not a sculpting or modelling
   application**, and copy must never imply that it is. Do not describe FlashFX
   as somewhere you *create* 3D geometry; you bring geometry in and animate it.
+- **Particle systems.** Confirmed 2026-08-07. FlashFX generates particles, with
+  fire, smoke, magic and confetti among the presets, and supports custom
+  emitters built by the user. Stated by the owner; the `ParticleGeneration`
+  section's copy rests on this entry.
 - **Personal site:** `https://gabrielebolognese.blog`
 - **Verified logo URL:** `https://flashfx.app/android-chrome-192x192.png`
   — confirmed live 2026-08-03, 200 OK, PNG, 192×192, 13.1 KB. Clears Google's
