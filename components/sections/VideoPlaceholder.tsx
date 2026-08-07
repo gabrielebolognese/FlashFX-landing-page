@@ -178,12 +178,11 @@ export function VideoPlaceholder({ title, description, isMainDemo, gridBackgroun
           */
           style={
             demo && demoFrame[demo].fullBleed
-              ? {
-                  maskImage:
-                    'linear-gradient(90deg, transparent 0%, #000 30%, #000 70%, transparent 100%)',
-                  WebkitMaskImage:
-                    'linear-gradient(90deg, transparent 0%, #000 30%, #000 70%, transparent 100%)',
-                }
+              ? (() => {
+                  const [a, b] = demoFrame[demo].fade ?? [30, 70];
+                  const ramp = `linear-gradient(90deg, transparent 0%, #000 ${a}%, #000 ${b}%, transparent 100%)`;
+                  return { maskImage: ramp, WebkitMaskImage: ramp };
+                })()
               : undefined
           }
         >
