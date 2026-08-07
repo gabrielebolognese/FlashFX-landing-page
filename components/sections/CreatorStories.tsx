@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Clapperboard, Link2, ArrowRight } from 'lucide-react';
 import { BackgroundPaths } from '@/components/ui/background-paths';
+import { BeamBorder } from '@/components/ui/beam-border';
 
 /*
  * Two ways to earn, side by side. This replaced a "Video Coming Soon"
@@ -41,12 +42,20 @@ function EarnCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.5, delay }}
-      className={`h-full flex flex-col text-left p-7 md:p-8 rounded-2xl border backdrop-blur-sm ${
+      className={`group relative h-full flex flex-col text-left p-7 md:p-8 rounded-2xl border backdrop-blur-sm ${
         live
           ? 'bg-fx-bg-surface/80 border-fx-accent-yellow/25'
           : 'bg-fx-bg-surface/40 border-fx-border'
       }`}
     >
+      {/*
+        The live route gets a continuously circling beam; the unlaunched one
+        gets nothing at all. Two of the three signals separating these cards are
+        already colour, and motion is the strongest of the three — the card you
+        can act on should be the one that is alive
+        (immersionmilestones.md I2).
+      */}
+      {live && <BeamBorder variant="ambient" priority={2} />}
       <div className="flex items-center justify-between gap-3 mb-5">
         <div
           className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 border ${

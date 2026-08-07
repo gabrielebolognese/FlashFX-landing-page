@@ -107,7 +107,7 @@ of how good it looks.
 | Milestone | Title | Status |
 |---|---|---|
 | I1 | The motion system | DONE |
-| I2 | Living borders and edges | NOT_STARTED |
+| I2 | Living borders and edges | DONE |
 | I3 | Show the editor, do not film it | NOT_STARTED |
 | I4 | One continuous space | NOT_STARTED |
 | I5 | Break the rhythm | NOT_STARTED |
@@ -211,7 +211,7 @@ npx tsc lib/motion/governor.ts --outDir /tmp/gov --module commonjs --target es20
 
 ## I2 — Living borders and edges
 
-**Status:** NOT_STARTED
+**Status:** DONE — 2026-08-07
 **Impact:** high visibility, very low cost. The cheapest immersion on the list.
 
 ### Why
@@ -245,10 +245,64 @@ There are well over a hundred of them.
 
 ### Acceptance criteria
 
-- [ ] Border animation is CSS, not framer-motion
-- [ ] Grid cards use `trace`, not `ambient` — no more than 6 always-on beams in a viewport
-- [ ] Zero added First Load JS (CSS only)
-- [ ] Static, visible borders under reduced motion
+- [x] Border animation is CSS, not framer-motion
+- [x] Grid cards use `trace` — **1** always-on beam exists sitewide, against a cap of 6
+- [x] Zero added First Load JS — 178 kB before and after
+- [x] Static, visible borders under reduced motion
+
+### What was built
+
+`components/ui/beam-border.tsx` plus `.fx-beam*` / `.fx-seam` in `globals.css`.
+
+**The technique** is the video loader's ring, generalised: a `conic-gradient`
+rotating behind a mask. The mask is the padding-box cut-out —
+`mask-composite: exclude` subtracts the content box from the border box, leaving
+a ring exactly as thick as the padding. The gradient is a plain child rotating
+underneath, so this needs no `@property` registration and no polyfill.
+
+`inset: -50%` sizes the spinner to twice the host in both directions so it
+covers the corners at any rotation and any aspect ratio. The conic ends up
+elliptical, which makes the beam travel marginally faster along the long
+edges — that reads as intent, and it is the price of not measuring the element
+in JavaScript.
+
+**`animation-play-state: paused` is the idle state everywhere.** A paused
+animation costs nothing, which is what makes it safe to put a beam on every card
+in a 179-card grid.
+
+**Three variants, and the split is the whole design:**
+
+| Variant | Trigger | Governed | Where |
+|---|---|---|---|
+| `trace` | hover / focus-within | no — bounded by the pointer | every grid card |
+| `ambient` | continuous | yes, via `useAmbient` | the one card that earns it |
+| `pulse` | continuous | yes | status and highlight states |
+
+`trace` needs no governor slot because a pointer can only be in one place, so
+183 of them contend for nothing. Making them all `ambient` would have spent the
+entire I1 budget on decoration in a single section.
+
+**Applied to:** `FeatureHighlights` (179 cards — the section that is long by
+design, where hover motion is what makes volume feel alive rather than
+tiring), `FAQSection` rows, `ComparisonTeaser`, and `CreatorStories` — where the
+live earn card gets the sitewide-only `ambient` beam and the unlaunched one gets
+nothing, because motion is the strongest of the three signals separating them.
+
+**Section seams** mark the four points where the page changes subject, not every
+boundary — a light on all 26 would be wallpaper. The sweep fires from an
+IntersectionObserver rather than on mount, because a CSS animation that plays on
+mount plays while the section is still far below the fold and is over before
+anyone sees it. That is the exact bug P6 found in `CreatorStories`.
+
+**Counts in the built HTML:** 183 `trace`, 1 `ambient`, 4 seams.
+
+### Not covered, and why
+
+- **`PricingSection`** draws its tier borders with inline `style` rather than
+  border classes, so there is no clean host element to inset a ring into
+  without restructuring it. Worth doing when I5 touches the section anyway.
+- **`AllLinks`** is a bespoke radial orbit layout, not cards. A rectangular
+  border beam has nothing to attach to.
 
 ---
 

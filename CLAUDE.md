@@ -92,6 +92,8 @@ Existing routes: `/`, `/about`, `/after-effects-alternative`, `/free-motion-grap
 
 `typewriter.tsx` and `shape-landing-hero.tsx` still contain raw `repeat: Infinity`. Both are dead code reaching zero built chunks — don't treat them as precedent.
 
+**Borders**: `components/ui/beam-border.tsx` (I2) puts a travelling light on an element's edge. Drop `<BeamBorder />` inside anything `relative` with a border radius. **Default to `trace`** (hover-driven, ungoverned, costs nothing idle) — there are 183 of those and only **1** `ambient` on the whole site, which is the point: `ambient` and `pulse` run continuously and take a governor slot, so they're for the two or three elements that genuinely earn the attention. `trace` requires `group` on the host, since the hover selector keys off it. `SectionSeam` is the divider sweep; it fires from an IntersectionObserver, never on mount.
+
 ### Section components
 
 Everything under `components/sections/` is `'use client'` and follows the same idiom: a `<section>` with an optional `id` anchor, framer-motion `initial` / `whileInView` / `viewport={{ once: true }}` reveals, and Tailwind `fx-*` tokens. Long content lists are extracted into sibling `.ts` data files (`fmgFaqData.ts`, `lightweightFaqData.ts`, `beginnerFaqData.ts`, and the three files in `feature-highlights/`) — though the homepage `FAQSection.tsx` and `after-effects-alternative/AEFAQSection.tsx` still inline theirs.

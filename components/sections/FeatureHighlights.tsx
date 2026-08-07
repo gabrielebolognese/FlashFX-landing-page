@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRef, useCallback } from 'react';
 import type { LucideIcon } from 'lucide-react';
+import { BeamBorder } from '@/components/ui/beam-border';
 import { editorFeatures, FeatureItem } from './feature-highlights/editorFeatures';
 import { animationPresets, AnimationPresetItem } from './feature-highlights/animationPresets';
 import { editableProperties, PropertyItem } from './feature-highlights/editableProperties';
@@ -56,7 +57,7 @@ function FeatureCard({ item, index, showCategory }: { item: CardItem; index: num
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="relative h-full rounded-2xl overflow-hidden cursor-default"
+        className="group relative h-full rounded-2xl overflow-hidden cursor-default"
         style={{
           background: 'rgba(20, 31, 64, 0.72)',
           backdropFilter: 'blur(16px)',
@@ -66,6 +67,14 @@ function FeatureCard({ item, index, showCategory }: { item: CardItem; index: num
           boxShadow: '0 4px 24px rgba(0,0,0,0.35), 0 1px 0 rgba(230,237,243,0.06) inset',
         }}
       >
+        {/*
+          `trace`, not `ambient`. This grid is the longest on the site by
+          design, and a permanent beam on every card would be noise as well as
+          blowing the I1 loop budget on decoration. Hover bounds it to one at a
+          time at no idle cost (immersionmilestones.md I2).
+        */}
+        <BeamBorder />
+
         <div
           ref={spotlightRef}
           className="absolute inset-0 pointer-events-none z-10 transition-none"

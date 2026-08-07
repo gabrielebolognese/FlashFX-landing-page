@@ -18,6 +18,7 @@ import { LoadTime } from '@/components/sections/LoadTime';
 import { CreatorStories } from '@/components/sections/CreatorStories';
 import { AllLinks } from '@/components/sections/AllLinks';
 import { PricingSection } from '@/components/sections/PricingSection';
+import { SectionSeam } from '@/components/ui/beam-border';
 
 /*
  * Entity graph. The @id values are load-bearing: they must stay byte-identical
@@ -171,11 +172,22 @@ export default function Home() {
         <SplitHero />
         <VideoPlaceholder title="Templates & Presets" description="Start creating instantly with pre-built motion graphics" />
         <CreatorStories />
+        {/*
+          Seams mark the transitions between the page's acts rather than every
+          section boundary — a light on all 26 would be wallpaper. These four
+          sit where the subject changes: from the product tour into the money
+          conversation, then into proof, features, and the close
+          (immersionmilestones.md I2).
+        */}
+        <SectionSeam />
         <ComparisonTeaser />
         <LoadTime />
+        <SectionSeam />
         <FeatureHighlights />
+        <SectionSeam />
         <PricingSection />
         <FAQSection />
+        <SectionSeam />
         <FinalCTA />
         <AllLinks />
       </main>

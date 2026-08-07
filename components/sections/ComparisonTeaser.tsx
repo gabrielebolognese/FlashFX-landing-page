@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Check, X } from 'lucide-react';
 import ShimmerButton from '@/components/ui/shimmer-button';
+import { BeamBorder } from '@/components/ui/beam-border';
 
 const comparisons = [
   { feature: 'Free to use', flashfx: true, afterEffects: false },
@@ -29,8 +30,10 @@ export function ComparisonTeaser() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-fx-bg-base border border-fx-border rounded-card overflow-hidden"
+          className="group relative bg-fx-bg-base border border-fx-border rounded-card overflow-hidden"
         >
+          <BeamBorder />
+
           <div className="grid grid-cols-3 border-b border-fx-border">
             <div className="p-4"></div>
             <div className="p-4 text-center border-l border-fx-border">

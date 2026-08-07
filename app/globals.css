@@ -163,6 +163,197 @@
 }
 
 /*
+ * Beam borders — components/ui/beam-border.tsx (immersionmilestones.md I2).
+ *
+ * Every border on this site was a static 1px line of --color-border, and there
+ * are well over a hundred of them. This gives them a light that travels the
+ * edge.
+ *
+ * The technique is the one already shipped in the video loader's ring: a
+ * conic-gradient rotating behind a mask. Here the mask is the padding-box
+ * cut-out trick — `mask-composite: exclude` subtracts the content box from the
+ * border box, leaving a ring the exact thickness of the padding. The gradient
+ * is a plain child rotating under it, so this needs no @property registration
+ * and works without a polyfill.
+ *
+ * `inset: -50%` makes the spinner twice the host's size in both directions, so
+ * it covers the corners at every angle of rotation whatever the card's aspect
+ * ratio. The conic is elliptical rather than circular as a result, which makes
+ * the beam travel marginally faster along the long edges — visually this reads
+ * as intent, and it is the price of not needing a size measurement in JS.
+ *
+ * Cost: one element, one transform animation, on the compositor, no JavaScript
+ * per frame. `animation-play-state: paused` is the idle state everywhere — a
+ * paused animation does no work, which is what makes it safe to put a `trace`
+ * beam on every card in a grid.
+ */
+.fx-beam {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.fx-beam-spin {
+  position: absolute;
+  inset: -50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 248deg,
+    var(--fx-beam-tint, rgba(245, 197, 24, 0.22)) 300deg,
+    var(--fx-beam-core, #f5c518) 342deg,
+    #ffffff 351deg,
+    transparent 360deg
+  );
+  animation: fx-beam-turn var(--fx-beam-dur, 24s) linear infinite;
+  animation-play-state: paused;
+}
+
+@keyframes fx-beam-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/*
+ * `trace` — the grid-card variant. Idle and invisible until the pointer
+ * arrives, then one lap of the border.
+ *
+ * This is the default on purpose. A hundred always-on beams is noise, and it
+ * would blow the I1 loop budget on decoration in a single section. Hover bounds
+ * it to one at a time, for free, with no governor involvement at all.
+ */
+.fx-beam--trace .fx-beam-spin {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .fx-beam--trace .fx-beam-spin,
+  .group:focus-within .fx-beam--trace .fx-beam-spin {
+    opacity: 1;
+    animation-play-state: running;
+  }
+}
+
+/*
+ * `ambient` and `pulse` run continuously, so they are governed: the component
+ * adds `is-live` only while `useAmbient` grants it a slot. Without the class
+ * the animation stays paused and the ring holds a still frame.
+ */
+.fx-beam--ambient .fx-beam-spin {
+  opacity: 0.6;
+}
+
+.fx-beam--pulse .fx-beam-spin {
+  background: var(--fx-beam-core, #f5c518);
+  opacity: 0.18;
+  animation-name: fx-beam-pulse;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes fx-beam-pulse {
+  0%,
+  100% {
+    opacity: 0.14;
+  }
+  50% {
+    opacity: 0.46;
+  }
+}
+
+.fx-beam.is-live .fx-beam-spin {
+  animation-play-state: running;
+}
+
+/*
+ * With motion off, a travelling light is exactly the thing to remove. The ring
+ * stays — as a static tint for the continuous variants, and fully hidden for
+ * `trace`, whose whole premise is a response to a gesture. Host elements keep
+ * their own `border` class either way, so no card loses its edge.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .fx-beam-spin {
+    animation: none;
+  }
+
+  .fx-beam--ambient .fx-beam-spin,
+  .fx-beam--pulse .fx-beam-spin {
+    background: var(--fx-beam-core, #f5c518);
+    opacity: 0.2;
+  }
+
+  .fx-beam--trace .fx-beam-spin {
+    opacity: 0;
+  }
+}
+
+/*
+ * Section seam — a light that sweeps the divider as a section arrives.
+ *
+ * One-shot, triggered by an `is-in` class rather than playing on mount, because
+ * an animation that plays on mount plays while the section is still far below
+ * the fold and is over before anyone sees it. That was the exact bug P6 fixed
+ * in CreatorStories.
+ */
+.fx-seam {
+  position: relative;
+  height: 1px;
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(90deg, transparent, var(--color-border), transparent);
+}
+
+.fx-seam::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  transform: translateX(-120%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-accent-yellow),
+    #ffffff,
+    var(--color-accent-yellow),
+    transparent
+  );
+  opacity: 0;
+}
+
+.fx-seam.is-in::after {
+  animation: fx-seam-sweep 1400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fx-seam-sweep {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(320%);
+    opacity: 0;
+  }
+}
+
+/*
  * Video loading placeholder — components/ui/video-loading.tsx.
  *
  * Every YouTube embed is created on approach rather than up front, which is

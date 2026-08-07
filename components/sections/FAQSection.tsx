@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { BeamBorder } from '@/components/ui/beam-border';
 
 export const faqData = [
   {
@@ -42,7 +43,8 @@ function FAQItem({ question, answer, index }: { question: string; answer: string
       transition={{ duration: 0.6, delay: index * 0.1, ease: "easeOut" }}
       className="w-full"
     >
-      <div className="bg-fx-bg-surface border border-fx-border rounded-card overflow-hidden hover:border-fx-accent-yellow/30 transition-colors">
+      <div className="group relative bg-fx-bg-surface border border-fx-border rounded-card overflow-hidden hover:border-fx-accent-yellow/30 transition-colors">
+        <BeamBorder />
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="w-full py-8 px-6 flex flex-col items-center text-center hover:bg-fx-bg-raised/50 transition-colors"
