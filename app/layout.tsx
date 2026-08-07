@@ -67,15 +67,37 @@ const jetbrainsMono = JetBrains_Mono({
  * The homepage (app/page.tsx) declares no metadata of its own, so it inherits
  * this block verbatim — title, robots, canonical, and social cards all come
  * from here. Editing this edits the homepage.
+ *
+ * ── The description is sized to the search result, not to the sentence ──────
+ *
+ * Google renders roughly 155–160 characters of description on desktop before
+ * truncating. The previous copy ran 117 and said nothing concrete: "built for
+ * creators" and "in minutes" are claims every editor makes, and it left about a
+ * third of the available width empty on the one result that matters most — the
+ * brand search for "flashfx".
+ *
+ * The replacement is 158, so it renders whole, and spends the extra length on
+ * specifics a competitor cannot copy verbatim: what it is, what you can
+ * actually do in it, and the two things that separate it from every desktop
+ * alternative. It leads with the brand because the query it most often answers
+ * is the brand.
+ *
+ * Every figure in it is load-bearing and must stay verifiable. "90 presets" is
+ * the site's own published count (`app/features/page.tsx`, `faqData.ts`); "no
+ * account needed" is a FIX.md canonical fact confirmed 2026-08-06. Do not add a
+ * number here that is not already established somewhere in FIX.md.
+ *
+ * If you rewrite it, count the characters. Under ~140 wastes the slot; over
+ * ~165 gets cut mid-clause.
  */
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'FlashFX — Free Browser-Based Motion Graphics & Video Editor',
+  title: 'FlashFX: Free Browser-Based Motion Graphics & Video Editor',
   icons: {
     icon: '/apple-touch-icon.png',
     apple: '/apple-touch-icon.png',
   },
-  description: 'Create professional motion graphics in minutes. Free, lightweight, and built for creators. No After Effects required.',
+  description: 'FlashFX is a free motion graphics and video editor that runs in your browser. Keyframe animation, 90 presets, 3D and particles. No install, no account needed.',
   keywords: ['motion graphics', 'video editing', 'animation', 'FlashFX', 'after effects alternative'],
   authors: [{ name: 'FlashFX' }],
   robots: {
@@ -83,8 +105,8 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'FlashFX — Free Browser-Based Motion Graphics & Video Editor',
-    description: 'Create professional motion graphics in minutes. Free, lightweight, and built for creators. No After Effects required.',
+    title: 'FlashFX: Free Browser-Based Motion Graphics & Video Editor',
+    description: 'FlashFX is a free motion graphics and video editor that runs in your browser. Keyframe animation, 90 presets, 3D and particles. No install, no account needed.',
     url: 'https://flashfx.app',
     siteName: 'FlashFX',
     locale: 'en_US',
@@ -93,8 +115,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FlashFX — Free Browser-Based Motion Graphics & Video Editor',
-    description: 'Create professional motion graphics in minutes. Free, lightweight, and built for creators. No After Effects required.',
+    title: 'FlashFX: Free Browser-Based Motion Graphics & Video Editor',
+    description: 'FlashFX is a free motion graphics and video editor that runs in your browser. Keyframe animation, 90 presets, 3D and particles. No install, no account needed.',
     images: OG_IMAGES,
   },
   alternates: {

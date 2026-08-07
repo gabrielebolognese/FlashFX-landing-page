@@ -6,7 +6,7 @@ import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'Download — FlashFX Is All Web | Install It From Your Browser',
+  title: 'Download: FlashFX Is All Web | Install It From Your Browser',
   description:
     'There is no FlashFX installer. It runs in the browser. Here is how to install it as a windowed app from Chrome, Edge, Brave, Safari, iOS, and Android in a few clicks.',
   keywords: [
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'Download — FlashFX Is All Web | Install It From Your Browser',
+    title: 'Download: FlashFX Is All Web | Install It From Your Browser',
     description:
       'No installer. FlashFX runs in the browser — here is how to install it as a windowed app in a few clicks.',
     url: 'https://flashfx.app/download',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Download — FlashFX Is All Web | Install It From Your Browser',
+    title: 'Download: FlashFX Is All Web | Install It From Your Browser',
     description:
       'No installer. FlashFX runs in the browser — here is how to install it as a windowed app in a few clicks.',
     images: OG_IMAGES,

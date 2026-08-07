@@ -4,15 +4,17 @@ import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'Refund Policy — FlashFX',
+  title: 'Refund Policy | FlashFX',
   description:
-    'When a FlashFX subscription can be refunded, how to request one, and how long it takes to process.',
+    // Describes the document, not its headings — the text lives in Termly and
+    // can change without this repo being touched.
+    'When a FlashFX subscription can be refunded and when it cannot, how to request one, and how long a refund takes to process once it has been approved.',
   robots: {
     index: true,
     follow: true,
   },
   openGraph: {
-    title: 'Refund Policy — FlashFX',
+    title: 'Refund Policy | FlashFX',
     description: 'When a FlashFX subscription can be refunded, and how to request one.',
     url: 'https://flashfx.app/refund-policy',
     siteName: 'FlashFX',
@@ -22,7 +24,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Refund Policy — FlashFX',
+    title: 'Refund Policy | FlashFX',
     description: 'When a FlashFX subscription can be refunded, and how to request one.',
     images: OG_IMAGES,
   },

@@ -6,7 +6,7 @@ import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'FAQ — Everything About FlashFX | Search the Answers',
+  title: 'FAQ: Everything About FlashFX | Search the Answers',
   description:
     'Answers about FlashFX: browser support, what you can animate, export formats and transparency, the free tier, paid plan pricing, project storage, and version history.',
   keywords: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'FAQ — Everything About FlashFX',
+    title: 'FAQ: Everything About FlashFX',
     description:
       'Answers about browser support, animation, export formats, the free tier, pricing, and project storage.',
     url: 'https://flashfx.app/faq',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FAQ — Everything About FlashFX',
+    title: 'FAQ: Everything About FlashFX',
     description:
       'Answers about browser support, animation, export formats, the free tier, pricing, and project storage.',
     images: OG_IMAGES,

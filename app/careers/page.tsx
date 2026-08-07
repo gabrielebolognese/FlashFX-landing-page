@@ -6,7 +6,7 @@ import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'Careers — FlashFX',
+  title: 'Careers | FlashFX',
   description:
     'FlashFX is built by a team of three. There are no open roles right now, but you can reach us at careers@flashfx.app to be on the list for when that changes.',
   keywords: ['FlashFX careers', 'FlashFX jobs', 'work at FlashFX'],
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'Careers — FlashFX',
+    title: 'Careers | FlashFX',
     description:
       'FlashFX is built by a team of three. No open roles right now — reach us at careers@flashfx.app.',
     url: 'https://flashfx.app/careers',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Careers — FlashFX',
+    title: 'Careers | FlashFX',
     description:
       'FlashFX is built by a team of three. No open roles right now — reach us at careers@flashfx.app.',
     images: OG_IMAGES,

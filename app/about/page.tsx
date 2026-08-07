@@ -9,7 +9,7 @@ import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'About FlashFX — Founded by Gabriele Bolognese',
+  title: 'About FlashFX: Founded by Gabriele Bolognese',
   description:
     'FlashFX is a browser-based motion graphics and video editor founded on 1 January 2024 by Gabriele Bolognese, its founder and CEO. Meet the three-person team building an alternative to After Effects and Premiere Pro.',
   keywords: [
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'About FlashFX — Founded by Gabriele Bolognese',
+    title: 'About FlashFX: Founded by Gabriele Bolognese',
     description:
       'FlashFX is a browser-based motion graphics and video editor founded on 1 January 2024 by Gabriele Bolognese, its founder and CEO. Meet the three-person team building an alternative to After Effects and Premiere Pro.',
     url: 'https://flashfx.app/about',
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About FlashFX — Founded by Gabriele Bolognese',
+    title: 'About FlashFX: Founded by Gabriele Bolognese',
     description:
       'FlashFX is a browser-based motion graphics and video editor founded on 1 January 2024 by Gabriele Bolognese, its founder and CEO.',
     images: OG_IMAGES,

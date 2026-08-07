@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Page not found — FlashFX',
+  title: 'Page not found | FlashFX',
   description: 'That page does not exist. Here is the way back into FlashFX.',
   robots: {
     index: false,

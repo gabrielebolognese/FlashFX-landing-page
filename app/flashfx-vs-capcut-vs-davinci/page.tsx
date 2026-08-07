@@ -13,7 +13,7 @@ import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'FlashFX vs CapCut vs DaVinci Resolve — Architecture, Hardware & Features',
+  title: 'FlashFX vs CapCut vs DaVinci Resolve: Architecture, Hardware & Features',
   description:
     'How FlashFX, CapCut and DaVinci Resolve differ by pipeline architecture, hardware requirements, and what each can actually do. Published specs and capability comparison — no unmeasured performance claims.',
   keywords: [
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'FlashFX vs CapCut vs DaVinci Resolve — Architecture, Hardware & Features',
+    title: 'FlashFX vs CapCut vs DaVinci Resolve: Architecture, Hardware & Features',
     description:
       'Three tools built for different jobs. Compared by architecture, hardware floor, and capability — with no unmeasured performance claims.',
     url: 'https://flashfx.app/flashfx-vs-capcut-vs-davinci',

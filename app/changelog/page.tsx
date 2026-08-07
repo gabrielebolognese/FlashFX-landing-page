@@ -5,7 +5,7 @@ import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'Changelog — What Has Changed in FlashFX',
+  title: 'Changelog: What Has Changed in FlashFX',
   description:
     'Every FlashFX release, newest first. Because FlashFX runs in the browser, you are always on the current version — there is nothing to download or update.',
   keywords: ['FlashFX changelog', 'FlashFX releases', 'FlashFX updates', 'FlashFX new features'],
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'Changelog — What Has Changed in FlashFX',
+    title: 'Changelog: What Has Changed in FlashFX',
     description: 'Every FlashFX release, newest first.',
     url: 'https://flashfx.app/changelog',
     siteName: 'FlashFX',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Changelog — What Has Changed in FlashFX',
+    title: 'Changelog: What Has Changed in FlashFX',
     description: 'Every FlashFX release, newest first.',
     images: OG_IMAGES,
   },

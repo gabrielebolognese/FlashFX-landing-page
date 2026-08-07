@@ -9,7 +9,7 @@ import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'Features — Vector Design, Keyframe Animation, 3D & Export | FlashFX',
+  title: 'Features: Vector Design, Keyframe Animation, 3D & Export | FlashFX',
   description:
     'Every FlashFX feature in one place: vector design tools, keyframe animation with 16 easing functions, 90 motion presets, 3D with model import, 70+ image filters, and MP4, WebM, GIF, SVG and PNG sequence export. All in the browser.',
   keywords: [
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'Features — Vector Design, Keyframe Animation, 3D & Export | FlashFX',
+    title: 'Features: Vector Design, Keyframe Animation, 3D & Export | FlashFX',
     description:
       'Vector design, keyframe animation, 3D, audio, and export — the whole motion graphics pipeline, running in a browser tab with nothing to install.',
     url: 'https://flashfx.app/features',
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Features — Vector Design, Keyframe Animation, 3D & Export | FlashFX',
+    title: 'Features: Vector Design, Keyframe Animation, 3D & Export | FlashFX',
     description:
       'Vector design, keyframe animation, 3D, audio, and export — the whole motion graphics pipeline, running in a browser tab with nothing to install.',
     images: OG_IMAGES,

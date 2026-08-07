@@ -4,15 +4,18 @@ import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'Acceptable Use Policy — FlashFX',
+  title: 'Acceptable Use Policy | FlashFX',
   description:
-    'What you may and may not do with FlashFX, and what happens to accounts that break these rules.',
+    // Deliberately describes the document rather than listing its sections: the
+    // text is served by Termly and can be edited outside this repo, so any
+    // section list here would eventually describe a page that no longer exists.
+    'The rules for using FlashFX: what counts as acceptable use of the editor and the work you export, what is prohibited, and what happens to accounts that break these rules.',
   robots: {
     index: true,
     follow: true,
   },
   openGraph: {
-    title: 'Acceptable Use Policy — FlashFX',
+    title: 'Acceptable Use Policy | FlashFX',
     description: 'What you may and may not do with FlashFX.',
     url: 'https://flashfx.app/acceptable-use-policy',
     siteName: 'FlashFX',
@@ -22,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Acceptable Use Policy — FlashFX',
+    title: 'Acceptable Use Policy | FlashFX',
     description: 'What you may and may not do with FlashFX.',
     images: OG_IMAGES,
   },

@@ -10,7 +10,7 @@ import { beginnerFaqData } from '@/components/sections/video-editing-for-beginne
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'Video Editing Software for Beginners (2026) — Easy & Free | FlashFX',
+  title: 'Video Editing Software for Beginners (2026): Easy & Free | FlashFX',
   description: 'FlashFX is the easiest video editing software for beginners. Free, browser-based, no download needed. Create your first professional animation in under 15 minutes. No experience required.',
   keywords: [
     'video editing software for beginners',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'Video Editing Software for Beginners (2026) — Easy & Free | FlashFX',
+    title: 'Video Editing Software for Beginners (2026): Easy & Free | FlashFX',
     description: 'FlashFX is the easiest video editing software for beginners. Free, browser-based, no download. First export in under 15 minutes.',
     url: 'https://flashfx.app/video-editing-software-for-beginners',
     siteName: 'FlashFX',
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Video Editing Software for Beginners (2026) — Easy & Free | FlashFX',
+    title: 'Video Editing Software for Beginners (2026): Easy & Free | FlashFX',
     description: 'FlashFX is the easiest video editing software for beginners. Free, browser-based. First export in under 15 minutes.',
     images: OG_IMAGES,
   },

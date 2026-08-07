@@ -9,7 +9,7 @@ import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'Brand — Logo, Colour, Type & Boilerplate | FlashFX',
+  title: 'Brand: Logo, Colour, Type & Boilerplate | FlashFX',
   description:
     'The FlashFX brand: logo download, the colour palette with hex values, the four typefaces we use, how to write the name, and standard boilerplate for press.',
   keywords: ['FlashFX brand', 'FlashFX logo', 'FlashFX press kit', 'FlashFX colours', 'FlashFX boilerplate'],
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'Brand — Logo, Colour, Type & Boilerplate | FlashFX',
+    title: 'Brand: Logo, Colour, Type & Boilerplate | FlashFX',
     description:
       'Logo download, colour palette with hex values, typefaces, name usage, and standard boilerplate for press.',
     url: 'https://flashfx.app/brand',
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Brand — Logo, Colour, Type & Boilerplate | FlashFX',
+    title: 'Brand: Logo, Colour, Type & Boilerplate | FlashFX',
     description:
       'Logo download, colour palette with hex values, typefaces, name usage, and standard boilerplate for press.',
     images: OG_IMAGES,

@@ -7,7 +7,7 @@ import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'Pricing — Free Tier, Ultra & Teams | FlashFX',
+  title: 'Pricing: Free Tier, Ultra & Teams | FlashFX',
   description:
     'FlashFX pricing: a free tier with unlimited projects and no watermark, Ultra at $29/month for AI and full 3D, and Teams at $39/seat/month for collaboration. No install, no credit card to start.',
   keywords: [
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'Pricing — Free Tier, Ultra & Teams | FlashFX',
+    title: 'Pricing: Free Tier, Ultra & Teams | FlashFX',
     description:
       'A free tier with unlimited projects and no watermark. Ultra at $29/month for AI and full 3D. Teams at $39/seat/month for collaboration.',
     url: 'https://flashfx.app/pricing',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pricing — Free Tier, Ultra & Teams | FlashFX',
+    title: 'Pricing: Free Tier, Ultra & Teams | FlashFX',
     description:
       'A free tier with unlimited projects and no watermark. Ultra at $29/month for AI and full 3D. Teams at $39/seat/month for collaboration.',
     images: OG_IMAGES,

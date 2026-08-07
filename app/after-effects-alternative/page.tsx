@@ -13,7 +13,7 @@ import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'Best After Effects Alternative in 2026 — FlashFX (Free & Lightweight)',
+  title: 'Best After Effects Alternative in 2026 | FlashFX (Free & Lightweight)',
   description: 'Looking for a free After Effects alternative? FlashFX delivers professional motion graphics with no learning curve, no heavy install, and no subscription. Try it free.',
   keywords: [
     'after effects alternative',
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'Best After Effects Alternative in 2026 — FlashFX',
+    title: 'Best After Effects Alternative in 2026 | FlashFX',
     description: 'Looking for a free After Effects alternative? FlashFX delivers professional motion graphics with no learning curve, no heavy install, and no subscription. Try it free.',
     url: 'https://flashfx.app/after-effects-alternative',
     siteName: 'FlashFX',
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Best After Effects Alternative in 2026 — FlashFX',
+    title: 'Best After Effects Alternative in 2026 | FlashFX',
     description: 'Looking for a free After Effects alternative? FlashFX delivers professional motion graphics with no learning curve, no heavy install, and no subscription. Try it free.',
     images: OG_IMAGES,
   },

@@ -11,7 +11,7 @@ import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'Motion Graphics Software for YouTube — Intros, End Screens & Shorts | FlashFX',
+  title: 'Motion Graphics Software for YouTube: Intros, End Screens & Shorts | FlashFX',
   description:
     'Make YouTube intros, end screens, lower thirds, and Shorts in your browser. 90 animation presets, custom fonts, MP4 and transparent PNG sequence export, and no watermark on the free tier.',
   keywords: [
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'Motion Graphics Software for YouTube — Intros, End Screens & Shorts | FlashFX',
+    title: 'Motion Graphics Software for YouTube: Intros, End Screens & Shorts | FlashFX',
     description:
       'Make YouTube intros, end screens, lower thirds, and Shorts in your browser. No install, no watermark on the free tier.',
     url: 'https://flashfx.app/motion-graphics-software-for-youtube',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Motion Graphics Software for YouTube — Intros, End Screens & Shorts | FlashFX',
+    title: 'Motion Graphics Software for YouTube: Intros, End Screens & Shorts | FlashFX',
     description:
       'Make YouTube intros, end screens, lower thirds, and Shorts in your browser. No install, no watermark on the free tier.',
     images: OG_IMAGES,
