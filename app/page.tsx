@@ -166,7 +166,7 @@ export default function Home() {
         <VideoPlaceholder heading="Animation presets" title="Animation Presets" description="Bring your ideas to life effortlessly" gridBackground demo="presets" youtubeId="Rk9hf3QI5Is" />
         <KeyframeInterpolation />
         {/* id is what the Navbar Features dropdown scrolls to for Share Projects. */}
-        <VideoPlaceholder id="share-projects" title="Share Projects" description="Collaborate and share your work with anyone, instantly" gridBackground demo="share" youtubeId="sqdlJULYNZA" sectionHeading="Share Projects" />
+        <VideoPlaceholder id="share-projects" title="Share Projects" description="Collaborate and share your work with anyone, instantly" demo="share" youtubeId="sqdlJULYNZA" sectionHeading="Share Projects" />
         <SplitHero />
         <CreatorStories />
         {/*
