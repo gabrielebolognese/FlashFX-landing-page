@@ -23,6 +23,15 @@ interface VideoPlaceholderProps {
    */
   demo?: DemoKind;
   /**
+   * A visible label above the demo.
+   *
+   * `title` and `description` have never been rendered by this component —
+   * they exist only as the iframe's accessible name and as documentation at the
+   * call site. `heading` is what actually appears on the page, added so the two
+   * timelines can be named as a pair under "Organize workflow".
+   */
+  heading?: string;
+  /**
    * Anchor id for the <section>. Added 2026-08-06 so the Navbar Features
    * dropdown can scroll to the Share Projects section, which had the content
    * but no id to target.
@@ -112,7 +121,7 @@ function YouTubeEmbed({ youtubeId, title }: { youtubeId: string; title: string }
   );
 }
 
-export function VideoPlaceholder({ title, description, isMainDemo, gridBackground, youtubeId, sectionHeading, id, demo }: VideoPlaceholderProps) {
+export function VideoPlaceholder({ title, description, isMainDemo, gridBackground, youtubeId, sectionHeading, id, demo, heading }: VideoPlaceholderProps) {
   return (
     <section
       id={id}
@@ -135,6 +144,18 @@ export function VideoPlaceholder({ title, description, isMainDemo, gridBackgroun
       )}
       {gridBackground && (
         <div className="absolute inset-0 pointer-events-none z-[2] bg-gradient-to-b from-fx-bg-base via-transparent to-fx-bg-base" />
+      )}
+
+      {heading && (
+        <motion.h3
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="relative z-10 mb-5 text-center font-mono text-xs md:text-sm uppercase tracking-[0.35em] text-fx-text-secondary"
+        >
+          {heading}
+        </motion.h3>
       )}
 
       {/*

@@ -1,6 +1,6 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Cormorant_Garamond, Outfit, JetBrains_Mono } from 'next/font/google';
+import { Cormorant_Garamond, Outfit, JetBrains_Mono, Inter } from 'next/font/google';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { PageLoader } from '@/components/PageLoader';
@@ -71,6 +71,24 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 /*
+ * A fourth family, added 2026-08-07 at the owner's request for the
+ * "Professional motion graphics, on your browser" heading.
+ *
+ * This is a deliberate step back from performancemilestones.md P7, which got
+ * the site to three. It is one weight, one heading, and `preload: false` —
+ * the heading is well below the fold, so it must not compete with Outfit for
+ * the single preload slot. If the extra family ever needs to go, Outfit is the
+ * closest substitute already loaded.
+ */
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['700'],
+  variable: '--font-inter',
+  display: 'swap',
+  preload: false,
+});
+
+/*
  * The homepage (app/page.tsx) declares no metadata of its own, so it inherits
  * this block verbatim — title, robots, canonical, and social cards all come
  * from here. Editing this edits the homepage.
@@ -116,7 +134,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${cormorantGaramond.variable} ${outfit.variable} ${jetbrainsMono.variable} font-sans`}>
+      <body className={`${cormorantGaramond.variable} ${outfit.variable} ${jetbrainsMono.variable} ${inter.variable} font-sans`}>
         {/*
           BodyWrapper and ContentGate were removed with the loading context in
           performancemilestones.md P1. They wrapped the whole tree in a client

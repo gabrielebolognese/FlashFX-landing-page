@@ -3,6 +3,7 @@ import { WhatIsFlashFX } from '@/components/sections/WhatIsFlashFX';
 import { VideoPlaceholder } from '@/components/sections/VideoPlaceholder';
 import { ImageCarousel } from '@/components/sections/ImageCarousel';
 import { SolutionSection } from '@/components/sections/SolutionSection';
+import { OrganizeWorkflow } from '@/components/sections/OrganizeWorkflow';
 import { FeaturesIntro } from '@/components/sections/FeaturesIntro';
 import { AllWebEditing } from '@/components/sections/AllWebEditing';
 import { DualTimeline } from '@/components/sections/DualTimeline';
@@ -156,10 +157,11 @@ export default function Home() {
           `youtubeId` stays recorded so reverting any single section is a
           one-word edit.
         */}
-        <VideoPlaceholder title="Intuitive Timeline Editing" description="Keyframe animation made simple for everyone" demo="timeline" youtubeId="bHdIvt_lUrE" sectionHeading="Intuitive Timeline Editing" />
+        <OrganizeWorkflow />
+        <VideoPlaceholder heading="Clip timeline" title="Clip Timeline" description="Arrange footage, overlays and audio in one sequence" gridBackground demo="clips" youtubeId="-zyusYiQNEc" />
+        <VideoPlaceholder heading="Animation timeline" title="Animation Timeline" description="Keyframe animation made simple for everyone" demo="timeline" youtubeId="bHdIvt_lUrE" sectionHeading="Animation Timeline" />
         <FeaturesIntro />
         <AllWebEditing />
-        <VideoPlaceholder title="All Web Editing" description="Professional editing, right in your browser" gridBackground demo="clips" youtubeId="-zyusYiQNEc" />
         {/*
           Sits between All Web Editing and Easy Animations to match the order of
           the Navbar Features dropdown (Navbar.tsx FEATURES). It carries
