@@ -149,8 +149,6 @@ export default function Home() {
 
       <main>
         <Hero />
-        <WhatIsFlashFX />
-        <ImageCarousel />
         <SolutionSection />
         {/*
           Every one of these was a YouTube embed of someone else's screen. They
@@ -162,6 +160,8 @@ export default function Home() {
         <VideoPlaceholder heading="Clip timeline" title="Clip Timeline" description="Arrange footage, overlays and audio in one sequence" gridBackground demo="clips" youtubeId="-zyusYiQNEc" />
         <VideoPlaceholder heading="Animation timeline" title="Animation Timeline" description="Keyframe animation made simple for everyone" demo="timeline" youtubeId="bHdIvt_lUrE" sectionHeading="Animation Timeline" />
         <InteractiveCanvas />
+        <ImageCarousel />
+        <WhatIsFlashFX />
         <FeaturesIntro />
         <AllWebEditing />
         {/*

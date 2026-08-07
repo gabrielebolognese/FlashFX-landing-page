@@ -71,9 +71,8 @@ export function WhatIsFlashFX() {
           className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6"
           style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.03em' }}
         >
-          <span className="text-white">What is </span>
-          <span style={{ color: '#f5c842' }}>FlashFX</span>
-          <span className="text-white">?</span>
+          <span className="text-white">Here are some </span>
+          <span style={{ color: '#f5c842' }}>examples</span>
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 16 }}

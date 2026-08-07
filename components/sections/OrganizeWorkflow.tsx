@@ -21,7 +21,7 @@ export function OrganizeWorkflow() {
         className="max-w-6xl mx-auto text-center text-4xl sm:text-5xl md:text-6xl leading-[1.06] text-white"
         style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 700, letterSpacing: '-0.035em' }}
       >
-        Organize <span style={{ color: '#f5c842' }}>workflow</span>
+        Organized <span style={{ color: '#f5c842' }}>workflow</span>
       </motion.h2>
     </section>
   );
