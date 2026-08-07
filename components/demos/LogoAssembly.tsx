@@ -1,0 +1,476 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
+import { cappedPixelRatio } from '@/lib/render-gate';
+import { useAmbient } from '@/lib/motion';
+import { DEMO_PRIORITY } from './demo-kit';
+
+/*
+ * One cube becomes the FlashFX lockup (immersionmilestones.md I8).
+ *
+ * A single cube duplicates, and the swarm splits: part of it builds the logo,
+ * which turns; the rest builds the word FlashFX, which does not.
+ *
+ * ── One continuous morph, and how ───────────────────────────────────────────
+ *
+ * The brief was explicit that this must not be morph-pause-morph-pause. So
+ * there are no stages at all. Every cube follows a single quadratic Bézier:
+ *
+ *     P(u) = (1−u)²·origin + 2(1−u)u·spread + u²·target
+ *
+ * The `spread` control point is the cube's place in a loose lattice, so the
+ * curve bulges outward on its way — that bulge *is* the duplication, expressed
+ * as one uninterrupted path rather than a discrete phase. There is nothing to
+ * hold between, because there is nothing between.
+ *
+ * Cubes are staggered by the x of their destination, so the lockup assembles
+ * left to right, logo first. At any instant some cubes are still leaving the
+ * origin while others have arrived — which is what makes it read as continuous
+ * duplication rather than a single block dispersing.
+ *
+ * ── Where the shapes come from ──────────────────────────────────────────────
+ *
+ * Both are rasterised, not hand-plotted: the logo from the real
+ * android-chrome-192x192.png, and the word from a canvas rendered in the site's
+ * own font (read off the DOM, so it tracks the real stack rather than
+ * guessing). Change either asset and the animation follows.
+ */
+
+/** Grid rows for each. The logo is square; the text's width follows its glyphs. */
+const LOGO_ROWS = 34;
+const TEXT_ROWS = 30;
+
+/** World units between cube centres. */
+const PITCH = 1;
+
+/** How far the logo's cubes stretch in z once assembled, so it reads as a slab. */
+const LOGO_EXTRUDE = 3.4;
+
+/** Gap between logo and word, in cubes. */
+const GAP = 9;
+
+/** Seconds for the whole build. */
+const BUILD = 6.5;
+
+/** Fraction of the build spent staggering starts across the swarm. */
+const STAGGER = 0.55;
+
+/** Text cube palette — the site's faceted six. */
+const FACES = ['#F5C518', '#7C5CBF', '#E6EDF3', '#2D6BE4', '#4ADE80', '#F97362'];
+
+/** Logo cubes are white-based and tinted per instance by the logo's own pixels. */
+const LOGO_SHADE = ['#d8dee6', '#c6ccd6', '#ffffff', '#aab2be', '#e8edf4', '#bcc4d0'];
+
+function smoothstep(a: number, b: number, x: number): number {
+  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+}
+
+/** A box whose six faces carry six fixed colours, as flat vertex colours. */
+function facedBox(w: number, h: number, d: number, palette: string[]): THREE.BoxGeometry {
+  const g = new THREE.BoxGeometry(w, h, d);
+  const colours = new Float32Array(24 * 3);
+  const c = new THREE.Color();
+  for (let face = 0; face < 6; face++) {
+    c.set(palette[face]);
+    for (let v = 0; v < 4; v++) {
+      const i = (face * 4 + v) * 3;
+      colours[i] = c.r; colours[i + 1] = c.g; colours[i + 2] = c.b;
+    }
+  }
+  g.setAttribute('color', new THREE.BufferAttribute(colours, 3));
+  return g;
+}
+
+interface Cell { x: number; y: number; r: number; g: number; b: number }
+interface Grid { cells: Cell[]; cols: number; rows: number }
+
+/**
+ * Crop a cell list to its own bounding box.
+ *
+ * Both sources carry padding — the logo PNG has margin around the bolt, and
+ * rasterised text has ascender and descender space the glyphs never reach.
+ * Laying out against the raw grid would centre the *padding* and leave the
+ * artwork visibly off to one side.
+ */
+function crop(cells: Cell[]): Grid {
+  if (!cells.length) return { cells, cols: 0, rows: 0 };
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (const c of cells) {
+    if (c.x < minX) minX = c.x; if (c.x > maxX) maxX = c.x;
+    if (c.y < minY) minY = c.y; if (c.y > maxY) maxY = c.y;
+  }
+  return {
+    cells: cells.map((c) => ({ ...c, x: c.x - minX, y: c.y - minY })),
+    cols: maxX - minX + 1,
+    rows: maxY - minY + 1,
+  };
+}
+
+/**
+ * Sample the logo into a grid.
+ *
+ * Keeps the bolt and drops the near-white ground it sits on: a pixel counts if
+ * it is opaque *and* either saturated or dark. Testing alpha alone would return
+ * the whole square. Verified against the real asset — at 34 rows the filter
+ * keeps the bolt and nothing else.
+ */
+function sampleLogo(image: HTMLImageElement, rows: number): Grid {
+  const canvas = document.createElement('canvas');
+  canvas.width = rows;
+  canvas.height = rows;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx) return { cells: [], cols: 0, rows: 0 };
+  ctx.drawImage(image, 0, 0, rows, rows);
+  const { data } = ctx.getImageData(0, 0, rows, rows);
+
+  const cells: Cell[] = [];
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < rows; x++) {
+      const i = (y * rows + x) * 4;
+      const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
+      if (a < 128) continue;
+      const saturation = Math.max(r, g, b) - Math.min(r, g, b);
+      const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+      if (saturation < 28 && luminance > 215) continue;
+      cells.push({ x, y, r: r / 255, g: g / 255, b: b / 255 });
+    }
+  }
+  return crop(cells);
+}
+
+/** Rasterise the word, then sample ink coverage per grid cell. */
+function sampleText(text: string, rows: number, fontFamily: string): Grid {
+  const px = 160;
+  const probe = document.createElement('canvas');
+  const pctx = probe.getContext('2d', { willReadFrequently: true });
+  if (!pctx) return { cells: [], cols: 0, rows: 0 };
+
+  const font = `700 ${px}px ${fontFamily}`;
+  pctx.font = font;
+  const width = Math.ceil(pctx.measureText(text).width);
+
+  probe.width = width + px;
+  probe.height = Math.ceil(px * 1.5);
+  const ctx = probe.getContext('2d', { willReadFrequently: true });
+  if (!ctx) return { cells: [], cols: 0, rows: 0 };
+  ctx.font = font;
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#fff';
+  ctx.fillText(text, px / 2, probe.height / 2);
+
+  const { data } = ctx.getImageData(0, 0, probe.width, probe.height);
+
+  // Tight bounds around the ink, so the grid is not mostly padding.
+  let minX = probe.width, maxX = 0, minY = probe.height, maxY = 0;
+  for (let y = 0; y < probe.height; y++) {
+    for (let x = 0; x < probe.width; x++) {
+      if (data[(y * probe.width + x) * 4 + 3] > 40) {
+        if (x < minX) minX = x; if (x > maxX) maxX = x;
+        if (y < minY) minY = y; if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (maxX <= minX || maxY <= minY) return { cells: [], cols: 0, rows: 0 };
+
+  const inkH = maxY - minY + 1;
+  const inkW = maxX - minX + 1;
+  const cell = inkH / rows;
+  const cols = Math.max(1, Math.round(inkW / cell));
+
+  const cells: Cell[] = [];
+  for (let ry = 0; ry < rows; ry++) {
+    for (let rx = 0; rx < cols; rx++) {
+      const x0 = Math.floor(minX + rx * cell), x1 = Math.floor(minX + (rx + 1) * cell);
+      const y0 = Math.floor(minY + ry * cell), y1 = Math.floor(minY + (ry + 1) * cell);
+      let sum = 0, n = 0;
+      for (let y = y0; y < y1; y++) {
+        for (let x = x0; x < x1; x++) {
+          sum += data[(y * probe.width + x) * 4 + 3];
+          n++;
+        }
+      }
+      if (n && sum / n / 255 > 0.42) cells.push({ x: rx, y: ry, r: 1, g: 1, b: 1 });
+    }
+  }
+  return crop(cells);
+}
+
+export function LogoAssembly({ className }: { className?: string }) {
+  const { ref, active } = useAmbient<HTMLDivElement>({ priority: DEMO_PRIORITY });
+  const host = useRef<HTMLDivElement>(null);
+  const activeRef = useRef(active);
+  const wake = useRef<(() => void) | null>(null);
+  activeRef.current = active;
+
+  useEffect(() => {
+    const container = host.current;
+    if (!container) return;
+
+    let disposed = false;
+    let cleanup: (() => void) | null = null;
+
+    const build = async () => {
+      // The canvas has to draw in the same face the page uses, so read the
+      // resolved stack off the DOM rather than naming a family here.
+      const probe = document.createElement('span');
+      probe.className = 'font-sans font-bold';
+      probe.style.position = 'absolute';
+      probe.style.visibility = 'hidden';
+      document.body.appendChild(probe);
+      const fontFamily = getComputedStyle(probe).fontFamily || 'sans-serif';
+      probe.remove();
+
+      try { await document.fonts.ready; } catch { /* older browsers */ }
+
+      const image = new Image();
+      image.src = '/android-chrome-192x192.png';
+      await new Promise<void>((resolve) => {
+        if (image.complete) return resolve();
+        image.onload = () => resolve();
+        image.onerror = () => resolve();
+      });
+      if (disposed) return;
+
+      const logo = sampleLogo(image, LOGO_ROWS);
+      const text = sampleText('FlashFX', TEXT_ROWS, fontFamily);
+      if (!logo.cells.length || !text.cells.length) return;
+
+      const logoCells = logo.cells;
+      const textCells = text.cells;
+
+      const totalW = logo.cols + GAP + text.cols;
+      const halfW = (totalW * PITCH) / 2;
+      const halfH = (Math.max(logo.rows, text.rows) * PITCH) / 2;
+
+      // Grid → world, each block centred on its own cropped box. y is flipped
+      // because image and canvas rows run downward.
+      const logoOriginX = -halfW + (logo.cols * PITCH) / 2;
+      const toLogoLocal = (c: Cell) => [
+        (c.x - logo.cols / 2 + 0.5) * PITCH,
+        (logo.rows / 2 - c.y - 0.5) * PITCH,
+        0,
+      ];
+      const toTextWorld = (c: Cell) => [
+        -halfW + (logo.cols + GAP + c.x + 0.5) * PITCH,
+        (text.rows / 2 - c.y - 0.5) * PITCH,
+        0,
+      ];
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 500);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setClearColor(0x000000, 0);
+      renderer.setPixelRatio(cappedPixelRatio());
+      container.appendChild(renderer.domElement);
+      renderer.domElement.style.width = '100%';
+      renderer.domElement.style.height = '100%';
+      renderer.domElement.style.display = 'block';
+
+      /*
+       * The logo is extruded in z so that spinning it does not make it vanish
+       * edge-on twice per turn — a slab stays solid where a flat layer does
+       * not. The extrusion is applied through the instance scale and eased in
+       * with the build: baked into the geometry it would also apply at u=0,
+       * when every cube is coincident at the origin, turning the single opening
+       * cube into a long box.
+       */
+      const logoGeo = facedBox(PITCH * 0.92, PITCH * 0.92, PITCH * 0.92, LOGO_SHADE);
+      const textGeo = facedBox(PITCH * 0.88, PITCH * 0.88, PITCH * 0.88, FACES);
+      const makeMaterial = () => new THREE.MeshBasicMaterial({ vertexColors: true });
+
+      const logoMesh = new THREE.InstancedMesh(logoGeo, makeMaterial(), logoCells.length);
+      const textMesh = new THREE.InstancedMesh(textGeo, makeMaterial(), textCells.length);
+      logoMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      textMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+
+      const tint = new THREE.Color();
+      logoCells.forEach((c, i) => {
+        tint.setRGB(c.r, c.g, c.b);
+        logoMesh.setColorAt(i, tint);
+      });
+      if (logoMesh.instanceColor) logoMesh.instanceColor.needsUpdate = true;
+
+      // The logo turns; the group is what turns, so its cubes are positioned in
+      // local space around the group's own centre.
+      const logoGroup = new THREE.Group();
+      logoGroup.position.set(logoOriginX, 0, 0);
+      logoGroup.add(logoMesh);
+      scene.add(logoGroup);
+      scene.add(textMesh);
+
+      /*
+       * Per-cube path data. `spread` is the Bézier control point — a loose
+       * lattice position that bulges the path outward mid-flight. `delay`
+       * staggers starts by destination x, so the lockup assembles left to
+       * right.
+       */
+      interface Cube { target: number[]; spread: number[]; delay: number }
+      const makeCubes = (cells: Cell[], toWorld: (c: Cell) => number[], localOffsetX: number): Cube[] =>
+        cells.map((c, i) => {
+          const target = toWorld(c);
+          const worldX = target[0] + localOffsetX;
+          const t = (worldX + halfW) / (halfW * 2);
+          const angle = i * 2.399963; // golden angle — spreads without clumping
+          const radius = halfH * (0.5 + ((i * 13) % 7) / 7);
+          return {
+            target,
+            spread: [
+              Math.cos(angle) * radius * 1.7,
+              Math.sin(angle) * radius,
+              Math.sin(angle * 1.7) * radius * 0.6,
+            ],
+            delay: Math.min(0.999, Math.max(0, t)) * STAGGER,
+          };
+        });
+
+      const logoCubes = makeCubes(logoCells, toLogoLocal, logoOriginX);
+      const textCubes = makeCubes(textCells, toTextWorld, 0);
+
+      const dummy = new THREE.Object3D();
+
+      /** Place one mesh's instances at global progress `p`. */
+      const place = (mesh: THREE.InstancedMesh, cubes: Cube[], origin: number[], p: number, extrude: number) => {
+        for (let i = 0; i < cubes.length; i++) {
+          const cube = cubes[i];
+          const u = Math.min(1, Math.max(0, (p - cube.delay) / (1 - STAGGER)));
+          const e = u * u * (3 - 2 * u); // smoothstep — no seams, no stops
+
+          const inv = 1 - e;
+          const a = inv * inv, b = 2 * inv * e, c = e * e;
+          dummy.position.set(
+            a * origin[0] + b * cube.spread[0] + c * cube.target[0],
+            a * origin[1] + b * cube.spread[1] + c * cube.target[1],
+            a * origin[2] + b * cube.spread[2] + c * cube.target[2]
+          );
+
+          // One big cube at rest, ordinary cubes once they are on their way.
+          const s = 1 + (1 - smoothstep(0, 0.32, u)) * 15;
+          dummy.scale.set(s, s, s * (1 + (extrude - 1) * smoothstep(0.45, 1, u)));
+          dummy.updateMatrix();
+          mesh.setMatrixAt(i, dummy.matrix);
+        }
+        mesh.instanceMatrix.needsUpdate = true;
+      };
+
+      const fit = () => {
+        const { clientWidth: w, clientHeight: h } = container;
+        if (!w || !h) return;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        const fov = (camera.fov * Math.PI) / 180;
+        // Fit the lockup's width and height, whichever binds, plus margin.
+        const distH = halfH / Math.tan(fov / 2);
+        const distW = halfW / (Math.tan(fov / 2) * camera.aspect);
+        camera.position.set(0, 0, Math.max(distH, distW) * 1.18);
+        camera.lookAt(0, 0, 0);
+        camera.updateProjectionMatrix();
+      };
+      const observer = new ResizeObserver(fit);
+      observer.observe(container);
+      fit();
+
+      let progress = 0;
+      let spin = 0;
+      let frame = 0;
+      let running = false;
+      let last = 0;
+
+      const draw = () => {
+        // Once assembled, instance matrices stop changing entirely and only the
+        // logo group's rotation is written — from ~1,100 matrix writes a frame
+        // down to none.
+        if (progress < 1) {
+          place(logoMesh, logoCubes, [-logoOriginX, 0, 0], progress, LOGO_EXTRUDE);
+          place(textMesh, textCubes, [0, 0, 0], progress, 1);
+        }
+        logoGroup.rotation.y = spin;
+        renderer.render(scene, camera);
+      };
+
+      const loop = (now: number) => {
+        if (!last) last = now;
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+
+        if (progress < 1) progress = Math.min(1, progress + dt / BUILD);
+        // The turn eases in as the logo finishes arriving, so its cubes are not
+        // flying toward a moving target.
+        spin += dt * 0.55 * smoothstep(0.55, 1, progress);
+
+        draw();
+
+        if (activeRef.current) {
+          frame = requestAnimationFrame(loop);
+        } else {
+          running = false;
+          last = 0;
+        }
+      };
+
+      const start = () => {
+        if (running || !activeRef.current) return;
+        running = true;
+        last = 0;
+        frame = requestAnimationFrame(loop);
+      };
+      wake.current = start;
+
+      /*
+       * Replay when the section has properly left and come back. Deliberately a
+       * separate observer from the governor's: losing a loop slot to another
+       * section is not a reason to restart the animation from a single cube.
+       */
+      const replay = new IntersectionObserver(
+        (records) => {
+          if (records.some((r) => !r.isIntersecting)) {
+            progress = 0;
+            spin = 0;
+          }
+        },
+        { threshold: 0 }
+      );
+      replay.observe(container);
+
+      draw();
+      start();
+
+      cleanup = () => {
+        cancelAnimationFrame(frame);
+        observer.disconnect();
+        replay.disconnect();
+        logoGeo.dispose();
+        textGeo.dispose();
+        (logoMesh.material as THREE.Material).dispose();
+        (textMesh.material as THREE.Material).dispose();
+        logoMesh.dispose();
+        textMesh.dispose();
+        renderer.dispose();
+        renderer.forceContextLoss();
+        if (renderer.domElement.parentNode === container) {
+          container.removeChild(renderer.domElement);
+        }
+      };
+    };
+
+    build();
+
+    return () => {
+      disposed = true;
+      wake.current = null;
+      cleanup?.();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (active) wake.current?.();
+  }, [active]);
+
+  return (
+    <div ref={ref} className={className}>
+      <div ref={host} className="absolute inset-0" />
+    </div>
+  );
+}
