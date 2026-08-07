@@ -166,8 +166,6 @@ export default function Home() {
         <EverythingToAnimate />
         <VideoPlaceholder heading="Animation presets" title="Animation Presets" description="Bring your ideas to life effortlessly" gridBackground demo="presets" youtubeId="Rk9hf3QI5Is" />
         <KeyframeInterpolation />
-        {/* id is what the Navbar Features dropdown scrolls to for Share Projects. */}
-        <VideoPlaceholder id="share-projects" title="Share Projects" description="Collaborate and share your work with anyone, instantly" demo="share" youtubeId="sqdlJULYNZA" sectionHeading="Share Projects" />
         <CreatorStories />
         {/*
           Seams mark the transitions between the page's acts rather than every

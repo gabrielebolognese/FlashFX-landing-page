@@ -22,9 +22,16 @@ const PlaneViewer = dynamic(
   () => import('@/components/demos/PlaneViewer').then((m) => m.PlaneViewer),
   {
     ssr: false,
-    // Sized placeholder so nothing shifts when the chunk lands. `ssr: false` is
-    // right twice over: WebGL needs a browser, and there is nothing here a
-    // crawler wants that the copy beside it does not already say.
+    /*
+     * `ssr: false` is right twice over: WebGL needs a browser, and there is
+     * nothing here a crawler wants that the copy beside it does not already say.
+     *
+     * This placeholder is only inset — it has no size of its own. What stops the
+     * layout shifting is the aspect ratio on its parent in the section below;
+     * this fills that reserved box. (This comment used to claim the placeholder
+     * was sized, which was never true: with the ratio on `PlaneViewer` itself,
+     * nothing existed to inset against until the chunk arrived.)
+     */
     loading: () => <div className="absolute inset-0" />,
   }
 );
@@ -115,7 +122,16 @@ export function ThreeDSupport() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="relative w-full"
+            /*
+              The aspect ratio lives here, on a server-rendered element, rather
+              than on `PlaneViewer`. The viewer is `ssr: false`, so its root does
+              not exist until the chunk lands — with the ratio there, this column
+              was zero height on first paint and shifted the row when the model
+              arrived. Reserving the box here is what makes the loading
+              placeholder below actually placeholder-shaped. Fixed 2026-08-07,
+              alongside the same bug in `ParticleGeneration`.
+            */
+            className="relative w-full aspect-[4/3] lg:aspect-square"
           >
             {/*
               No panel, no border. The viewer blends into the section rather
@@ -129,7 +145,7 @@ export function ThreeDSupport() {
                   'radial-gradient(ellipse at center, rgba(245,197,24,0.11) 0%, rgba(124,92,191,0.07) 42%, transparent 72%)',
               }}
             />
-            <PlaneViewer className="relative w-full aspect-[4/3] lg:aspect-square" />
+            <PlaneViewer className="absolute inset-0" />
           </motion.div>
         </div>
       </div>

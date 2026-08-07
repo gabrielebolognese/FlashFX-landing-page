@@ -18,9 +18,10 @@ import type { LucideIcon } from 'lucide-react';
  * The inline counts (16 easings, 70+ filters, 7 materials, 16 blend modes)
  * come from those entries' own descriptions.
  *
- * `anchor` points at a section that is actually rendered on `/`. Do not add
- * `#dual-timeline` or `#share-projects` — those components exist but are not
- * mounted on any page (FIX.md M6).
+ * `anchor` points at a section that is actually rendered on `/`. `#dual-timeline`
+ * and `#share-projects` are both gone — the first was never mounted, the second
+ * was removed with the sharing section on 2026-08-07. Check the target exists
+ * before adding an anchor; one that scrolls nowhere is FIX.md M6 all over again.
  */
 export interface FeatureCategory {
   title: string;

@@ -30,12 +30,7 @@ const PresetWallDemo = dynamic(() => import('./PresetWallDemo').then((m) => m.Pr
   ssr: false,
   loading: holding,
 });
-const ShareDemo = dynamic(() => import('./ShareDemo').then((m) => m.ShareDemo), {
-  ssr: false,
-  loading: holding,
-});
-
-export type DemoKind = 'timeline' | 'clips' | 'presets' | 'share';
+export type DemoKind = 'timeline' | 'clips' | 'presets';
 
 /**
  * The frame each demo wants.
@@ -62,25 +57,6 @@ export const demoFrame: Record<
   timeline: { width: '', aspect: 'aspect-[21/8] md:aspect-[21/6]', bare: true, fullBleed: true },
   clips: { width: '', aspect: 'aspect-[21/8] md:aspect-[21/6]', bare: true, fullBleed: true },
   presets: { width: 'max-w-5xl', aspect: 'aspect-video' },
-  /*
-   * Same treatment as the timelines: no card, full width, edges faded. The
-   * choreography ends on a call to action that spans 40% of the page, which
-   * only reads at full bleed. Sized by height rather than aspect ratio because
-   * the content is a fixed vertical stack — artwork, lockup, button — not a
-   * picture that should scale with width.
-   */
-  share: {
-    width: '',
-    aspect: 'h-[68vh] min-h-[460px] md:h-[74vh]',
-    bare: true,
-    fullBleed: true,
-    /*
-     * A gentler fade than the timelines' 30/70. The choreography ends on a
-     * button spanning 40% of the page — 30% to 70% — whose edges would land
-     * exactly on a 30/70 mask boundary and fade out. 14/86 clears it.
-     */
-    fade: [14, 86],
-  },
 };
 
 export function Demo({ kind }: { kind: DemoKind }) {
@@ -97,7 +73,5 @@ export function Demo({ kind }: { kind: DemoKind }) {
       return <ClipTimelineDemo />;
     case 'presets':
       return <PresetWallDemo />;
-    case 'share':
-      return <ShareDemo />;
   }
 }

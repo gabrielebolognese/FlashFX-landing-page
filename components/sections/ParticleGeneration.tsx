@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
+import { CtaButton } from '@/components/ui/cta-button';
 import {
   DEFAULTS,
   PRESETS,
@@ -157,6 +158,17 @@ export function ParticleGeneration() {
                   );
                 })}
               </div>
+            </div>
+
+            {/*
+              `md`, the same size the 3D section uses. The hero's `lg` is the
+              page's one loudest moment and stays that way — a section CTA that
+              matches it competes with it.
+            */}
+            <div className="pt-2">
+              <CtaButton href="https://editor.flashfx.app" size="md">
+                Make your own
+              </CtaButton>
             </div>
           </motion.div>
 
