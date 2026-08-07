@@ -170,7 +170,7 @@ export default function Home() {
         <EasyAnimations />
         <VideoPlaceholder title="Animation Presets" description="Bring your ideas to life effortlessly" gridBackground demo="presets" youtubeId="Rk9hf3QI5Is" />
         <ThreeDSupport />
-        <VideoPlaceholder title="3D Support" description="Create stunning 3D motion graphics that captivate your audience" gridBackground demo="cube" />
+        <VideoPlaceholder title="3D Support" description="Create stunning 3D motion graphics that captivate your audience" gridBackground demo="morph" />
         <KeyframeInterpolation />
         <VideoPlaceholder title="Keyframe Interpolation" description="Click any curve to preview its shape" gridBackground demo="easing" youtubeId="fkQhKYaSv0Q" />
         {/* id is what the Navbar Features dropdown scrolls to for Share Projects. */}

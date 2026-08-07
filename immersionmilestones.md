@@ -113,7 +113,7 @@ of how good it looks.
 | I5 | Break the rhythm | NOT_STARTED |
 | I6 | Ambient motion and cursor presence | NOT_STARTED |
 | I7 | Guardrails, mobile and re-verification | NOT_STARTED |
-| I8 | The morph sequence — cube to aeroplane | PLANNED, NOT STARTED |
+| I8 | The morph sequence — cube to aeroplane | DONE |
 
 Order matters. **I1 is a hard prerequisite** — it is the difference between
 "immersive" and "forty uncoordinated infinite loops", which is precisely the
@@ -622,8 +622,7 @@ it.
 
 ## I8 — The morph sequence: cube to aeroplane
 
-**Status:** PLANNED, NOT STARTED — 2026-08-07. Planning only; the viewport
-blending shipped separately.
+**Status:** DONE — 2026-08-07.
 **Impact:** the single most memorable thing on the site, if it lands.
 
 ### The brief
@@ -728,32 +727,70 @@ The real cost is a **WebGL context**, and I4's budget says one. See question 1.
 - [ ] Homepage First Load JS unchanged — demo code split out
 - [ ] Under reduced motion: the aeroplane, still, no sequence
 
-### What I need from you
+### Decisions taken, 2026-08-07
 
-The plan is blocked on these. Numbers 1 and 2 matter most.
+1. **WebGL budget: option (a).** The homepage may run two contexts. Three exist
+   today (hero shader, carousel, features intro) so this is the fourth until I4
+   collapses those into one, at which point it is two — still far below the
+   browser's ~8–16 limit.
+2. **Aeroplane: Boeing 747.** Chosen because it survives extreme
+   simplification: the upper-deck hump, four engines and a long swept wing are
+   enough to identify it at any level of detail. `morph-shapes.ts` verifies all
+   three features are populated.
+3. **Home: *3D Support*,** replacing `CubeDemo`, which stays registered as a
+   `DemoKind` but is no longer used on any page.
+4. **Timed, not scrolled** — a 14.8 s loop. A scroll-driven version remains the
+   more striking option and is worth revisiting under I5's sticky
+   scrollytelling.
+5. **FlashFX genuinely does this.** Confirmed by the owner: the product imports
+   and animates 3D objects and runs morph animations that modify them, and this
+   sequence is one the founder actually built in FlashFX. It is a demonstration
+   of a real capability, not decoration. Recorded in FIX.md *Canonical facts*
+   under "3D capability", including the limit: **it is not a sculpting or
+   modelling application**, and copy must never imply you create geometry in it.
 
-1. **The WebGL budget.** This needs a context, and I4 reserves the single
-   allowed one for the page-wide backdrop. Three ways out:
-   - **(a)** Let the homepage run two contexts — the backdrop and this. Simple,
-     and 2 is still far below the browser's limit of ~8–16. Costs a rule I
-     wrote, not a real constraint. *My recommendation.*
-   - **(b)** One shared renderer, drawing both through scissor viewports. Most
-     efficient, considerably more machinery.
-   - **(c)** Drop the I4 backdrop to canvas2D or CSS and give WebGL to this.
-2. **What aeroplane?** The silhouette drives the point cloud. A swept-wing jet,
-   a straight-wing light aircraft, an airliner, a paper plane? A reference image
-   or even a rough sketch is enough — I need the proportions, not a model.
-3. **Where does it live?** Replacing `CubeDemo` in *3D Support* is the obvious
-   home. But a sequence this long may deserve a section of its own, possibly the
-   sticky scrollytelling treatment from I5 — where the stages advance as you
-   scroll rather than on a timer, so the visitor drives the morph. That is more
-   striking and more work.
-4. **Timed or scrolled?** A ~12 s loop, or bound to scroll position?
-5. **Does FlashFX actually do this?** If the product can produce this kind of
-   sequence, it should be framed as a demonstration and the copy should say so.
-   If it cannot, it stays decoration and the copy must not imply otherwise —
-   `CLAUDE.md` forbids inventing product claims, and this is exactly the kind of
-   thing a visitor would read as one.
+### What shipped
+
+`components/demos/morph-shapes.ts` — pure arithmetic, no three.js and no React,
+so the geometry can be checked in node. `MorphDemo.tsx` — 512 cubes in one
+`InstancedMesh`, one draw call.
+
+- **512 = 8³**, deliberately a perfect cube. At a non-cube count the duplication
+  lattice's final z-layer is only partly filled and the whole thing looks
+  lopsided — on the one stage whose entire job is to look regular.
+- **Points are allocated by block volume**, so a thin wing does not get the same
+  density as the fuselage. The engines are deliberately oversized against true
+  proportions: at 1:1 scale four engines take about 4% of the aircraft, roughly
+  five cubes each, which reads as a smudge rather than a pod.
+- **Wingspan 10.5 against a fuselage of 11.6.** A real 747 is 70.6 m long with a
+  64.4 m span — longer than it is wide. Getting that backwards makes an airliner
+  look like a glider.
+- **Seeded PRNG, never `Math.random()`.** A different aeroplane on every mount
+  would be a bug, not variety.
+- **Elapsed time is accumulated, not read from the clock.** Driving the loop
+  from `performance.now()` directly would enter at an arbitrary phase — usually
+  mid-morph, the one point that never reads well.
+- **Cubes arrive in a wave**, each offset across 40% of the morph window.
+  On a single clock the swarm snaps between shapes as one rigid object.
+- The still frame is the finished aeroplane at a three-quarter angle — used when
+  the governor denies a slot and under reduced motion. Never a blank canvas,
+  never a half-finished morph.
+- The context is handed back on unmount via `forceContextLoss()`, not left for
+  the browser to reclaim.
+
+Verified: three.js and the morph chunk are both absent from the homepage's eager
+chunks, and First Load JS is unchanged at **179 kB**.
+
+### Still open
+
+- **Copy.** The section still reads "Create stunning 3D motion graphics". Given
+  fact 5, it could now say this sequence is the kind of thing FlashFX makes —
+  but what renders on the page is a **web recreation**, not a FlashFX export.
+  Claiming the artwork on screen came out of the product would cross the line
+  drawn in open question 6. If that claim is wanted, the honest way is to show
+  the real FlashFX render.
+- **Device tier (I7)** should step `MORPH_COUNT` down rather than change
+  anything else — 125 (5³) and 216 (6³) both still read correctly.
 
 ---
 

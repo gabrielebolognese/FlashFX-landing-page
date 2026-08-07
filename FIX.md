@@ -62,6 +62,14 @@ and ask.
   truth for what a *plan* includes; any copy quoting a storage number must say
   which state it means, or it reads as a contradiction (as
   `editorFeatures.ts` did until 2026-08-06).
+- **3D capability — what FlashFX does and does not do.** Confirmed 2026-08-07.
+  It **can**: import 3D objects, animate cubes and other primitives, perform
+  basic 3D editing, and run *morph animations that modify objects* — the
+  cube → sphere → aeroplane sequence recreated in `MorphDemo` is an animation
+  the founder actually built in FlashFX. That is enough for motion graphics,
+  which is the claim to make. It is **not a sculpting or modelling
+  application**, and copy must never imply that it is. Do not describe FlashFX
+  as somewhere you *create* 3D geometry; you bring geometry in and animate it.
 - **Personal site:** `https://gabrielebolognese.blog`
 - **Verified logo URL:** `https://flashfx.app/android-chrome-192x192.png`
   — confirmed live 2026-08-03, 200 OK, PNG, 192×192, 13.1 KB. Clears Google's
