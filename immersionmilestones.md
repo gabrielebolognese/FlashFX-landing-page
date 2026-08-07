@@ -495,7 +495,7 @@ cheaper, despite looking like the most expensive one here.
 
 ### Acceptance criteria
 
-- [x] **Exactly one *decorative* WebGL context** — see the note below
+- [x] **One decorative WebGL context, plus the hero's** — see the notes below
 - [x] Backdrop pauses when the tab is hidden (`visibilitychange`), not just off-screen
 - [x] Pixel ratio still capped at 1.5 (`lib/render-gate.ts`)
 - [x] Static gradient fallback under reduced motion and where WebGL is absent
@@ -523,13 +523,18 @@ shared JS.
 toward violet by the closing call to action, so the top of the page feels like a
 different place from the bottom rather than the same wallpaper repeated.
 
-**The hero's rays moved into it.** They fade out across the first screen, so
-they still belong to the hero, and `uAmp` ramps over the same 2.7 s the old
-timer used — the light arrives under the tail of the cube animation exactly as
-it did before. What changed is that it is no longer a second shader.
+**The hero keeps its own shader.** I4 originally folded the hero's rays into
+the backdrop and removed `ShaderAnimation`; that was reverted the same day at
+the owner's request — it is the best animation on the site and stays. The
+backdrop therefore carries no rays of its own, and is the ambient field only,
+with the hero's light playing over the top of it.
 
-**Retired:** `ShaderAnimation` in the hero and `WebGLShader` in `ImageCarousel`
-are both off the homepage, and `ElegantShapesBackground` is gone from
+That leaves two decorative contexts on the homepage rather than one: the
+backdrop and the hero's shader. Recorded here rather than quietly restated in
+the acceptance criteria — the criterion below is what was achieved for the rest
+of the page, and the hero is a deliberate exception.
+
+**Retired:** `WebGLShader` in `ImageCarousel` is off the homepage, and `ElegantShapesBackground` is gone from
 `VideoPlaceholder` — five copies of that section drew five shapes each, so 25
 elements and 5 governed loops, behind demos that are now full-bleed and
 edge-faded where a drifting blob is just noise. `LoadTime` keeps its own shapes;

@@ -22,15 +22,17 @@ import { isReducedTier } from '@/lib/motion';
  *
  * ── What it is driven by ────────────────────────────────────────────────────
  *
- * Scroll position, so the field warms and thins as you descend: cool and
- * ray-lit behind the hero, warmer and quieter by the closing call to action.
- * The rays fade out with the first screen, which is what makes the top of the
- * page feel like a different place from the bottom rather than the same
- * wallpaper repeated.
+ * Scroll position, so the field warms as you descend: cool and blue behind the
+ * hero, warmer and violet by the closing call to action. That is what makes the
+ * top of the page feel like a different place from the bottom rather than the
+ * same wallpaper repeated.
  *
- * `uAmp` ramps from 0 over the first 2.7 s, preserving the hero's timing: the
- * light still arrives under the tail of the cube animation, exactly as it did
- * when that was a separate shader.
+ * It carries no rays. The hero has its own `ShaderAnimation` and keeps it —
+ * this sits behind everything as the ambient field, and the hero's own light
+ * plays over the top of it.
+ *
+ * `uAmp` still ramps from 0 over 2.7 s, so the field arrives rather than
+ * appearing.
  */
 
 const RAMP_MS = 2700;
@@ -78,18 +80,11 @@ void main() {
   vec3 col = base + lift * f * 0.55;
 
   /*
-   * Rays, and only near the top. This is the hero's old light, folded in — it
-   * fades out across the first screen, so it belongs to the hero rather than
-   * following the visitor down the page.
+   * No rays here. The hero keeps its own ShaderAnimation — it is the best
+   * animation on the site and stays (owner's call, 2026-08-07). Drawing rays
+   * here as well would double them behind it, so this backdrop is the ambient
+   * field only.
    */
-  float top = smoothstep(0.35, 0.0, uScroll);
-  if (top > 0.001) {
-    vec2 o = p - vec2(ar * 0.5, 1.35);
-    float a = atan(o.y, o.x);
-    float r = pow(abs(sin(a * 7.0 + t * 0.8)), 14.0);
-    float fall = smoothstep(1.35, 0.15, length(o));
-    col += vec3(0.96, 0.78, 0.16) * r * fall * 0.22 * top;
-  }
 
   /* A hint of grain, so wide gradients do not band on cheap panels. */
   float g = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);
