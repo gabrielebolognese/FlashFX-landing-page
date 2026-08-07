@@ -6,10 +6,13 @@ import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 
+/*
+ * Every entry must point at a section that is actually rendered. Web Editing,
+ * Dual Timeline and Easy Animations were removed on 2026-08-07 with the three
+ * split-screen sections they targeted — a dropdown item that scrolls nowhere is
+ * the exact failure FIX.md M6 existed to fix.
+ */
 const FEATURES = [
-  { id: 'all-web-editing', label: 'Web Editing' },
-  { id: 'dual-timeline', label: 'Dual Timeline' },
-  { id: 'easy-animations', label: 'Easy Animations' },
   { id: '3d-support', label: '3D Support' },
   { id: 'keyframe-interpolation', label: 'Keyframe Interpolation' },
   { id: 'share-projects', label: 'Share Projects' },

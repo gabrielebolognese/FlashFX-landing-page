@@ -6,10 +6,6 @@ import { SolutionSection } from '@/components/sections/SolutionSection';
 import { OrganizeWorkflow } from '@/components/sections/OrganizeWorkflow';
 import { InteractiveCanvas } from '@/components/sections/InteractiveCanvas';
 import { AllOnWeb } from '@/components/sections/AllOnWeb';
-import { FeaturesIntro } from '@/components/sections/FeaturesIntro';
-import { AllWebEditing } from '@/components/sections/AllWebEditing';
-import { DualTimeline } from '@/components/sections/DualTimeline';
-import { EasyAnimations } from '@/components/sections/EasyAnimations';
 import { ThreeDSupport } from '@/components/sections/ThreeDSupport';
 import { KeyframeInterpolation } from '@/components/sections/KeyframeInterpolation';
 import { SplitHero } from '@/components/sections/SplitHero';
@@ -165,16 +161,6 @@ export default function Home() {
         <AllOnWeb />
         <ImageCarousel />
         <WhatIsFlashFX />
-        <FeaturesIntro />
-        <AllWebEditing />
-        {/*
-          Sits between All Web Editing and Easy Animations to match the order of
-          the Navbar Features dropdown (Navbar.tsx FEATURES). It carries
-          id="dual-timeline", which that dropdown scrolls to — moving or removing
-          this breaks the menu item.
-        */}
-        <DualTimeline />
-        <EasyAnimations />
         <VideoPlaceholder title="Animation Presets" description="Bring your ideas to life effortlessly" gridBackground demo="presets" youtubeId="Rk9hf3QI5Is" />
         <KeyframeInterpolation />
         <VideoPlaceholder title="Keyframe Interpolation" description="Click any curve to preview its shape" gridBackground demo="easing" youtubeId="fkQhKYaSv0Q" />
