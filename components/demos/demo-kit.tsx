@@ -63,8 +63,14 @@ export function DemoShell({
   innerRef?: React.Ref<HTMLDivElement>;
 }) {
   if (bare) {
+    // `flex flex-col` for the same reason the panelled branch needs it: a child
+    // asking for `flex-1` to fill the height gets nothing from a block
+    // container and collapses to the height of its text.
     return (
-      <div ref={innerRef} className={cn('absolute inset-0 overflow-hidden select-none', className)}>
+      <div
+        ref={innerRef}
+        className={cn('absolute inset-0 flex flex-col overflow-hidden select-none', className)}
+      >
         {children}
       </div>
     );

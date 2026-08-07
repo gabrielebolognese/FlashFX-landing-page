@@ -1,28 +1,44 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { DemoShell, keyframeTimes, useDemo } from './demo-kit';
+import { useCallback, useRef, useState } from 'react';
+import { DemoShell, useDemo } from './demo-kit';
+import { usePlayhead } from './use-playhead';
 
 /*
  * The keyframe timeline, for "Intuitive Timeline Editing"
- * (immersionmilestones.md I3).
+ * (immersionmilestones.md I8).
  *
- * Rebuilt 2026-08-07: four tracks left most of the panel empty, so only the top
- * strip read as a timeline at all. Fourteen tracks at 40% of the previous row
- * height fill the frame, and a real project looks like this — a dozen layers
- * stacked, not four.
+ * Rebuilt 2026-08-07 to be interactive and full-bleed. Previously it was a
+ * framer-motion animation in a bordered card: it looked cornered, and nothing
+ * on it could be touched.
  *
- * The sibling demo in "All Web Editing" is `ClipTimelineDemo`, deliberately a
- * different kind of timeline: this one is keyframes on property tracks, that
- * one is clips in an NLE. Do not converge them.
+ *   - **Drag the playhead** anywhere along the ruler or the track area.
+ *   - **Drag a keyframe** to move it. Position persists.
+ *   - Auto-play resumes a couple of seconds after you stop.
+ *
+ * The **track-name gutter is gone**. The section is now full width with the
+ * outer 30% on each side faded out, and a left-hand gutter would sit exactly in
+ * the invisible zone. Track colour carries the identity instead, and losing the
+ * gutter means the playhead's range is the full width of the page, which is
+ * also what makes scrubbing feel right.
+ *
+ * The sibling in "All Web Editing" is `ClipTimelineDemo` — clips in a sequence,
+ * where this is keyframes on property tracks. **Do not converge them.**
  */
 
-const CYCLE = 7;
+const CYCLE = 9;
 
-/** Where the still frame parks without a loop slot. */
-const RESTING = 38;
+/** How close, in track percent, a keyframe reacts to the playhead. */
+const REACH = 5;
 
-const tracks = [
+interface Track {
+  name: string;
+  colour: string;
+  bar: [number, number];
+  keys: number[];
+}
+
+const initialTracks: Track[] = [
   { name: 'Logo', colour: '#F5C518', bar: [4, 96], keys: [8, 34, 62, 90] },
   { name: 'Title', colour: '#7C5CBF', bar: [14, 88], keys: [18, 47, 82] },
   { name: 'Shape', colour: '#2D6BE4', bar: [8, 74], keys: [12, 40, 68] },
@@ -39,128 +55,153 @@ const tracks = [
   { name: 'Vignette', colour: '#C084FC', bar: [18, 86], keys: [24, 54, 80] },
 ];
 
-/** Label gutter. Narrow so the tracks themselves get the width. */
-const GUTTER = 68;
-
-function Keyframe({ percent, colour, active }: { percent: number; colour: string; active: boolean }) {
-  return (
-    <motion.span
-      className="absolute top-1/2 w-[7px] h-[7px] -mt-[3.5px] -ml-[3.5px] rounded-[1px]"
-      style={{ left: `${percent}%`, rotate: 45, backgroundColor: colour }}
-      animate={
-        active
-          ? { scale: [1, 1, 1.9, 1, 1], opacity: [0.55, 0.55, 1, 0.75, 0.55] }
-          : { scale: 1, opacity: percent <= RESTING ? 0.85 : 0.5 }
-      }
-      transition={
-        active
-          ? {
-              duration: CYCLE,
-              times: keyframeTimes(percent),
-              repeat: Number.POSITIVE_INFINITY,
-              ease: 'easeOut',
-            }
-          : { duration: 0 }
-      }
-    />
-  );
-}
-
 export function TimelineDemo() {
   const { ref, active } = useDemo();
+  const [tracks, setTracks] = useState(initialTracks);
+  const [touched, setTouched] = useState(false);
+
+  const playhead = useRef<HTMLDivElement>(null);
+  /** `${trackIndex}:${keyIndex}` → element, for per-frame styling without React. */
+  const keyNodes = useRef(new Map<string, HTMLSpanElement>());
+  const dragging = useRef<{ track: number; key: number; node: HTMLSpanElement } | null>(null);
+
+  /*
+   * Runs on every animation frame and on every scrub. Writes styles straight to
+   * the DOM: a `setState` here would reconcile 14 tracks and ~45 keyframes 60
+   * times a second.
+   */
+  const onFrame = useCallback((p: number) => {
+    if (playhead.current) playhead.current.style.transform = `translateX(${p}%)`;
+
+    keyNodes.current.forEach((node, id) => {
+      const at = Number(node.dataset.at);
+      const near = Math.max(0, 1 - Math.abs(at - p) / REACH);
+      node.style.transform = `rotate(45deg) scale(${1 + near * 0.95})`;
+      node.style.opacity = String(0.5 + near * 0.5);
+    });
+  }, []);
+
+  const bar = usePlayhead({ cycle: CYCLE, active, onFrame });
+
+  const registerKey = useCallback((id: string) => (node: HTMLSpanElement | null) => {
+    if (node) keyNodes.current.set(id, node);
+    else keyNodes.current.delete(id);
+  }, []);
+
+  const onKeyDown = (track: number, key: number) => (e: React.PointerEvent<HTMLSpanElement>) => {
+    // Stop the track underneath from treating this as a scrub.
+    e.stopPropagation();
+    e.preventDefault();
+    const node = e.currentTarget;
+    node.setPointerCapture(e.pointerId);
+    dragging.current = { track, key, node };
+    bar.touch();
+    setTouched(true);
+  };
+
+  const onKeyMove = (e: React.PointerEvent<HTMLSpanElement>) => {
+    const drag = dragging.current;
+    if (!drag) return;
+    e.stopPropagation();
+    const at = bar.percentAt(e.clientX);
+    // Move it in the DOM now and commit to state on release — a state update
+    // per pointermove would re-render the whole timeline mid-drag.
+    drag.node.dataset.at = String(at);
+    drag.node.style.left = `${at}%`;
+    bar.touch();
+    bar.emit();
+  };
+
+  const onKeyUp = (e: React.PointerEvent<HTMLSpanElement>) => {
+    const drag = dragging.current;
+    if (!drag) return;
+    e.stopPropagation();
+    drag.node.releasePointerCapture(e.pointerId);
+    const at = Number(drag.node.dataset.at);
+    setTracks((prev) =>
+      prev.map((t, ti) =>
+        ti === drag.track ? { ...t, keys: t.keys.map((k, ki) => (ki === drag.key ? at : k)) } : t
+      )
+    );
+    dragging.current = null;
+    bar.touch();
+  };
+
+  const scrub = {
+    onPointerDown: (e: React.PointerEvent) => {
+      bar.beginScrub(e);
+      setTouched(true);
+    },
+    onPointerMove: bar.moveScrub,
+    onPointerUp: bar.endScrub,
+    onPointerCancel: bar.endScrub,
+  };
 
   return (
-    <DemoShell innerRef={ref} label="Timeline">
-      {/* Ruler */}
-      <div className="flex items-stretch h-5 border-b border-fx-border/70 flex-shrink-0">
-        <div
-          className="flex-shrink-0 border-r border-fx-border/70"
-          style={{ width: GUTTER }}
-        />
-        <div className="relative flex-1 flex">
-          {Array.from({ length: 16 }, (_, i) => (
-            <div key={i} className="flex-1 border-r border-fx-border/40 last:border-r-0" />
-          ))}
-        </div>
+    <DemoShell innerRef={ref} label="Timeline" bare>
+      {/* Ruler — also the primary scrub surface, as in any editor. */}
+      <div
+        className="relative flex items-stretch h-5 flex-shrink-0 border-b border-fx-border/60 cursor-ew-resize touch-none"
+        {...scrub}
+      >
+        {Array.from({ length: 32 }, (_, i) => (
+          <div key={i} className="flex-1 border-r border-fx-border/30 last:border-r-0" />
+        ))}
       </div>
 
-      <div className="relative flex-1 min-h-0 flex flex-col gap-[2px] py-[3px]">
-        {tracks.map((track) => (
-          <div key={track.name} className="flex items-center flex-1 min-h-0">
+      <div
+        ref={bar.trackRef}
+        className="relative flex-1 min-h-0 flex flex-col gap-[2px] py-[3px] cursor-ew-resize touch-none"
+        {...scrub}
+      >
+        {tracks.map((track, ti) => (
+          <div key={track.name} className="relative flex items-center flex-1 min-h-0">
             <div
-              className="flex-shrink-0 flex items-center gap-1.5 px-2 overflow-hidden"
-              style={{ width: GUTTER }}
-            >
+              className="absolute h-[58%] rounded-[2px] top-1/2 -translate-y-1/2"
+              style={{
+                left: `${track.bar[0]}%`,
+                width: `${track.bar[1] - track.bar[0]}%`,
+                backgroundColor: `${track.colour}1c`,
+                border: `1px solid ${track.colour}3a`,
+              }}
+            />
+            {track.keys.map((at, ki) => (
               <span
-                className="w-1 h-1 rounded-full flex-shrink-0"
-                style={{ backgroundColor: track.colour }}
+                key={ki}
+                ref={registerKey(`${ti}:${ki}`)}
+                data-at={at}
+                onPointerDown={onKeyDown(ti, ki)}
+                onPointerMove={onKeyMove}
+                onPointerUp={onKeyUp}
+                onPointerCancel={onKeyUp}
+                className="absolute top-1/2 w-[9px] h-[9px] -mt-[4.5px] -ml-[4.5px] rounded-[1px] cursor-grab active:cursor-grabbing touch-none"
+                style={{ left: `${at}%`, backgroundColor: track.colour, transform: 'rotate(45deg)' }}
               />
-              <span className="font-mono text-[8px] leading-none text-fx-text-secondary truncate">
-                {track.name}
-              </span>
-            </div>
-
-            <div className="relative flex-1 h-full flex items-center pr-2">
-              <div
-                className="absolute h-[62%] rounded-[2px]"
-                style={{
-                  left: `${track.bar[0]}%`,
-                  width: `${track.bar[1] - track.bar[0]}%`,
-                  backgroundColor: `${track.colour}1f`,
-                  border: `1px solid ${track.colour}40`,
-                }}
-              />
-              {track.keys.map((k) => (
-                <Keyframe key={k} percent={k} colour={track.colour} active={active} />
-              ))}
-            </div>
+            ))}
           </div>
         ))}
 
         {/*
-          The playhead is pinned to the left of a full-width wrapper and the
-          wrapper translates, so it crosses the track area without animating
-          `left` — which would force layout every frame across fourteen rows.
+          Pinned to the left of a full-width wrapper; the wrapper is what
+          translates, so the playhead crosses the track without animating
+          `left` and forcing layout across fourteen rows every frame.
         */}
-        <div className="absolute inset-y-0 right-2 pointer-events-none" style={{ left: GUTTER }}>
-          <motion.div
-            className="absolute inset-y-0 left-0 right-0"
-            animate={active ? { x: ['0%', '100%'] } : { x: `${RESTING}%` }}
-            transition={
-              active
-                ? { duration: CYCLE, repeat: Number.POSITIVE_INFINITY, ease: 'linear' }
-                : { duration: 0 }
-            }
-          >
-            <div className="absolute inset-y-0 -left-px w-[2px] bg-fx-accent-yellow shadow-[0_0_12px_2px_rgba(245,197,24,0.5)]" />
-            <div className="absolute -top-0.5 -left-[5px] w-3 h-2 rounded-sm bg-fx-accent-yellow" />
-          </motion.div>
+        <div className="absolute inset-y-0 left-0 right-0 pointer-events-none">
+          <div ref={playhead} className="absolute inset-y-0 left-0 right-0">
+            <div className="absolute inset-y-0 -left-px w-[2px] bg-fx-accent-yellow shadow-[0_0_12px_2px_rgba(245,197,24,0.55)]" />
+            <div className="absolute -top-[3px] -left-[6px] w-3.5 h-2 rounded-sm bg-fx-accent-yellow" />
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-4 px-3 py-1.5 border-t border-fx-border bg-fx-bg-surface/70 flex-shrink-0 overflow-hidden">
-        {[
-          { label: 'x', from: 120, to: 940 },
-          { label: 'rotate', from: 0, to: 360 },
-          { label: 'scale', from: 40, to: 100 },
-        ].map((prop) => (
-          <span key={prop.label} className="flex items-center gap-1.5 font-mono text-[9px] whitespace-nowrap">
-            <span className="text-fx-text-secondary">{prop.label}</span>
-            <motion.span
-              className="text-fx-accent-yellow tabular-nums"
-              animate={active ? { opacity: [0.65, 1, 0.65] } : { opacity: 0.8 }}
-              transition={
-                active
-                  ? { duration: CYCLE / 2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }
-                  : { duration: 0 }
-              }
-            >
-              {prop.from}
-              <span className="text-fx-text-secondary mx-0.5">→</span>
-              {prop.to}
-            </motion.span>
-          </span>
-        ))}
+      <div className="flex-shrink-0 h-6 flex items-center justify-center">
+        <span
+          className={`font-mono text-[10px] uppercase tracking-widest text-fx-text-secondary/60 transition-opacity duration-500 ${
+            touched ? 'opacity-0' : 'opacity-100'
+          }`}
+        >
+          Drag the playhead · drag a keyframe
+        </span>
       </div>
     </DemoShell>
   );

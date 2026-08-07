@@ -141,9 +141,17 @@ export function VideoPlaceholder({ title, description, isMainDemo, gridBackgroun
         A demo picks its own frame. The default card is a video's shape — 16:9
         at max-w-5xl — which is wrong for a timeline: those need width to read
         along and height to stack tracks in. See `demoFrame`.
+
+        `fullBleed` cancels the section's own `px-6` with a negative margin
+        rather than using `100vw`, which would overflow by the width of the
+        scrollbar and put a horizontal scrollbar on the page.
       */}
       <div
-        className={`relative z-10 ${demo ? demoFrame[demo].width : 'max-w-5xl'} mx-auto w-full ${isMainDemo ? 'flex flex-col h-full py-16' : ''}`}
+        className={`relative z-10 ${
+          demo && demoFrame[demo].fullBleed
+            ? '-mx-6 w-[calc(100%+3rem)]'
+            : `${demo ? demoFrame[demo].width : 'max-w-5xl'} mx-auto w-full`
+        } ${isMainDemo ? 'flex flex-col h-full py-16' : ''}`}
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -162,6 +170,22 @@ export function VideoPlaceholder({ title, description, isMainDemo, gridBackgroun
           } ${/* only the empty "coming soon" state is clickable */ !demo && !youtubeId ? 'cursor-pointer' : ''} ${
             isMainDemo ? 'flex-1 min-h-0' : demo ? demoFrame[demo].aspect : 'aspect-video'
           }`}
+          /*
+            Full-bleed demos fade out across the outer 30% of each side, so they
+            dissolve into the page instead of stopping at a hard edge. The mask
+            is on this element rather than the demo itself so it applies
+            whatever the demo renders.
+          */
+          style={
+            demo && demoFrame[demo].fullBleed
+              ? {
+                  maskImage:
+                    'linear-gradient(90deg, transparent 0%, #000 30%, #000 70%, transparent 100%)',
+                  WebkitMaskImage:
+                    'linear-gradient(90deg, transparent 0%, #000 30%, #000 70%, transparent 100%)',
+                }
+              : undefined
+          }
         >
           {demo ? (
             <Demo kind={demo} />

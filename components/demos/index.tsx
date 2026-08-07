@@ -50,10 +50,21 @@ export type DemoKind = 'timeline' | 'clips' | 'easing' | 'presets' | 'share';
  * wider than the default and appreciably taller. Everything else keeps the
  * original frame.
  */
-export const demoFrame: Record<DemoKind, { width: string; aspect: string; bare?: boolean }> = {
-  // 64rem + 20%.
-  timeline: { width: 'max-w-[76.8rem]', aspect: 'aspect-[16/11]' },
-  clips: { width: 'max-w-[76.8rem]', aspect: 'aspect-[16/10]' },
+export const demoFrame: Record<
+  DemoKind,
+  { width: string; aspect: string; bare?: boolean; fullBleed?: boolean }
+> = {
+  /*
+   * The timelines run the full width of the page with no card behind them, and
+   * the outer 30% of each side faded out (see `VideoPlaceholder`). A timeline
+   * boxed in a rounded panel reads as cornered; run edge to edge it reads as a
+   * surface the page is sitting on.
+   *
+   * Both are also interactive — playhead scrubbing, draggable keyframes,
+   * selectable clips — which is the other half of not feeling like a picture.
+   */
+  timeline: { width: '', aspect: 'aspect-[21/8] md:aspect-[21/6]', bare: true, fullBleed: true },
+  clips: { width: '', aspect: 'aspect-[21/8] md:aspect-[21/6]', bare: true, fullBleed: true },
   easing: { width: 'max-w-5xl', aspect: 'aspect-video' },
   presets: { width: 'max-w-5xl', aspect: 'aspect-video' },
   share: { width: 'max-w-5xl', aspect: 'aspect-video' },
