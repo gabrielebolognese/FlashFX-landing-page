@@ -367,12 +367,37 @@ show something a recreation genuinely cannot.
 | Demo | Section | Replaced |
 |---|---|---|
 | `TimelineDemo` | Intuitive Timeline Editing | embed `bHdIvt_lUrE` |
-| `TimelineDemo` `chrome="browser"` | All Web Editing | embed `-zyusYiQNEc` |
+| `ClipTimelineDemo` | All Web Editing | embed `-zyusYiQNEc` |
 | `PresetWallDemo` | Animation Presets | embed `Rk9hf3QI5Is` |
 | `CubeDemo` | 3D Support | **dead box** |
 | `EasingCurveDemo` | Keyframe Interpolation | embed `fkQhKYaSv0Q` |
 | `ShareDemo` | Share Projects | embed `sqdlJULYNZA` |
 | `PresetWallDemo` | Templates & Presets | **dead box** |
+
+### Revision, 2026-08-07 — the two timelines
+
+The first pass shipped `TimelineDemo` twice, once with browser chrome, so the
+homepage showed the identical timeline in two sections. Both were also too
+sparse: four tracks left most of the panel empty, so only the top strip read as
+a timeline at all.
+
+- **`TimelineDemo` — 4 tracks → 14**, each a distinct colour, at 40% of the
+  previous row height. A real project stacks a dozen layers; four looked like a
+  diagram of a timeline rather than one.
+- **`ClipTimelineDemo` is new, and is a different instrument.** `TimelineDemo`
+  is keyframes on property tracks — the animation side. This is clips in an NLE
+  sequence: ten tracks of tall blocks with name bars, six video and four audio,
+  the audio drawn with waveforms and the video with filmstrip notches. It keeps
+  the browser chrome, because the section's claim is that all of this happens in
+  a tab. **Do not converge the two back together.**
+- **Demos now choose their own frame** via `demoFrame` in the registry. The
+  default card is a video's shape — 16:9 at `max-w-5xl` — which is wrong for a
+  timeline. Both timelines take `max-w-[76.8rem]` (20% wider) and a taller
+  aspect: 16:11 for the fourteen-track one, 16:10 for the clips.
+
+Waveform heights come from a deterministic `sin`/`cos` function rather than
+`Math.random()`, which would differ between the server and client render — the
+same trap P6 removed from `background-paths`.
 
 **The two dead boxes went first**, as planned — no video to lose, so no risk in
 proving the pattern there.

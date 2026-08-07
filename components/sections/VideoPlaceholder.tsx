@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { ElegantShapesBackground } from '@/components/ui/elegant-shapes';
 import { VideoLoading, useVideoEmbed } from '@/components/ui/video-loading';
-import { Demo, type DemoKind } from '@/components/demos';
+import { Demo, demoFrame, type DemoKind } from '@/components/demos';
 
 interface VideoPlaceholderProps {
   title: string;
@@ -137,13 +137,22 @@ export function VideoPlaceholder({ title, description, isMainDemo, gridBackgroun
         <div className="absolute inset-0 pointer-events-none z-[2] bg-gradient-to-b from-fx-bg-base via-transparent to-fx-bg-base" />
       )}
 
-      <div className={`relative z-10 max-w-5xl mx-auto w-full ${isMainDemo ? 'flex flex-col h-full py-16' : ''}`}>
+      {/*
+        A demo picks its own frame. The default card is a video's shape — 16:9
+        at max-w-5xl — which is wrong for a timeline: those need width to read
+        along and height to stack tracks in. See `demoFrame`.
+      */}
+      <div
+        className={`relative z-10 ${demo ? demoFrame[demo].width : 'max-w-5xl'} mx-auto w-full ${isMainDemo ? 'flex flex-col h-full py-16' : ''}`}
+      >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className={`relative w-full rounded-[32px] bg-fx-bg-surface border border-fx-border overflow-hidden group ${youtubeId ? '' : 'cursor-pointer'} ${isMainDemo ? 'flex-1 min-h-0' : 'aspect-video'}`}
+          className={`relative w-full rounded-[32px] bg-fx-bg-surface border border-fx-border overflow-hidden group ${youtubeId ? '' : 'cursor-pointer'} ${
+            isMainDemo ? 'flex-1 min-h-0' : demo ? demoFrame[demo].aspect : 'aspect-video'
+          }`}
         >
           {demo ? (
             <Demo kind={demo} />

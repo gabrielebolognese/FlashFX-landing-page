@@ -159,7 +159,7 @@ export default function Home() {
         <VideoPlaceholder title="Intuitive Timeline Editing" description="Keyframe animation made simple for everyone" demo="timeline" youtubeId="bHdIvt_lUrE" sectionHeading="Intuitive Timeline Editing" />
         <FeaturesIntro />
         <AllWebEditing />
-        <VideoPlaceholder title="All Web Editing" description="Professional editing, right in your browser" gridBackground demo="browser" youtubeId="-zyusYiQNEc" />
+        <VideoPlaceholder title="All Web Editing" description="Professional editing, right in your browser" gridBackground demo="clips" youtubeId="-zyusYiQNEc" />
         {/*
           Sits between All Web Editing and Easy Animations to match the order of
           the Navbar Features dropdown (Navbar.tsx FEATURES). It carries

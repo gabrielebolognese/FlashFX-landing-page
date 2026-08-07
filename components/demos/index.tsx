@@ -22,6 +22,10 @@ const TimelineDemo = dynamic(() => import('./TimelineDemo').then((m) => m.Timeli
   ssr: false,
   loading: holding,
 });
+const ClipTimelineDemo = dynamic(() => import('./ClipTimelineDemo').then((m) => m.ClipTimelineDemo), {
+  ssr: false,
+  loading: holding,
+});
 const CubeDemo = dynamic(() => import('./CubeDemo').then((m) => m.CubeDemo), {
   ssr: false,
   loading: holding,
@@ -39,16 +43,39 @@ const ShareDemo = dynamic(() => import('./ShareDemo').then((m) => m.ShareDemo), 
   loading: holding,
 });
 
-export type DemoKind = 'timeline' | 'browser' | 'cube' | 'easing' | 'presets' | 'share';
+export type DemoKind = 'timeline' | 'clips' | 'cube' | 'easing' | 'presets' | 'share';
+
+/**
+ * The frame each demo wants.
+ *
+ * `VideoPlaceholder` defaults every card to `max-w-5xl` and 16:9, which is a
+ * video's shape, not a timeline's. The two timelines carry fourteen and ten
+ * tracks respectively and need width to read along and height to stack — 20%
+ * wider than the default and appreciably taller. Everything else keeps the
+ * original frame.
+ */
+export const demoFrame: Record<DemoKind, { width: string; aspect: string }> = {
+  // 64rem + 20%.
+  timeline: { width: 'max-w-[76.8rem]', aspect: 'aspect-[16/11]' },
+  clips: { width: 'max-w-[76.8rem]', aspect: 'aspect-[16/10]' },
+  cube: { width: 'max-w-5xl', aspect: 'aspect-video' },
+  easing: { width: 'max-w-5xl', aspect: 'aspect-video' },
+  presets: { width: 'max-w-5xl', aspect: 'aspect-video' },
+  share: { width: 'max-w-5xl', aspect: 'aspect-video' },
+};
 
 export function Demo({ kind }: { kind: DemoKind }) {
   switch (kind) {
     case 'timeline':
       return <TimelineDemo />;
-    // The same timeline, inside an address bar. That makes the "All Web
-    // Editing" point better than the sentence under it does.
-    case 'browser':
-      return <TimelineDemo chrome="browser" />;
+    /*
+     * A different instrument, not the same one reskinned. `timeline` is
+     * keyframes on property tracks; this is clips in an NLE sequence. They sat
+     * in two sections of the homepage as literally the same component until
+     * 2026-08-07 — keep them distinct.
+     */
+    case 'clips':
+      return <ClipTimelineDemo />;
     case 'cube':
       return <CubeDemo />;
     case 'easing':
