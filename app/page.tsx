@@ -8,7 +8,6 @@ import { AllWebEditing } from '@/components/sections/AllWebEditing';
 import { DualTimeline } from '@/components/sections/DualTimeline';
 import { EasyAnimations } from '@/components/sections/EasyAnimations';
 import { ThreeDSupport } from '@/components/sections/ThreeDSupport';
-import { LogoMorph } from '@/components/sections/LogoMorph';
 import { KeyframeInterpolation } from '@/components/sections/KeyframeInterpolation';
 import { SplitHero } from '@/components/sections/SplitHero';
 import { FeatureHighlights } from '@/components/sections/FeatureHighlights';
@@ -171,7 +170,6 @@ export default function Home() {
         <EasyAnimations />
         <VideoPlaceholder title="Animation Presets" description="Bring your ideas to life effortlessly" gridBackground demo="presets" youtubeId="Rk9hf3QI5Is" />
         <ThreeDSupport />
-        <LogoMorph />
         <KeyframeInterpolation />
         <VideoPlaceholder title="Keyframe Interpolation" description="Click any curve to preview its shape" gridBackground demo="easing" youtubeId="fkQhKYaSv0Q" />
         {/* id is what the Navbar Features dropdown scrolls to for Share Projects. */}

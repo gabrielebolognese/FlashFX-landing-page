@@ -7,27 +7,21 @@ import { useAmbient } from '@/lib/motion';
 import { DEMO_PRIORITY } from './demo-kit';
 
 /*
- * One cube becomes the FlashFX lockup (immersionmilestones.md I8).
+ * Cubes stream past the camera and settle into the FlashFX lockup — the
+ * homepage hero (immersionmilestones.md I8).
  *
- * A single cube duplicates, and the swarm splits: part of it builds the logo,
- * which turns; the rest builds the word FlashFX, which does not.
- *
- * ── One continuous morph, and how ───────────────────────────────────────────
- *
- * The brief was explicit that this must not be morph-pause-morph-pause. So
- * there are no stages at all. Every cube follows a single quadratic Bézier:
- *
- *     P(u) = (1−u)²·origin + 2(1−u)u·spread + u²·target
- *
- * The `spread` control point is the cube's place in a loose lattice, so the
- * curve bulges outward on its way — that bulge *is* the duplication, expressed
- * as one uninterrupted path rather than a discrete phase. There is nothing to
- * hold between, because there is nothing between.
+ * Moved here from a section under the 3D block on 2026-08-07, and re-entered.
+ * It no longer opens on a single cube that duplicates: it starts *mid-flight*,
+ * with every cube already separate, close to the camera and large, flying back
+ * into place. That is why the start is a spread of深 z values rather than a
+ * shared origin, and why each cube carries a random tumble that unwinds to
+ * square as it lands — a cube that never rotates reads as a flat tile, and the
+ * brief was that these must read as cubes.
  *
  * Cubes are staggered by the x of their destination, so the lockup assembles
- * left to right, logo first. At any instant some cubes are still leaving the
- * origin while others have arrived — which is what makes it read as continuous
- * duplication rather than a single block dispersing.
+ * left to right, logo first. At any instant some are still arriving while
+ * others have landed, which is what keeps it from looking like one rigid block
+ * sliding in.
  *
  * ── Where the shapes come from ──────────────────────────────────────────────
  *
@@ -50,8 +44,8 @@ const LOGO_EXTRUDE = 3.4;
 /** Gap between logo and word, in cubes. */
 const GAP = 9;
 
-/** Seconds for the whole build. */
-const BUILD = 6.5;
+/** Seconds for the whole flight. The hero brief called for 3.5. */
+const BUILD = 3.5;
 
 /** Fraction of the build spent staggering starts across the swarm. */
 const STAGGER = 0.55;
@@ -197,11 +191,30 @@ function sampleText(text: string, rows: number, fontFamily: string): Grid {
   return crop(cells);
 }
 
-export function LogoAssembly({ className }: { className?: string }) {
-  const { ref, active } = useAmbient<HTMLDivElement>({ priority: DEMO_PRIORITY });
+export function LogoAssembly({
+  className,
+  duration = BUILD,
+  onDone,
+}: {
+  className?: string;
+  /** Seconds for the whole flight. */
+  duration?: number;
+  /** Fired once, when the last cube has landed. */
+  onDone?: () => void;
+}) {
+  /*
+   * Priority 10, above every other demo. This is the hero: if the governor
+   * handed its slot to a floating shape further down the page, the animation
+   * would stall part-assembled in the most visible place on the site.
+   */
+  const { ref, active } = useAmbient<HTMLDivElement>({ priority: 10 });
   const host = useRef<HTMLDivElement>(null);
   const activeRef = useRef(active);
   const wake = useRef<(() => void) | null>(null);
+  const doneRef = useRef(onDone);
+  doneRef.current = onDone;
+  const durationRef = useRef(duration);
+  durationRef.current = duration;
   activeRef.current = active;
 
   useEffect(() => {
@@ -307,20 +320,35 @@ export function LogoAssembly({ className }: { className?: string }) {
        * staggers starts by destination x, so the lockup assembles left to
        * right.
        */
-      interface Cube { target: number[]; spread: number[]; delay: number }
+      interface Cube { target: number[]; from: number[]; spin: number[]; delay: number }
       const makeCubes = (cells: Cell[], toWorld: (c: Cell) => number[], localOffsetX: number): Cube[] =>
         cells.map((c, i) => {
           const target = toWorld(c);
           const worldX = target[0] + localOffsetX;
           const t = (worldX + halfW) / (halfW * 2);
-          const angle = i * 2.399963; // golden angle — spreads without clumping
-          const radius = halfH * (0.5 + ((i * 13) % 7) / 7);
+
+          /*
+           * Start close to the camera and off to one side. `NEAR` is a fraction
+           * of the camera's own distance, so a cube begins a few units from the
+           * lens and perspective alone makes it enormous — no scaling needed to
+           * sell "coming at you". The golden angle spreads the cloud without the
+           * clumping that uniform randomness produces at these counts.
+           */
+          const angle = i * 2.399963;
+          const spread = 0.55 + ((i * 13) % 7) / 7;
           return {
             target,
-            spread: [
-              Math.cos(angle) * radius * 1.7,
-              Math.sin(angle) * radius,
-              Math.sin(angle * 1.7) * radius * 0.6,
+            from: [
+              target[0] * 0.35 + Math.cos(angle) * halfW * 0.55 * spread,
+              target[1] * 0.35 + Math.sin(angle) * halfH * 1.5 * spread,
+              0.42 + ((i * 7) % 5) / 16, // fraction of the camera distance, resolved at paint
+            ],
+            // Unwinds to square on landing. Deterministic, so the hero is the
+            // same animation on every visit.
+            spin: [
+              ((i * 37) % 13) / 13 * Math.PI * 2,
+              ((i * 53) % 17) / 17 * Math.PI * 2,
+              ((i * 29) % 11) / 11 * Math.PI * 2,
             ],
             delay: Math.min(0.999, Math.max(0, t)) * STAGGER,
           };
@@ -332,29 +360,37 @@ export function LogoAssembly({ className }: { className?: string }) {
       const dummy = new THREE.Object3D();
 
       /** Place one mesh's instances at global progress `p`. */
-      const place = (mesh: THREE.InstancedMesh, cubes: Cube[], origin: number[], p: number, extrude: number) => {
+      const place = (mesh: THREE.InstancedMesh, cubes: Cube[], p: number, extrude: number) => {
         for (let i = 0; i < cubes.length; i++) {
           const cube = cubes[i];
           const u = Math.min(1, Math.max(0, (p - cube.delay) / (1 - STAGGER)));
           const e = u * u * (3 - 2 * u); // smoothstep — no seams, no stops
 
+          // A straight, eased flight — no duplication arc, because nothing is
+          // duplicating: each cube is already its own from the first frame.
           const inv = 1 - e;
-          const a = inv * inv, b = 2 * inv * e, c = e * e;
           dummy.position.set(
-            a * origin[0] + b * cube.spread[0] + c * cube.target[0],
-            a * origin[1] + b * cube.spread[1] + c * cube.target[1],
-            a * origin[2] + b * cube.spread[2] + c * cube.target[2]
+            cube.from[0] * inv + cube.target[0] * e,
+            cube.from[1] * inv + cube.target[1] * e,
+            (camDistance * cube.from[2]) * inv + cube.target[2] * e
           );
 
-          // One big cube at rest, ordinary cubes once they are on their way.
-          const s = 1 + (1 - smoothstep(0, 0.32, u)) * 15;
-          dummy.scale.set(s, s, s * (1 + (extrude - 1) * smoothstep(0.45, 1, u)));
+          // The tumble unwinds over the last two thirds of the flight.
+          const settle = 1 - smoothstep(0.25, 1, u);
+          dummy.rotation.set(
+            cube.spin[0] * settle,
+            cube.spin[1] * settle,
+            cube.spin[2] * settle
+          );
+
+          dummy.scale.set(1, 1, 1 + (extrude - 1) * smoothstep(0.6, 1, u));
           dummy.updateMatrix();
           mesh.setMatrixAt(i, dummy.matrix);
         }
         mesh.instanceMatrix.needsUpdate = true;
       };
 
+      let camDistance = 60;
       const fit = () => {
         const { clientWidth: w, clientHeight: h } = container;
         if (!w || !h) return;
@@ -364,7 +400,8 @@ export function LogoAssembly({ className }: { className?: string }) {
         // Fit the lockup's width and height, whichever binds, plus margin.
         const distH = halfH / Math.tan(fov / 2);
         const distW = halfW / (Math.tan(fov / 2) * camera.aspect);
-        camera.position.set(0, 0, Math.max(distH, distW) * 1.18);
+        camDistance = Math.max(distH, distW) * 1.18;
+        camera.position.set(0, 0, camDistance);
         camera.lookAt(0, 0, 0);
         camera.updateProjectionMatrix();
       };
@@ -383,8 +420,8 @@ export function LogoAssembly({ className }: { className?: string }) {
         // logo group's rotation is written — from ~1,100 matrix writes a frame
         // down to none.
         if (progress < 1) {
-          place(logoMesh, logoCubes, [-logoOriginX, 0, 0], progress, LOGO_EXTRUDE);
-          place(textMesh, textCubes, [0, 0, 0], progress, 1);
+          place(logoMesh, logoCubes, progress, LOGO_EXTRUDE);
+          place(textMesh, textCubes, progress, 1);
         }
         logoGroup.rotation.y = spin;
         renderer.render(scene, camera);
@@ -395,7 +432,10 @@ export function LogoAssembly({ className }: { className?: string }) {
         const dt = Math.min(0.05, (now - last) / 1000);
         last = now;
 
-        if (progress < 1) progress = Math.min(1, progress + dt / BUILD);
+        if (progress < 1) {
+          progress = Math.min(1, progress + dt / durationRef.current);
+          if (progress >= 1) doneRef.current?.();
+        }
         // The turn eases in as the logo finishes arriving, so its cubes are not
         // flying toward a moving target.
         spin += dt * 0.55 * smoothstep(0.55, 1, progress);
@@ -433,6 +473,17 @@ export function LogoAssembly({ className }: { className?: string }) {
         { threshold: 0 }
       );
       replay.observe(container);
+
+      /*
+       * `useAmbient` reports inactive under reduced motion, and this loop only
+       * advances while active — so without this the hero would sit frozen on
+       * the first frame, cubes scattered and nothing legible. Land them.
+       */
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        progress = 1;
+        spin = 0;
+        doneRef.current?.();
+      }
 
       draw();
       start();
