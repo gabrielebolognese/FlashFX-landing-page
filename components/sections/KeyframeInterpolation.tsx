@@ -4,26 +4,24 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Play, RotateCcw } from 'lucide-react';
 
 /*
- * Easing curves as a rollercoaster (immersionmilestones.md I8, 2026-08-07).
- *
- * Replaced a scrollable column of small static curve charts. Charts describe an
- * easing; a coaster lets you feel one.
- *
- * ── The idea that makes it read ─────────────────────────────────────────────
+ * Easing curves as a rollercoaster (immersionmilestones.md I8).
  *
  * The track *is* the curve. The train advances at a constant rate horizontally
- * — equal time per unit of x — while its height follows the easing. So where
- * the curve is steep the train covers far more track per second and visibly
- * accelerates, and where it flattens it coasts.
+ * — equal time per unit of x — while its height follows the easing. Where the
+ * curve steepens it covers far more track per second and visibly accelerates;
+ * where it flattens it coasts.
  *
- * That is not a metaphor bolted on: it is exactly what an easing curve means.
- * Linear is a constant slope and a constant speed. Ease-in creeps along the
- * crest and then plunges. Ease-out drops off the edge and coasts to the
- * station. Bounce hits the bottom and bounces. Nobody has to be told.
+ * That is not a metaphor bolted on: it is what an easing curve means. Linear is
+ * a constant slope and a constant speed. Ease-in creeps over the crest then
+ * plunges. Bounce lands hard and bounces. Nobody has to be told.
  *
- * The alternative — driving the train's x by the easing along a flat track —
- * was rejected: the track shape would then mean nothing, and the whole point is
- * that the shape is the thing being explained.
+ * ── Second pass ────────────────────────────────────────────────────────────
+ *
+ * Everything that was below the track — the Simulate button, the explanatory
+ * paragraph, the curve note and the progress readout — is gone or moved into
+ * the frame's top corners. That reclaimed vertical space went into the track,
+ * which is the only part that carries meaning: a curve squashed flat across a
+ * wide frame reads as a straight line whatever easing it is.
  */
 
 const bounceOut = (t: number): number => {
@@ -38,42 +36,24 @@ const bounceOut = (t: number): number => {
 interface Curve {
   id: string;
   label: string;
-  note: string;
   fn: (t: number) => number;
 }
 
-/*
- * Eight, not the twenty-five the old chart list carried. Every one here has a
- * silhouette you can tell apart at a glance from the others, which is the whole
- * requirement for a row of chips.
- */
 const CURVES: Curve[] = [
-  { id: 'linear', label: 'Linear', note: 'One speed, start to finish.', fn: (t) => t },
-  { id: 'ease-in', label: 'Ease in', note: 'Creeps over the crest, then plunges.', fn: (t) => t * t * t },
-  { id: 'ease-out', label: 'Ease out', note: 'Drops off the edge and coasts in.', fn: (t) => 1 - Math.pow(1 - t, 3) },
+  { id: 'linear', label: 'Linear', fn: (t) => t },
+  { id: 'ease-in', label: 'Ease in', fn: (t) => t * t * t },
+  { id: 'ease-out', label: 'Ease out', fn: (t) => 1 - Math.pow(1 - t, 3) },
   {
     id: 'ease-in-out',
-    label: 'Ease in out',
-    note: 'Slow, fast, slow — the classic hill.',
+    label: 'In out',
     fn: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
   },
-  {
-    id: 'expo',
-    label: 'Expo',
-    note: 'Almost nothing, then everything at once.',
-    fn: (t) => (t === 0 ? 0 : Math.pow(2, 10 * t - 10)),
-  },
-  {
-    id: 'back',
-    label: 'Back',
-    note: 'Rolls back up before it commits.',
-    fn: (t) => 2.70158 * t * t * t - 1.70158 * t * t,
-  },
-  { id: 'bounce', label: 'Bounce', note: 'Lands hard and bounces twice.', fn: bounceOut },
+  { id: 'expo', label: 'Expo', fn: (t) => (t === 0 ? 0 : Math.pow(2, 10 * t - 10)) },
+  { id: 'back', label: 'Back', fn: (t) => 2.70158 * t * t * t - 1.70158 * t * t },
+  { id: 'bounce', label: 'Bounce', fn: bounceOut },
   {
     id: 'elastic',
     label: 'Elastic',
-    note: 'Overshoots the station and springs back.',
     fn: (t) => {
       if (t === 0) return 0;
       if (t === 1) return 1;
@@ -83,28 +63,30 @@ const CURVES: Curve[] = [
   },
 ];
 
-/** Samples across the track. Enough that the rail reads as smooth. */
 const N = 220;
 
 /*
- * A fixed vertical range shared by every curve, rather than fitting each one to
- * the frame. Back and elastic overshoot past 0 and 1, and rescaling per curve
- * would make a gentle ease look as dramatic as a bounce — the comparison
- * between them is the point.
+ * The vertical range every curve shares, tightened from ±0.32 so the 0→1 span
+ * fills 71% of the frame instead of 61% — most of the height increase asked
+ * for comes from here rather than from the section simply getting taller.
+ *
+ * It cannot tighten further: `back` dips to about −0.10 and `elastic`
+ * overshoots to about 1.07, and clipping either would misrepresent the curve.
  */
-const V_MIN = -0.32;
-const V_MAX = 1.32;
+const V_MIN = -0.2;
+const V_MAX = 1.2;
 const yOf = (v: number) => (v - V_MIN) / (V_MAX - V_MIN);
 
-/** Seconds for one run, and how long the train waits at the station. */
 const RIDE = 2.9;
 const PAUSE = 900;
 
-/** Carriages, and the gap between them in track-time. */
 const CARS = 5;
-const CAR_GAP = 0.028;
+const CAR_GAP = 0.03;
 
 const MORPH = 520;
+
+/** Bounce by default — the most obviously non-linear of the eight. */
+const DEFAULT_CURVE = 'bounce';
 
 function sample(fn: (t: number) => number): Float64Array {
   const out = new Float64Array(N + 1);
@@ -112,32 +94,38 @@ function sample(fn: (t: number) => number): Float64Array {
   return out;
 }
 
+/** A miniature of the track for each chip, drawn the same way round as the real one. */
+function miniPath(fn: (t: number) => number, w = 30, h = 18, pad = 2.5): string {
+  let d = '';
+  for (let i = 0; i <= 24; i++) {
+    const t = i / 24;
+    const x = pad + t * (w - 2 * pad);
+    const y = pad + yOf(fn(t)) * (h - 2 * pad);
+    d += `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`;
+  }
+  return d;
+}
+
 export function KeyframeInterpolation() {
-  const [curveId, setCurveId] = useState('linear');
+  const [curveId, setCurveId] = useState(DEFAULT_CURVE);
   const [running, setRunning] = useState(false);
 
-  const stage = useRef<HTMLDivElement>(null);
+  const track = useRef<HTMLDivElement>(null);
   const rail = useRef<SVGPathElement>(null);
   const bed = useRef<SVGPathElement>(null);
   const pillars = useRef<SVGGElement>(null);
   const cars = useRef<(HTMLDivElement | null)[]>([]);
-  const readout = useRef<HTMLSpanElement>(null);
 
-  /* Live values live in refs: at 60 fps a setState per frame would reconcile
-     the chips, the track and every carriage sixty times a second. */
-  const samples = useRef(sample(CURVES[0].fn));
+  const samples = useRef(sample(CURVES.find((c) => c.id === DEFAULT_CURVE)!.fn));
   const morphFrom = useRef<Float64Array | null>(null);
   const morphTo = useRef<Float64Array | null>(null);
   const morphAt = useRef(0);
   const progress = useRef(0);
   const runningRef = useRef(false);
   const box = useRef({ w: 1, h: 1 });
-  /** Wakes the loop. Set by the effect, called by the handlers. */
   const wake = useRef<(() => void) | null>(null);
+  const rideRef = useRef<(() => void) | null>(null);
 
-  const curve = CURVES.find((c) => c.id === curveId) ?? CURVES[0];
-
-  /** Height at t, reading the live (possibly mid-morph) track. */
   const valueAt = useCallback((t: number) => {
     const s = samples.current;
     const x = Math.min(1, Math.max(0, t)) * N;
@@ -155,16 +143,14 @@ export function KeyframeInterpolation() {
     rail.current?.setAttribute('d', d);
     bed.current?.setAttribute('d', d);
 
-    // Supports drop from the rail to the ground, so the track reads as built
-    // rather than floating.
     if (pillars.current) {
       const ground = yOf(V_MAX) * 1000;
       let g = '';
-      for (let k = 0; k <= 26; k++) {
-        const t = k / 26;
+      for (let k = 0; k <= 30; k++) {
+        const t = k / 30;
         const x = (t * 1000).toFixed(2);
         const y = (yOf(valueAt(t)) * 1000).toFixed(2);
-        g += `<line x1="${x}" y1="${y}" x2="${x}" y2="${ground}" stroke="rgba(245,197,24,0.16)" stroke-width="2" vector-effect="non-scaling-stroke" />`;
+        g += `<line x1="${x}" y1="${y}" x2="${x}" y2="${ground}" stroke="rgba(245,197,24,0.15)" stroke-width="2" vector-effect="non-scaling-stroke" />`;
       }
       pillars.current.innerHTML = g;
     }
@@ -179,9 +165,8 @@ export function KeyframeInterpolation() {
       const t = Math.min(1, Math.max(0, head - i * CAR_GAP));
       const v = valueAt(t);
 
-      // Tangent in pixels, not in curve units — the angle depends on the
-      // frame's aspect ratio, and a percentage-space angle would be wrong on
-      // every screen but one.
+      // Tangent measured in pixels: the angle depends on the frame's aspect
+      // ratio, so an angle computed in curve units is right on one screen only.
       const d = 0.006;
       const a = yOf(valueAt(Math.max(0, t - d))) * h;
       const b = yOf(valueAt(Math.min(1, t + d))) * h;
@@ -191,14 +176,10 @@ export function KeyframeInterpolation() {
       node.style.top = `${yOf(v) * 100}%`;
       node.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
     }
-    if (readout.current) {
-      readout.current.textContent = `${Math.round(progress.current * 100)}% · value ${valueAt(progress.current).toFixed(2)}`;
-    }
   }, [valueAt]);
 
-  /* ── One loop for morphing, riding and resizing ───────────────────────── */
   useEffect(() => {
-    const el = stage.current;
+    const el = track.current;
     if (!el) return;
 
     const measure = () => {
@@ -262,12 +243,41 @@ export function KeyframeInterpolation() {
       }
     };
 
+    /*
+     * Rides itself when the section arrives. The whole point is the motion, and
+     * a visitor who has to find a button before anything moves has already been
+     * shown a static chart — the thing this replaced.
+     */
+    const auto = new IntersectionObserver(
+      (records) => {
+        if (records.some((r) => r.isIntersecting) && !runningRef.current) {
+          rideRef.current?.();
+        }
+      },
+      { threshold: 0.4 }
+    );
+    auto.observe(el);
+
     return () => {
       wake.current = null;
       cancelAnimationFrame(frame);
       ro.disconnect();
+      auto.disconnect();
     };
   }, [paintTrack, paintTrain]);
+
+  const ride = useCallback(() => {
+    progress.current = 0;
+    runningRef.current = true;
+    setRunning(true);
+    wake.current?.();
+  }, []);
+
+  // Assigned in an effect rather than during render, so a double render in
+  // strict mode cannot write a stale closure into the ref.
+  useEffect(() => {
+    rideRef.current = ride;
+  }, [ride]);
 
   const pick = (c: Curve) => {
     if (c.id === curveId) return;
@@ -275,124 +285,138 @@ export function KeyframeInterpolation() {
     morphFrom.current = Float64Array.from(samples.current);
     morphTo.current = sample(c.fn);
     morphAt.current = 0;
-    // Send the train back to the station: watching it teleport onto a track
-    // that is still bending would undo the illusion.
+    // Back to the station: watching the train teleport onto a track that is
+    // still bending would undo the illusion.
     progress.current = 0;
     runningRef.current = false;
     setRunning(false);
     wake.current?.();
-  };
-
-  const ride = () => {
-    progress.current = 0;
-    runningRef.current = true;
-    setRunning(true);
-    wake.current?.();
+    // Ride the new curve once it has finished forming.
+    window.setTimeout(() => ride(), MORPH + 120);
   };
 
   return (
-    <section id="keyframe-interpolation" className="relative w-full py-12 md:py-16">
-      <div className="px-6">
-        <h3
-          className="text-center text-3xl sm:text-4xl md:text-5xl leading-[1.06] text-white mb-3"
-          style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 700, letterSpacing: '-0.035em' }}
-        >
-          Keyframe interpolation
-        </h3>
-        <p className="text-center text-fx-text-secondary text-base md:text-lg max-w-2xl mx-auto">
-          The track is the curve. Pick one, then send the train — it speeds up
-          wherever the track steepens.
-        </p>
+    <section id="keyframe-interpolation" className="relative w-full py-10 md:py-14">
+      <h3
+        className="px-6 text-center text-3xl sm:text-4xl md:text-5xl leading-[1.06] text-white"
+        style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 700, letterSpacing: '-0.035em' }}
+      >
+        Keyframe Interpolation, <span style={{ color: '#f5c842' }}>like a rollercoaster!</span>
+      </h3>
 
-        <div className="mt-7 flex flex-wrap justify-center gap-2 max-w-4xl mx-auto">
-          {CURVES.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => pick(c)}
-              className={`px-3.5 py-1.5 rounded-full border font-mono text-[11px] tracking-wide transition-colors duration-200 ${
-                c.id === curveId
-                  ? 'bg-fx-accent-yellow text-fx-bg-base border-fx-accent-yellow'
-                  : 'text-fx-text-secondary border-fx-border hover:border-fx-accent-yellow/50 hover:text-fx-text-primary'
-              }`}
+      <div className="relative w-full h-[54vh] min-h-[360px] md:h-[64vh] mt-6 select-none">
+        {/* Controls sit in the frame's corners rather than under it, so the
+            track keeps the height. */}
+        <div className="absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-4 px-4 sm:px-8">
+          <button
+            onClick={ride}
+            disabled={running}
+            className="fx-cta group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-fx-bg-base font-semibold text-sm sm:text-base tracking-tight disabled:opacity-70 flex-shrink-0"
+            style={{ fontFamily: 'var(--font-inter), sans-serif' }}
+          >
+            {running ? <RotateCcw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4 fill-current" />}
+            {running ? 'Riding' : 'Simulate'}
+          </button>
+
+          <div className="flex flex-wrap justify-end gap-1.5 max-w-[64%]">
+            {CURVES.map((c) => {
+              const on = c.id === curveId;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => pick(c)}
+                  className={`flex items-center gap-1.5 pl-1.5 pr-2.5 py-1 rounded-md border transition-colors duration-200 ${
+                    on
+                      ? 'bg-fx-accent-yellow/15 border-fx-accent-yellow text-fx-accent-yellow'
+                      : 'border-fx-border text-fx-text-secondary hover:border-fx-accent-yellow/50 hover:text-fx-text-primary'
+                  }`}
+                >
+                  {/* Each chip previews the track it selects. */}
+                  <svg width="30" height="18" viewBox="0 0 30 18" className="flex-shrink-0" aria-hidden="true">
+                    <path
+                      d={miniPath(c.fn)}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <span className="font-mono text-[10px] tracking-wide whitespace-nowrap">{c.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* The track area proper, inset below the controls. */}
+        <div ref={track} className="absolute inset-x-0 bottom-0 top-[128px] sm:top-[84px] md:top-[78px]">
+          <svg
+            viewBox="0 0 1000 1000"
+            preserveAspectRatio="none"
+            className="absolute inset-0 w-full h-full"
+            aria-hidden="true"
+          >
+            <g ref={pillars} />
+            <path
+              ref={bed}
+              fill="none"
+              stroke="rgba(245,197,24,0.18)"
+              strokeWidth="18"
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+            />
+            <path
+              ref={rail}
+              fill="none"
+              stroke="#F5C518"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+
+          {Array.from({ length: CARS }, (_, i) => (
+            <div
+              key={i}
+              ref={(node) => {
+                cars.current[i] = node;
+              }}
+              className="absolute will-change-transform"
+              style={{ left: 0, top: 0 }}
             >
-              {c.label}
-            </button>
+              {/* 60% larger than the first pass. */}
+              <svg width={i === 0 ? 74 : 64} height={42} viewBox="0 0 46 26" className="drop-shadow-lg">
+                <rect
+                  x="3"
+                  y="3"
+                  width="40"
+                  height="14"
+                  rx="5"
+                  fill={i === 0 ? '#F5C518' : '#7C5CBF'}
+                  stroke="rgba(0,0,0,0.35)"
+                />
+                <rect x="8" y="6" width="11" height="8" rx="2" fill="rgba(10,14,26,0.75)" />
+                <rect x="23" y="6" width="11" height="8" rx="2" fill="rgba(10,14,26,0.75)" />
+                <circle
+                  cx="13"
+                  cy="20"
+                  r="4.5"
+                  fill="#0a0e1a"
+                  stroke={i === 0 ? '#F5C518' : '#7C5CBF'}
+                  strokeWidth="1.5"
+                />
+                <circle
+                  cx="33"
+                  cy="20"
+                  r="4.5"
+                  fill="#0a0e1a"
+                  stroke={i === 0 ? '#F5C518' : '#7C5CBF'}
+                  strokeWidth="1.5"
+                />
+              </svg>
+            </div>
           ))}
         </div>
-      </div>
-
-      {/* Full width and uncontained, like the timelines above it. */}
-      <div ref={stage} className="relative w-full h-[42vh] min-h-[260px] md:h-[48vh] mt-8 select-none">
-        <svg
-          viewBox="0 0 1000 1000"
-          preserveAspectRatio="none"
-          className="absolute inset-0 w-full h-full"
-          aria-hidden="true"
-        >
-          <g ref={pillars} />
-          {/* Two passes: a soft bed under a bright rail, so the track has depth
-              at any width. `non-scaling-stroke` keeps them even, because
-              preserveAspectRatio="none" would otherwise stretch the stroke. */}
-          <path
-            ref={bed}
-            fill="none"
-            stroke="rgba(245,197,24,0.18)"
-            strokeWidth="14"
-            strokeLinecap="round"
-            vectorEffect="non-scaling-stroke"
-          />
-          <path
-            ref={rail}
-            fill="none"
-            stroke="#F5C518"
-            strokeWidth="3"
-            strokeLinecap="round"
-            vectorEffect="non-scaling-stroke"
-          />
-        </svg>
-
-        {Array.from({ length: CARS }, (_, i) => (
-          <div
-            key={i}
-            ref={(node) => {
-              cars.current[i] = node;
-            }}
-            className="absolute will-change-transform"
-            style={{ left: 0, top: 0 }}
-          >
-            <svg width={i === 0 ? 46 : 40} height={26} viewBox="0 0 46 26" className="drop-shadow-lg">
-              <rect
-                x="3"
-                y="3"
-                width="40"
-                height="14"
-                rx="5"
-                fill={i === 0 ? '#F5C518' : '#7C5CBF'}
-                stroke="rgba(0,0,0,0.35)"
-              />
-              <rect x="8" y="6" width="11" height="8" rx="2" fill="rgba(10,14,26,0.75)" />
-              <rect x="23" y="6" width="11" height="8" rx="2" fill="rgba(10,14,26,0.75)" />
-              <circle cx="13" cy="20" r="4.5" fill="#0a0e1a" stroke={i === 0 ? '#F5C518' : '#7C5CBF'} strokeWidth="1.5" />
-              <circle cx="33" cy="20" r="4.5" fill="#0a0e1a" stroke={i === 0 ? '#F5C518' : '#7C5CBF'} strokeWidth="1.5" />
-            </svg>
-          </div>
-        ))}
-      </div>
-
-      <div className="px-6 mt-6 flex flex-col items-center gap-3">
-        <button
-          onClick={ride}
-          disabled={running}
-          className="fx-cta group inline-flex items-center gap-2.5 rounded-full px-7 py-3 text-fx-bg-base font-semibold text-base sm:text-lg tracking-tight disabled:opacity-70"
-          style={{ fontFamily: 'var(--font-inter), sans-serif' }}
-        >
-          {running ? <RotateCcw className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5 fill-current" />}
-          {running ? 'Riding…' : 'Simulate'}
-        </button>
-
-        <p className="font-mono text-[11px] text-fx-text-secondary/70 text-center">
-          {curve.note} <span ref={readout} className="text-fx-accent-yellow ml-1" />
-        </p>
       </div>
     </section>
   );
