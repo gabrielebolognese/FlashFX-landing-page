@@ -65,7 +65,25 @@ export function Hero() {
         </motion.div>
       )}
 
-      <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 w-full">
+      {/*
+        The canvas is the whole viewport, not a band inside it.
+
+        The cubes begin close to the camera and well outside the frame, so a
+        short container clipped the stream against its own edges — the animation
+        looked cut off at top and bottom while it was still the most interesting
+        part. Full height gives the flight somewhere to happen; the lockup
+        itself stays centred, sized by `FILL`.
+
+        `pointer-events-none` so it cannot swallow clicks on the buttons that
+        sit over it.
+      */}
+      <LogoAssembly
+        className="absolute inset-0 pointer-events-none"
+        duration={3.5}
+        onDone={() => setLanded(true)}
+      />
+
+      <div className="absolute inset-x-0 bottom-[9vh] z-10 flex flex-col items-center text-center px-6">
         {/*
           The headline is drawn in cubes now, so it is no longer text on screen.
           It is still the page's <h1>: deleting it would take the primary
@@ -80,17 +98,11 @@ export function Hero() {
         */}
         <h1 className="sr-only">Make Animations with FlashFX</h1>
 
-        <LogoAssembly
-          className="relative w-full h-[34vh] min-h-[190px] md:h-[40vh]"
-          duration={3.5}
-          onDone={() => setLanded(true)}
-        />
-
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: 'easeOut', delay: 0.15 }}
-          className="text-xl md:text-2xl text-white/80 mt-4 mb-10 max-w-3xl"
+          className="text-xl md:text-2xl text-white/80 mb-8 max-w-3xl"
           style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
         >
           Professional motion graphics in your browser. No installation, no complexity.

@@ -38,9 +38,24 @@ const TEXT_ROWS = 30;
 /** World units between cube centres, before each block's own scale. */
 const PITCH = 1;
 
-/** Relative sizes of the two blocks. The logo reads larger than the word. */
+/*
+ * Relative sizes of the two blocks. The logo reads larger than the word.
+ *
+ * These set the ratio *between* the blocks and nothing else. Scaling both by
+ * the same factor has no visible effect whatsoever: the camera fits the lockup
+ * to the frame, so a larger lockup is simply viewed from further away and
+ * projects to exactly the same pixels. How big the lockup looks on screen is
+ * `FILL`, below.
+ */
 const LOGO_SCALE = 1.4;
 const TEXT_SCALE = 0.8;
+
+/**
+ * How much of the frame's binding dimension the lockup occupies, 0–1.
+ *
+ * This is the size control. Was an implicit 0.85; 0.47 is 55% of that.
+ */
+const FILL = 0.47;
 
 /** How far the logo's cubes stretch in z once assembled, so it reads as a slab. */
 const LOGO_EXTRUDE = 3.4;
@@ -427,7 +442,7 @@ export function LogoAssembly({
         // Fit the lockup's width and height, whichever binds, plus margin.
         const distH = halfH / Math.tan(fov / 2);
         const distW = halfW / (Math.tan(fov / 2) * camera.aspect);
-        camDistance = Math.max(distH, distW) * 1.18;
+        camDistance = Math.max(distH, distW) / FILL;
         camera.position.set(0, 0, camDistance);
         camera.lookAt(0, 0, 0);
         camera.updateProjectionMatrix();
