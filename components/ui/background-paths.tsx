@@ -158,23 +158,21 @@ export function BackgroundPaths({
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 1, delay: 0.5 }}
-                            className="text-lg sm:text-xl text-fx-text-secondary mb-12 max-w-2xl mx-auto"
+                            className="text-lg sm:text-xl text-fx-text-secondary max-w-2xl mx-auto"
                         >
                             {description}
                         </motion.p>
                     )}
-
-                    {children && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1, delay: 0.7 }}
-                        >
-                            {children}
-                        </motion.div>
-                    )}
                 </motion.div>
+
+                {/*
+                  Children sit outside the max-w-4xl wrapper, and wider than it.
+                  That width is right for a headline and a one-line description
+                  but too narrow for the two side-by-side columns this section
+                  now carries. They are also outside the parent's fade, because
+                  the cards run their own staggered reveal.
+                */}
+                {children && <div className="max-w-5xl mx-auto">{children}</div>}
             </div>
         </div>
     );
