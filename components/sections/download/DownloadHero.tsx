@@ -13,7 +13,7 @@ export function DownloadHero() {
         >
           <h1
             className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-[1.05]"
-            style={{ fontFamily: 'Georgia, serif', letterSpacing: '-0.03em' }}
+            style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.03em' }}
           >
             <span className="text-white">FlashFX is </span>
             <span style={{ color: '#f5c842' }}>all web</span>
@@ -21,7 +21,7 @@ export function DownloadHero() {
 
           <p
             className="text-2xl md:text-3xl lg:text-4xl text-fx-text-primary leading-snug max-w-4xl mx-auto"
-            style={{ fontFamily: 'Georgia, serif', letterSpacing: '-0.02em' }}
+            style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.02em' }}
           >
             You can install this page with Chromium
           </p>

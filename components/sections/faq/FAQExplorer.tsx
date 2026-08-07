@@ -113,7 +113,7 @@ export function FAQExplorer() {
                           className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-fx-bg-raised transition-colors"
                           aria-expanded={isOpen}
                         >
-                          <span className="font-lexend text-lg font-bold text-fx-text-primary pr-4">
+                          <span className="font-sans text-lg font-bold text-fx-text-primary pr-4">
                             {entry.question}
                           </span>
                           <ChevronDown

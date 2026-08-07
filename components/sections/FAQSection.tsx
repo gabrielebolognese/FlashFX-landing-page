@@ -49,7 +49,7 @@ function FAQItem({ question, answer, index }: { question: string; answer: string
           aria-expanded={isOpen}
         >
           <div className="flex items-center justify-center gap-3 w-full">
-            <span className="text-lg md:text-xl font-normal text-fx-text-primary" style={{ fontFamily: 'var(--font-lexend), sans-serif' }}>
+            <span className="text-lg md:text-xl font-normal text-fx-text-primary" style={{ fontFamily: 'var(--font-outfit), sans-serif' }}>
               {question}
             </span>
             <ChevronDown
@@ -60,7 +60,7 @@ function FAQItem({ question, answer, index }: { question: string; answer: string
           </div>
         </button>
         {isOpen && (
-          <div className="px-6 pb-8 text-fx-text-secondary leading-relaxed text-center max-w-4xl mx-auto font-normal" style={{ fontFamily: 'var(--font-lexend), sans-serif' }}>
+          <div className="px-6 pb-8 text-fx-text-secondary leading-relaxed text-center max-w-4xl mx-auto font-normal" style={{ fontFamily: 'var(--font-outfit), sans-serif' }}>
             {answer}
           </div>
         )}
@@ -79,7 +79,7 @@ export function FAQSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="section-heading font-display text-5xl md:text-7xl lg:text-8xl font-bold text-white text-center mb-16"
-          style={{ fontFamily: 'Georgia, serif', letterSpacing: '-0.03em' }}
+          style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.03em' }}
         >
           Frequently Asked Questions
         </motion.h2>

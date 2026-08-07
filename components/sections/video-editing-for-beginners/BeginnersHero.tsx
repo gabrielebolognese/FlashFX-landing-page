@@ -25,7 +25,7 @@ export function BeginnersHero() {
           </div>
           <h1
             className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
-            style={{ fontFamily: 'Georgia, serif', letterSpacing: '-0.03em' }}
+            style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.03em' }}
           >
             <span className="text-white">Video Editing Software</span>
             <span style={{ color: '#f5c842' }}> for Beginners </span>

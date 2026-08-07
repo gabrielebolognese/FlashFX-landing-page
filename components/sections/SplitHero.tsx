@@ -100,7 +100,7 @@ export function SplitHero() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
             className="text-fx-text-secondary text-lg md:text-xl mb-8"
-            style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontWeight: 300 }}
+            style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', fontStyle: 'italic', fontWeight: 300 }}
           >
             All on web, even 3D
           </motion.p>

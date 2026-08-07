@@ -14,7 +14,7 @@ export function BrandHero() {
           <p className="mono-accent text-xs uppercase tracking-[0.2em] mb-5">Brand</p>
           <h1
             className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
-            style={{ fontFamily: 'Georgia, serif', letterSpacing: '-0.03em' }}
+            style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.03em' }}
           >
             <span className="text-white">The FlashFX </span>
             <span style={{ color: '#f5c842' }}>brand</span>

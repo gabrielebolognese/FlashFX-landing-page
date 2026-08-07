@@ -31,7 +31,7 @@ it should arguably run first even though it is listed last.
 | P4 | One WebGL context, paused off-screen | DONE |
 | P5 | Code-split the heavy visual components | DONE |
 | P6 | Animation fluidity and reduced motion | DONE |
-| P7 | Trim the font payload | NOT_STARTED |
+| P7 | Trim the font payload | DONE |
 | P8 | Measurement, budgets and regression guards | BASELINE DROPPED |
 
 Statuses: `NOT_STARTED` → `IN_PROGRESS` → `DONE`. Update both this table and the
@@ -588,7 +588,7 @@ users that is an accessibility failure, not a preference.
 
 ## P7 — Trim the font payload
 
-**Status:** NOT_STARTED
+**Status:** DONE — 2026-08-07
 **Impact:** smallest of the eight. Do it last.
 
 ### Why
@@ -618,9 +618,86 @@ needs — several headings override the font inline to Georgia anyway.
 
 ### Acceptance criteria
 
-- [ ] Three font families or fewer
-- [ ] No layout shift attributable to font swap
-- [ ] Display font of the hero is preloaded; the rest are not
+- [x] Three font families or fewer — Cormorant, Outfit, JetBrains Mono
+- [x] No layout shift attributable to font swap — Next emits a size-adjusted
+      fallback face per family (`__Outfit_Fallback_*`), verified in the built CSS
+- [x] Display font of the hero is preloaded; the rest are not — 1 `.p.woff2`,
+      down from 4
+
+### What was actually done
+
+**The premise in change 1 did not survive contact with the code.** All four
+families were genuinely used — Cormorant ~100 times via `font-display`,
+JetBrains Mono 91 times via `font-mono`, Outfit as the body default, and Lexend
+17 times. Nothing was earning its weight "once or twice", so this became a
+consolidation rather than a deletion.
+
+**Lexend folded into Outfit.** Two geometric sans-serifs were splitting the same
+job. The deciding argument was not byte count: one of Lexend's 17 usages is the
+homepage `<h1>`, the LCP element, which meant *the largest text on the site
+depended on a font file nothing else on the critical path needed*. It is now
+Outfit, which the body requires regardless.
+
+**Outfit gained weight 700, for free.** The spans that moved off Lexend carry
+`font-bold`, and Lexend only ever loaded weight 400 — so every one of them was
+being synthetically emboldened by the browser. Outfit is a *variable* font, so
+400, 500 and 700 all resolve from a single file: real bold, zero extra bytes.
+
+**Georgia got a fallback that exists.** 35 headings hardcoded
+`fontFamily: 'Georgia, serif'`. Georgia is a system font, so it costs nothing —
+but it is not installed on Android or most Linux, where those headings were
+dropping to a generic system serif. The stack is now
+`Georgia, var(--font-cormorant), serif`: unchanged on Windows and macOS, and a
+real designed serif everywhere else. Change 2 assumed one of Georgia/Cormorant
+was redundant; in fact both are used, for different levels — Georgia for hero
+`<h1>`s, Cormorant for section `<h2>`/`<h3>`s. Chaining them resolves it without
+restyling 35 headings.
+
+**Preload narrowed from four files to one.** Next.js preloads every family it is
+handed. Above the fold on the homepage the only typeface used is Outfit, so
+Cormorant and JetBrains Mono are now `preload: false`.
+
+| | Before | After |
+|---|---|---|
+| Families | 4 | **3** |
+| woff2 files emitted | 16 (228 kB) | **13 (188 kB)** |
+| `@font-face` rules | 22 | **20** |
+| Preloaded font files | 4 | **1** |
+| Faux-bold text | FAQ questions, feature headings | **none** |
+
+### Trap: you cannot check font preloading from a Windows build
+
+Next's `next-font-manifest-plugin` matches modules with
+`mod.request.includes('/next-font-loader/index.js?')` — a **forward** slash. On
+Windows the module request contains backslashes, so the match never fires,
+`next-font-manifest.json` is written empty, and the built HTML contains **zero**
+preload tags. This is a local-only artefact: Netlify builds on Linux, and the
+deployed HTML was confirmed to carry the preload links.
+
+```bash
+# Wrong on Windows — always returns 0:
+grep -c 'as="font"' .next/server/app/index.html
+
+# Use instead: the `.p.` infix is what `preload: true` produces.
+ls .next/static/media/*.p.woff2 | wc -l    # expect 1
+
+# Or check the deployed HTML:
+curl -s https://flashfx.app/ | grep -o 'as="font"' | wc -l
+```
+
+### Left alone, deliberately
+
+- **13 of the 20 `@font-face` rules are for subsets the site never renders** —
+  latin-ext, cyrillic, cyrillic-ext, greek, vietnamese. `subsets: ['latin']` is
+  set correctly; in Next 13.5.1 that option governs *preloading*, not which
+  faces are emitted. They cost CSS bytes only — `unicode-range` means the files
+  are never fetched for English text. Removing them would mean dropping
+  `next/font` and self-hosting by hand, which is not worth it.
+- **`font-display font-bold` is still faux-bold** on ~100 section headings:
+  Cormorant loads weight 600 only and Tailwind's `font-bold` asks for 700.
+  Cormorant Garamond is not a variable font, so a real 700 is another file on
+  every route. Left as-is; noted here because it is a genuine typographic
+  compromise, not an oversight.
 
 ---
 

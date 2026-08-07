@@ -68,7 +68,7 @@ export function Navbar() {
           />
           <span
             className="text-lg text-fx-text-primary group-hover:text-fx-accent-yellow transition-colors"
-            style={{ fontFamily: 'var(--font-lexend), sans-serif', fontWeight: 400 }}
+            style={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 400 }}
           >
             FlashFX
           </span>

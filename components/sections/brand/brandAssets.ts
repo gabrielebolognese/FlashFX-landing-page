@@ -83,7 +83,10 @@ export interface BrandFont {
   variable: string;
 }
 
-/** Loaded in app/layout.tsx via next/font/google. All four are Google Fonts. */
+/**
+ * Loaded in app/layout.tsx via next/font/google. All three are Google Fonts.
+ * Lexend was a fourth until performancemilestones.md P7 folded it into Outfit.
+ */
 export const brandFonts: BrandFont[] = [
   {
     name: 'Cormorant Garamond',
@@ -93,8 +96,8 @@ export const brandFonts: BrandFont[] = [
   },
   {
     name: 'Outfit',
-    role: 'Body. The default sans across the site.',
-    weights: '400, 500',
+    role: 'Body and UI. The default sans across the site, and the wordmark.',
+    weights: '400, 500, 700',
     variable: '--font-outfit',
   },
   {
@@ -102,11 +105,5 @@ export const brandFonts: BrandFont[] = [
     role: 'Monospace. Figures, labels, and technical detail.',
     weights: '400',
     variable: '--font-jetbrains',
-  },
-  {
-    name: 'Lexend',
-    role: 'Supporting sans. Used for emphasis in UI copy.',
-    weights: '400',
-    variable: '--font-lexend',
   },
 ];

@@ -44,7 +44,7 @@ export function AllWebEditing() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
             className="text-fx-text-secondary text-lg md:text-xl mb-8"
-            style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontWeight: 300 }}
+            style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', fontStyle: 'italic', fontWeight: 300 }}
           >
             Professional editing, right in your browser
           </motion.p>

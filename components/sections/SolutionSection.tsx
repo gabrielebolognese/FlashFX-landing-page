@@ -27,7 +27,7 @@ export function SolutionSection() {
           >
             <h2
               className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
-              style={{ fontFamily: 'Georgia, serif', letterSpacing: '-0.03em' }}
+              style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.03em' }}
             >
               <span className="text-white">Built for </span>
               <span style={{ color: '#f5c842' }}>Speed.</span>

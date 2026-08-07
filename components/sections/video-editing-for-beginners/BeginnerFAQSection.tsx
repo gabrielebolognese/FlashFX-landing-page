@@ -36,7 +36,7 @@ export function BeginnerFAQSection() {
                 aria-expanded={openIndex === index}
                 aria-controls={`beg-faq-answer-${index}`}
               >
-                <span className="font-lexend text-lg font-bold text-fx-text-primary pr-4">
+                <span className="font-sans text-lg font-bold text-fx-text-primary pr-4">
                   {faq.question}
                 </span>
                 <ChevronDown

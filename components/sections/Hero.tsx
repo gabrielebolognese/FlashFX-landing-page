@@ -42,7 +42,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
           className="text-6xl md:text-7xl lg:text-8xl font-normal tracking-tight text-white mb-6"
-          style={{ fontFamily: 'var(--font-lexend), sans-serif' }}
+          style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
         >
           Make Animations with <span className="text-yellow-400">FlashFX</span>
         </motion.h1>

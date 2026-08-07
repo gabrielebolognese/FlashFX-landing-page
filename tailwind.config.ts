@@ -13,7 +13,6 @@ const config: Config = {
         mono: ['var(--font-jetbrains)', 'monospace'],
         sans: ['var(--font-outfit)', 'sans-serif'],
         display: ['var(--font-cormorant)', 'serif'],
-        lexend: ['var(--font-lexend)', 'sans-serif'],
       },
       borderRadius: {
         card: '4px',

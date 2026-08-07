@@ -102,7 +102,13 @@ Two global rules in `globals.css` bite easily:
 - **`h1` has a hardcoded gradient with `-webkit-text-fill-color: transparent`.** Any `text-*` color class on an `h1` is invisible. Components that need a solid-color heading (e.g. `Hero`) work around this by styling a `motion.h1` with explicit inline styles, or by using a `<span>`.
 - `* { @apply border-fx-border }` sets the default border color globally; `h1, h2, h3` are forced to the Cormorant display font. `h2.section-heading` gets a gradient underline via `::after`.
 
-Four fonts are loaded in `app/layout.tsx` via `next/font/google` and exposed as CSS variables: `--font-cormorant` (display/headings), `--font-outfit` (`font-sans`, body), `--font-jetbrains` (`font-mono`), `--font-lexend`. Existing components mostly apply these through inline `style={{ fontFamily: 'var(--font-…)' }}` rather than the Tailwind font classes — match whichever the surrounding file uses.
+**Three** fonts are loaded in `app/layout.tsx` via `next/font/google` and exposed as CSS variables: `--font-cormorant` (display, `font-display`), `--font-outfit` (`font-sans`, body and UI), `--font-jetbrains` (`font-mono`). Existing components mostly apply these through inline `style={{ fontFamily: 'var(--font-…)' }}` rather than the Tailwind font classes — match whichever the surrounding file uses.
+
+A fourth family, Lexend, was removed in `performancemilestones.md` P7 and folded into Outfit — it was a second geometric sans doing Outfit's job, and one of its usages was the homepage `<h1>`, the LCP element. **Do not reintroduce `--font-lexend` or the `font-lexend` Tailwind class**; both are gone. Outfit is a variable font, so 400/500/700 all come from one file — adding a weight to it is free, adding one to Cormorant is not.
+
+Only Outfit is preloaded (`preload: false` on the other two), because above the fold on the homepage nothing else is used. Note that **you cannot verify font preloading from a build made on Windows** — Next's font-manifest plugin matches module requests with a forward slash, so on Windows the manifest comes out empty and the HTML has zero preload tags. Count `.next/static/media/*.p.woff2` instead (expect 1), or check the deployed HTML.
+
+Hero `<h1>`s set `fontFamily: 'Georgia, var(--font-cormorant), serif'` inline in 35 components. Georgia is a system font and costs nothing, but is absent on Android and most Linux — the Cormorant link is what those platforms fall back to, so **keep it in the stack** rather than trimming back to `Georgia, serif`.
 
 ### Component library — two overlapping systems
 

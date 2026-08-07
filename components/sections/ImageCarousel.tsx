@@ -104,7 +104,7 @@ export function ImageCarousel() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-4xl md:text-5xl lg:text-6xl leading-tight font-bold text-center mb-4"
-          style={{ fontFamily: 'Georgia, serif', letterSpacing: '-0.03em' }}
+          style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.03em' }}
         >
           <span style={{ color: '#f5c842' }}>See</span><span className="text-white"> what it looks like</span>
         </motion.h2>

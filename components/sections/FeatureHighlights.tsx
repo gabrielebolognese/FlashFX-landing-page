@@ -76,7 +76,7 @@ function FeatureCard({ item, index, showCategory }: { item: CardItem; index: num
           {showCategory && category && (
             <span
               className="text-xs font-medium mb-3 tracking-wider uppercase"
-              style={{ color: 'rgba(245, 197, 24, 0.5)', fontFamily: 'var(--font-lexend)' }}
+              style={{ color: 'rgba(245, 197, 24, 0.5)', fontFamily: 'var(--font-outfit)' }}
             >
               {category}
             </span>
@@ -95,7 +95,7 @@ function FeatureCard({ item, index, showCategory }: { item: CardItem; index: num
 
           <h3
             className="text-sm font-normal text-fx-text-primary mb-1.5"
-            style={{ fontFamily: 'var(--font-lexend)', fontWeight: 400 }}
+            style={{ fontFamily: 'var(--font-outfit)', fontWeight: 400 }}
           >
             {item.title}
           </h3>
@@ -132,7 +132,7 @@ function CategorySection({
       >
         <h3
           className="text-2xl font-semibold text-white mb-2"
-          style={{ fontFamily: 'var(--font-lexend)', fontWeight: 600 }}
+          style={{ fontFamily: 'var(--font-outfit)', fontWeight: 600 }}
         >
           {title}
         </h3>
@@ -175,7 +175,7 @@ export function FeatureHighlights() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="section-heading font-display text-5xl md:text-7xl lg:text-8xl font-bold text-center mb-20"
-          style={{ fontFamily: 'Georgia, serif', letterSpacing: '-0.03em' }}
+          style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.03em' }}
         >
           <span style={{ color: '#f5c842' }}>Everything</span>
           <span className="text-white"> FlashFX can do</span>
@@ -242,7 +242,7 @@ export function FeatureHighlights() {
           transition={{ duration: 0.6 }}
           style={{
             color: '#f5c842',
-            fontFamily: 'Georgia, serif',
+            fontFamily: 'Georgia, var(--font-cormorant), serif',
             fontSize: 'clamp(2.5rem, 5vw, 5rem)',
             fontWeight: 700,
             letterSpacing: '-0.025em',
@@ -282,7 +282,7 @@ export function FeatureHighlights() {
               transition={{ duration: 0.45, delay: 0.3 + i * 0.08 }}
               style={{
                 color: 'rgba(230, 237, 243, 0.55)',
-                fontFamily: 'Georgia, serif',
+                fontFamily: 'Georgia, var(--font-cormorant), serif',
                 fontSize: 'clamp(1.1rem, 2.2vw, 1.6rem)',
                 fontWeight: 400,
                 letterSpacing: '-0.01em',
