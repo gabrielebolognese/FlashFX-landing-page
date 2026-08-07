@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { SpotlightAceternity } from '@/components/ui/spotlight-aceternity';
 import { Box, Sparkles, Zap } from 'lucide-react';
+import { CtaButton } from '@/components/ui/cta-button';
 
 /*
  * Copy on the left, a rotatable A380 on the right (immersionmilestones.md I8).
@@ -69,9 +70,10 @@ export function ThreeDSupport() {
               style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.03em' }}
             >
               <span style={{ color: '#ffffff', WebkitTextFillColor: '#ffffff' }}>
-                FlashFX has 3 dimensions,{' '}
+                Yes, also{' '}
               </span>
-              <span style={{ color: '#f5c842', WebkitTextFillColor: '#f5c842' }}>on the web!</span>
+              <span style={{ color: '#f5c842', WebkitTextFillColor: '#f5c842' }}>3D</span>
+              <span style={{ color: '#ffffff', WebkitTextFillColor: '#ffffff' }}>, for free</span>
             </h2>
 
             <p className="text-lg md:text-xl text-fx-text-secondary leading-relaxed max-w-xl">
@@ -99,6 +101,12 @@ export function ThreeDSupport() {
                   <p className="text-sm text-fx-text-secondary">See changes instantly as you create</p>
                 </div>
               </div>
+            </div>
+
+            <div className="pt-2">
+              <CtaButton href="https://editor.flashfx.app" size="md">
+                Try it now
+              </CtaButton>
             </div>
           </motion.div>
 

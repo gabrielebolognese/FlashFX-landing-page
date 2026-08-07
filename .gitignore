@@ -40,3 +40,8 @@ next-env.d.ts
 # too large to fetch in a browser. Re-bake with scratchpad/bake-a380.js.
 public/*.obj
 public/*.mtl
+
+# Source browser icons: 1060 kB of PNGs, converted and squared into
+# public/browsers/*.webp (55 kB total) by the AllOnWeb section. Untracked, so
+# they would never reach Netlify anyway — this makes that explicit.
+public/browser icons/

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
-import { ArrowRight } from 'lucide-react';
+import { CtaButton } from '@/components/ui/cta-button';
 
 /*
  * The hero opens on the cube animation, not on a headline
@@ -131,22 +131,16 @@ export function Hero() {
           gated, nothing blocks render); this is a deliberate design trade, not
           a regression that crept in.
         */}
-        <motion.a
-          href="https://editor.flashfx.app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={landed ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="fx-cta group inline-flex items-center gap-3 sm:gap-4 rounded-full px-8 sm:px-12 py-4 sm:py-6 text-fx-bg-base font-semibold text-lg sm:text-2xl md:text-[26px] tracking-tight"
-          style={{ fontFamily: 'var(--font-inter), sans-serif', pointerEvents: landed ? 'auto' : 'none' }}
+          style={{ pointerEvents: landed ? 'auto' : 'none' }}
         >
-          Open the editor, it&rsquo;s free
-          <ArrowRight
-            className="w-5 h-5 sm:w-7 sm:h-7 flex-shrink-0 transition-transform duration-200 group-hover:translate-x-1"
-            strokeWidth={2.5}
-          />
-        </motion.a>
+          <CtaButton href="https://editor.flashfx.app" size="lg">
+            Open the editor, it&rsquo;s free
+          </CtaButton>
+        </motion.div>
       </div>
     </section>
   );

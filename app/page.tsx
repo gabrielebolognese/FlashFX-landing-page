@@ -5,6 +5,7 @@ import { ImageCarousel } from '@/components/sections/ImageCarousel';
 import { SolutionSection } from '@/components/sections/SolutionSection';
 import { OrganizeWorkflow } from '@/components/sections/OrganizeWorkflow';
 import { InteractiveCanvas } from '@/components/sections/InteractiveCanvas';
+import { AllOnWeb } from '@/components/sections/AllOnWeb';
 import { FeaturesIntro } from '@/components/sections/FeaturesIntro';
 import { AllWebEditing } from '@/components/sections/AllWebEditing';
 import { DualTimeline } from '@/components/sections/DualTimeline';
@@ -160,6 +161,8 @@ export default function Home() {
         <VideoPlaceholder heading="Clip timeline" title="Clip Timeline" description="Arrange footage, overlays and audio in one sequence" gridBackground demo="clips" youtubeId="-zyusYiQNEc" />
         <VideoPlaceholder heading="Animation timeline" title="Animation Timeline" description="Keyframe animation made simple for everyone" demo="timeline" youtubeId="bHdIvt_lUrE" sectionHeading="Animation Timeline" />
         <InteractiveCanvas />
+        <ThreeDSupport />
+        <AllOnWeb />
         <ImageCarousel />
         <WhatIsFlashFX />
         <FeaturesIntro />
@@ -173,7 +176,6 @@ export default function Home() {
         <DualTimeline />
         <EasyAnimations />
         <VideoPlaceholder title="Animation Presets" description="Bring your ideas to life effortlessly" gridBackground demo="presets" youtubeId="Rk9hf3QI5Is" />
-        <ThreeDSupport />
         <KeyframeInterpolation />
         <VideoPlaceholder title="Keyframe Interpolation" description="Click any curve to preview its shape" gridBackground demo="easing" youtubeId="fkQhKYaSv0Q" />
         {/* id is what the Navbar Features dropdown scrolls to for Share Projects. */}
