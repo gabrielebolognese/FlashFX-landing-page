@@ -26,19 +26,6 @@ const ClipTimelineDemo = dynamic(() => import('./ClipTimelineDemo').then((m) => 
   ssr: false,
   loading: holding,
 });
-const CubeDemo = dynamic(() => import('./CubeDemo').then((m) => m.CubeDemo), {
-  ssr: false,
-  loading: holding,
-});
-/*
- * Carries three.js with it. That is fine and is the reason `ssr: false` and the
- * lazy chunk matter more here than anywhere else — three is already a
- * dependency (the hero shader uses it) but must not reach the initial bundle.
- */
-const MorphDemo = dynamic(() => import('./MorphDemo').then((m) => m.MorphDemo), {
-  ssr: false,
-  loading: holding,
-});
 const EasingCurveDemo = dynamic(() => import('./EasingCurveDemo').then((m) => m.EasingCurveDemo), {
   ssr: false,
   loading: holding,
@@ -52,7 +39,7 @@ const ShareDemo = dynamic(() => import('./ShareDemo').then((m) => m.ShareDemo), 
   loading: holding,
 });
 
-export type DemoKind = 'timeline' | 'clips' | 'cube' | 'morph' | 'easing' | 'presets' | 'share';
+export type DemoKind = 'timeline' | 'clips' | 'easing' | 'presets' | 'share';
 
 /**
  * The frame each demo wants.
@@ -67,14 +54,6 @@ export const demoFrame: Record<DemoKind, { width: string; aspect: string; bare?:
   // 64rem + 20%.
   timeline: { width: 'max-w-[76.8rem]', aspect: 'aspect-[16/11]' },
   clips: { width: 'max-w-[76.8rem]', aspect: 'aspect-[16/10]' },
-  /*
-   * `bare` — no card surface, no border, no radius. The 3D viewport is meant to
-   * blend into the section rather than sit in a box, so `VideoPlaceholder`
-   * paints nothing behind it. `CubeDemo` passes `bare` to `DemoShell` to match;
-   * the two have to agree or you get a headerless panel with a visible edge.
-   */
-  cube: { width: 'max-w-[76.8rem]', aspect: 'aspect-[16/9]', bare: true },
-  morph: { width: 'max-w-[76.8rem]', aspect: 'aspect-[16/9]', bare: true },
   easing: { width: 'max-w-5xl', aspect: 'aspect-video' },
   presets: { width: 'max-w-5xl', aspect: 'aspect-video' },
   share: { width: 'max-w-5xl', aspect: 'aspect-video' },
@@ -92,10 +71,6 @@ export function Demo({ kind }: { kind: DemoKind }) {
      */
     case 'clips':
       return <ClipTimelineDemo />;
-    case 'cube':
-      return <CubeDemo />;
-    case 'morph':
-      return <MorphDemo />;
     case 'easing':
       return <EasingCurveDemo />;
     case 'presets':

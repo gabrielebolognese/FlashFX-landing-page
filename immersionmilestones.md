@@ -790,6 +790,29 @@ stub that renders the words "3D scene unavailable" on a black square. Removed;
 the section is now a single centred column, retitled *"FlashFX has 3 dimensions,
 on the web!"*, and demoted from `<h1>` to `<h2>` — the page's h1 is the hero.
 
+### Revision, 2026-08-07 — the morph is gone; the plane is interactive
+
+Owner's call: drop the sequence, keep only its last stage, put it beside the
+section's title, and let people rotate it.
+
+- **No morph.** `MorphDemo.tsx` and `CubeDemo.tsx` are deleted, along with the
+  `cube` and `morph` demo kinds. `PlaneViewer.tsx` replaces them. With no
+  vertex morphing the loop only writes a rotation — it no longer rewrites 20,916
+  floats per frame, which makes this far cheaper than what it replaced.
+- **The page is a section shorter.** The 3D had its own full-width
+  `VideoPlaceholder` below `ThreeDSupport`; the model now occupies the column
+  the Spline stub vacated, so that section is gone. Homepage: **26 → 25**.
+- **Drag to rotate.** Pointer events with momentum and friction, pitch clamped
+  to ±0.85 rad so it cannot end up upside down.
+  - `touch-action: pan-y`, not `none`. The browser keeps vertical scrolling, so
+    a visitor swiping down the page on a phone is not trapped by a large canvas;
+    only the horizontal gesture is taken.
+  - **The render loop runs while dragging even if the governor has denied a
+    slot.** An object that ignores the pointer reads as broken rather than as
+    restrained. The loop parks itself when there is nothing left to do — no
+    grant, no pointer, no momentum — and a fresh grant wakes it.
+- **`spline-scene.tsx` deleted.** It had one consumer and was a stub.
+
 ### What shipped
 
 `components/demos/morph-shapes.ts` — pure arithmetic, no three.js and no React,
