@@ -71,7 +71,7 @@ export function Footer() {
     <footer className="relative w-full bg-fx-bg-surface">
       <div className="max-w-7xl mx-auto px-6 pt-16 pb-10">
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-fx-text-primary mb-2" style={{ fontFamily: 'var(--font-cormorant), serif' }}>
+          <h2 className="text-xl font-semibold text-fx-text-primary mb-2" style={{ fontFamily: 'var(--font-inter), sans-serif' }}>
             FlashFX
           </h2>
           <p className="text-fx-text-secondary text-[0.8rem]" style={{ fontFamily: 'var(--font-outfit), sans-serif' }}>

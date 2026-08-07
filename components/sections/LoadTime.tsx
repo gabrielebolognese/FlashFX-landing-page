@@ -74,7 +74,7 @@ export function LoadTime() {
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-6xl md:text-7xl lg:text-8xl leading-tight bg-gradient-to-r from-fx-accent-yellow to-orange-500 bg-clip-text text-transparent mb-6"
-            style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', fontWeight: 700, letterSpacing: '-0.02em' }}
+            style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 700, letterSpacing: '-0.02em' }}
           >
             Load Time
           </motion.h2>

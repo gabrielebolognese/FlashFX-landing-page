@@ -69,7 +69,7 @@ export function WhatIsFlashFX() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6"
-          style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.03em' }}
+          style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.03em' }}
         >
           <span className="text-white">What is </span>
           <span style={{ color: '#f5c842' }}>FlashFX</span>

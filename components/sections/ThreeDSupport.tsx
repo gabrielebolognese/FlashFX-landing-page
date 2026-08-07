@@ -66,7 +66,7 @@ export function ThreeDSupport() {
             */}
             <h2
               className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.08]"
-              style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.03em' }}
+              style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.03em' }}
             >
               <span style={{ color: '#ffffff', WebkitTextFillColor: '#ffffff' }}>
                 FlashFX has 3 dimensions,{' '}

@@ -97,7 +97,7 @@ export function AllLinks() {
         <h2
           className="mb-3"
           style={{
-            fontFamily: 'Cormorant Garamond, serif',
+            fontFamily: 'var(--font-inter), sans-serif',
             fontWeight: 600,
             fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
             color: '#F5C518',

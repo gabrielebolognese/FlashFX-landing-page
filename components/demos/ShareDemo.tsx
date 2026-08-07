@@ -347,7 +347,7 @@ export function ShareDemo() {
         <div className="absolute inset-x-0 top-[46%] flex flex-col items-center pointer-events-none px-4">
           <div
             className="font-bold leading-none text-white text-5xl sm:text-7xl md:text-8xl"
-            style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.03em' }}
+            style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.03em' }}
           >
             <span ref={head} />
             <span ref={headCaret} className="text-fx-accent-yellow" style={{ opacity: 0 }}>|</span>

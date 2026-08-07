@@ -81,7 +81,7 @@ export function FAQSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="section-heading font-display text-5xl md:text-7xl lg:text-8xl font-bold text-white text-center mb-16"
-          style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.03em' }}
+          style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.03em' }}
         >
           Frequently Asked Questions
         </motion.h2>

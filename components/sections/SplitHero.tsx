@@ -89,7 +89,7 @@ export function SplitHero() {
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-5xl md:text-6xl lg:text-7xl leading-tight bg-gradient-to-r from-fx-accent-yellow to-orange-500 bg-clip-text text-transparent mb-4"
-            style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontWeight: 950, letterSpacing: '-0.02em' }}
+            style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 950, letterSpacing: '-0.02em' }}
           >
             Create Motion Graphics Faster
           </motion.h1>
@@ -100,7 +100,7 @@ export function SplitHero() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
             className="text-fx-text-secondary text-lg md:text-xl mb-8"
-            style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', fontStyle: 'italic', fontWeight: 300 }}
+            style={{ fontFamily: 'var(--font-inter), sans-serif', fontStyle: 'italic', fontWeight: 300 }}
           >
             All on web, even 3D
           </motion.p>

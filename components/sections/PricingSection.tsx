@@ -305,7 +305,7 @@ export function PricingSection() {
           <p className="text-xs font-semibold uppercase tracking-widest text-fx-accent-yellow mb-3">Pricing</p>
           <h2
             className="section-heading font-display text-5xl md:text-7xl lg:text-8xl font-bold text-white text-center mb-4"
-            style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.03em' }}
+            style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.03em' }}
           >
             <span style={{ color: '#f5c842' }}>Simple</span>
             <span className="text-white">, honest pricing.</span>

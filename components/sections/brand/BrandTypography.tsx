@@ -25,9 +25,8 @@ export function BrandTypography() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-lg text-fx-text-secondary max-w-3xl leading-relaxed mb-12"
         >
-          Three families, all available on Google Fonts. A serif for display, a geometric sans
-          for reading and UI, and a monospace for anything numeric. Hero headlines use Georgia,
-          a system serif, and fall back to Cormorant Garamond where it is not installed.
+          Three families, all available on Google Fonts. Inter sets every heading, a geometric
+          sans carries reading and UI, and a monospace handles anything numeric.
         </motion.p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

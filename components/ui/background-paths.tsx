@@ -139,7 +139,7 @@ export function BackgroundPaths({
                 >
                     <h1
                         className="text-5xl sm:text-7xl md:text-8xl font-bold mb-8"
-                        style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.03em' }}
+                        style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.03em' }}
                     >
                         {words.map((word, wordIndex) => (
                             <span

@@ -50,7 +50,7 @@
   }
 
   h1, h2, h3 {
-    font-family: var(--font-cormorant), serif;
+    font-family: var(--font-inter), sans-serif;
     font-weight: 600;
     font-feature-settings: 'kern' 1, 'liga' 1;
   }

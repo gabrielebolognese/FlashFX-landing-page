@@ -25,7 +25,7 @@ export function YTHero() {
           </div>
           <h1
             className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
-            style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', letterSpacing: '-0.03em' }}
+            style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.03em' }}
           >
             <span className="text-white">Motion graphics software </span>
             <span style={{ color: '#f5c842' }}>for YouTube creators</span>

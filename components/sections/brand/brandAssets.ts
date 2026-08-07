@@ -85,14 +85,17 @@ export interface BrandFont {
 
 /**
  * Loaded in app/layout.tsx via next/font/google. All three are Google Fonts.
+ *
  * Lexend was a fourth until performancemilestones.md P7 folded it into Outfit.
+ * Cormorant Garamond was the display face until 2026-08-07, when every section
+ * heading on the site moved to Inter and nothing referenced it any more.
  */
 export const brandFonts: BrandFont[] = [
   {
-    name: 'Cormorant Garamond',
-    role: 'Display. Headings and section titles.',
-    weights: '600',
-    variable: '--font-cormorant',
+    name: 'Inter',
+    role: 'Display. Every heading and section title.',
+    weights: 'variable, 100–900',
+    variable: '--font-inter',
   },
   {
     name: 'Outfit',

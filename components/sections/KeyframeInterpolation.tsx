@@ -208,7 +208,7 @@ export function KeyframeInterpolation() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className="text-6xl md:text-7xl lg:text-8xl leading-tight bg-gradient-to-r from-fx-accent-yellow to-orange-500 bg-clip-text text-transparent mb-4"
-            style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', fontWeight: 700, letterSpacing: '-0.02em' }}
+            style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 700, letterSpacing: '-0.02em' }}
           >
             Keyframe Interpolation
           </motion.h2>

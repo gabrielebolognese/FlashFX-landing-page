@@ -12,7 +12,8 @@ const config: Config = {
       fontFamily: {
         mono: ['var(--font-jetbrains)', 'monospace'],
         sans: ['var(--font-outfit)', 'sans-serif'],
-        display: ['var(--font-cormorant)', 'serif'],
+        // `font-display` is the heading face. Inter since 2026-08-07.
+        display: ['var(--font-inter)', 'sans-serif'],
       },
       borderRadius: {
         card: '4px',

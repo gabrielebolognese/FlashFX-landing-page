@@ -33,7 +33,7 @@ export function EasyAnimations() {
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.2 }}
             className="text-4xl md:text-5xl lg:text-6xl leading-tight bg-gradient-to-r from-fx-accent-yellow to-orange-500 bg-clip-text text-transparent mb-4"
-            style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontWeight: 950, letterSpacing: '-0.02em' }}
+            style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 950, letterSpacing: '-0.02em' }}
           >
             Animation Presets
           </motion.h2>
@@ -44,7 +44,7 @@ export function EasyAnimations() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
             className="text-fx-text-secondary text-lg md:text-xl mb-8"
-            style={{ fontFamily: 'Georgia, var(--font-cormorant), serif', fontStyle: 'italic', fontWeight: 300 }}
+            style={{ fontFamily: 'var(--font-inter), sans-serif', fontStyle: 'italic', fontWeight: 300 }}
           >
             Bring your ideas to life effortlessly
           </motion.p>
