@@ -218,48 +218,74 @@ export function FeatureHighlights() {
         next/image gives both. It sits far below the fold, so it is explicitly
         not `priority` — see performancemilestones.md P3.
       */}
-      <div
-        className="relative"
-        style={{
-          width: '100%',
-          height: '140vh',
-          lineHeight: 0,
-        }}
-      >
+      {/*
+        The iceberg: everything above is the tip, and the picture is the rest of
+        it. It has to look like part of the page rather than a photograph pasted
+        onto one.
+
+        Sized by its own aspect ratio rather than a fixed 140vh. At 140vh with
+        `object-cover` the bottom was cropped by about 185px on a desktop — and
+        far worse on a phone, where a 375px-wide viewport made the container
+        nearly five times taller than the image's proportions, so it filled the
+        height and cropped almost all the width away. `h-auto` shows the whole
+        thing at every width and pushes what follows down, which is the point.
+
+        Both edges are near-black (#040c13 top, #000107 bottom) against a
+        #141f40 page, so both are faded into the background rather than meeting
+        it as a seam. The bottom fade is the deep one, and the line sits inside
+        it.
+      */}
+      <div className="relative w-full" style={{ lineHeight: 0 }}>
         <Image
           src="/fix-copy.webp"
-          alt=""
-          fill
+          alt="An iceberg, most of it below the surface"
+          width={1600}
+          height={1414}
           sizes="100vw"
-          className="object-cover"
-          style={{ objectPosition: 'top' }}
+          className="w-full h-auto select-none"
         />
+
+        <div
+          className="absolute inset-x-0 top-0 h-[12%] pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom, #141f40 0%, rgba(20,31,64,0.55) 45%, transparent 100%)' }}
+        />
+
+        <div
+          className="absolute inset-x-0 bottom-0 h-[55%] pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(to bottom, transparent 0%, rgba(20,31,64,0.45) 38%, rgba(20,31,64,0.88) 70%, #141f40 92%)',
+          }}
+        />
+
+        <div className="absolute inset-x-0 bottom-0 flex justify-center px-6 pb-[7%]">
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            style={{
+              color: '#f5c842',
+              fontFamily: 'var(--font-inter), sans-serif',
+              fontSize: 'clamp(2.5rem, 5vw, 5rem)',
+              fontWeight: 700,
+              letterSpacing: '-0.025em',
+              lineHeight: 1,
+              textShadow: '0 8px 40px rgba(20,31,64,0.9)',
+            }}
+          >
+            And so much more
+          </motion.p>
+        </div>
       </div>
 
       <div
         className="relative w-full text-center"
         style={{
           background: '#141f40',
-          paddingTop: '1rem',
           paddingBottom: '7rem',
         }}
       >
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          style={{
-            color: '#f5c842',
-            fontFamily: 'var(--font-inter), sans-serif',
-            fontSize: 'clamp(2.5rem, 5vw, 5rem)',
-            fontWeight: 700,
-            letterSpacing: '-0.025em',
-            lineHeight: 1,
-          }}
-        >
-          And so much more
-        </motion.p>
 
         <motion.ul
           initial={{ opacity: 0, y: 24 }}
@@ -269,7 +295,7 @@ export function FeatureHighlights() {
           style={{
             listStyle: 'none',
             padding: 0,
-            margin: '3rem auto 0',
+            margin: '0 auto',
             maxWidth: '600px',
             display: 'flex',
             flexDirection: 'column',
