@@ -8,6 +8,7 @@ import { InteractiveCanvas } from '@/components/sections/InteractiveCanvas';
 import { AllOnWeb } from '@/components/sections/AllOnWeb';
 import { ThreeDSupport } from '@/components/sections/ThreeDSupport';
 import { KeyframeInterpolation } from '@/components/sections/KeyframeInterpolation';
+import { EverythingToAnimate } from '@/components/sections/EverythingToAnimate';
 import { SplitHero } from '@/components/sections/SplitHero';
 import { FeatureHighlights } from '@/components/sections/FeatureHighlights';
 import { ComparisonTeaser } from '@/components/sections/ComparisonTeaser';
@@ -161,13 +162,12 @@ export default function Home() {
         <AllOnWeb />
         <ImageCarousel />
         <WhatIsFlashFX />
-        <VideoPlaceholder title="Animation Presets" description="Bring your ideas to life effortlessly" gridBackground demo="presets" youtubeId="Rk9hf3QI5Is" />
+        <EverythingToAnimate />
+        <VideoPlaceholder heading="Animation presets" title="Animation Presets" description="Bring your ideas to life effortlessly" gridBackground demo="presets" youtubeId="Rk9hf3QI5Is" />
         <KeyframeInterpolation />
-        <VideoPlaceholder title="Keyframe Interpolation" description="Click any curve to preview its shape" gridBackground demo="easing" youtubeId="fkQhKYaSv0Q" />
         {/* id is what the Navbar Features dropdown scrolls to for Share Projects. */}
         <VideoPlaceholder id="share-projects" title="Share Projects" description="Collaborate and share your work with anyone, instantly" gridBackground demo="share" youtubeId="sqdlJULYNZA" sectionHeading="Share Projects" />
         <SplitHero />
-        <VideoPlaceholder title="Templates & Presets" description="Start creating instantly with pre-built motion graphics" demo="presets" />
         <CreatorStories />
         {/*
           Seams mark the transitions between the page's acts rather than every

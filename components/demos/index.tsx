@@ -26,10 +26,6 @@ const ClipTimelineDemo = dynamic(() => import('./ClipTimelineDemo').then((m) => 
   ssr: false,
   loading: holding,
 });
-const EasingCurveDemo = dynamic(() => import('./EasingCurveDemo').then((m) => m.EasingCurveDemo), {
-  ssr: false,
-  loading: holding,
-});
 const PresetWallDemo = dynamic(() => import('./PresetWallDemo').then((m) => m.PresetWallDemo), {
   ssr: false,
   loading: holding,
@@ -39,7 +35,7 @@ const ShareDemo = dynamic(() => import('./ShareDemo').then((m) => m.ShareDemo), 
   loading: holding,
 });
 
-export type DemoKind = 'timeline' | 'clips' | 'easing' | 'presets' | 'share';
+export type DemoKind = 'timeline' | 'clips' | 'presets' | 'share';
 
 /**
  * The frame each demo wants.
@@ -65,7 +61,6 @@ export const demoFrame: Record<
    */
   timeline: { width: '', aspect: 'aspect-[21/8] md:aspect-[21/6]', bare: true, fullBleed: true },
   clips: { width: '', aspect: 'aspect-[21/8] md:aspect-[21/6]', bare: true, fullBleed: true },
-  easing: { width: 'max-w-5xl', aspect: 'aspect-video' },
   presets: { width: 'max-w-5xl', aspect: 'aspect-video' },
   /*
    * Same treatment as the timelines: no card, full width, edges faded. The
@@ -100,8 +95,6 @@ export function Demo({ kind }: { kind: DemoKind }) {
      */
     case 'clips':
       return <ClipTimelineDemo />;
-    case 'easing':
-      return <EasingCurveDemo />;
     case 'presets':
       return <PresetWallDemo />;
     case 'share':

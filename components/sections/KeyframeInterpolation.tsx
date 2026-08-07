@@ -199,19 +199,24 @@ export function KeyframeInterpolation() {
   }, [selectedId]);
 
   return (
-    <section id="keyframe-interpolation" className="relative w-full py-24 bg-fx-bg-base">
+    <section id="keyframe-interpolation" className="relative w-full py-12 md:py-16 bg-fx-bg-base">
       <div className="max-w-[1100px] mx-auto px-6">
         <div className="text-center mb-12">
-          <motion.h2
+          {/*
+            An <h3> in the subheading style, not the huge gradient <h2> this
+            used to carry: it now sits under "Everything you need to animate"
+            and should read as part of it rather than as a rival title.
+          */}
+          <motion.h3
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-6xl md:text-7xl lg:text-8xl leading-tight bg-gradient-to-r from-fx-accent-yellow to-orange-500 bg-clip-text text-transparent mb-4"
-            style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 700, letterSpacing: '-0.02em' }}
+            className="text-3xl sm:text-4xl md:text-5xl leading-[1.06] text-white mb-4"
+            style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 700, letterSpacing: '-0.035em' }}
           >
-            Keyframe Interpolation
-          </motion.h2>
+            Keyframe interpolation
+          </motion.h3>
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
