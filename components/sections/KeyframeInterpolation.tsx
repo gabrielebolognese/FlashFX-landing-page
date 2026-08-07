@@ -1,399 +1,398 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Play, RotateCcw } from 'lucide-react';
 
-type Curve = {
-  id: string;
-  label: string;
-  easingFn: (t: number) => number;
-};
+/*
+ * Easing curves as a rollercoaster (immersionmilestones.md I8, 2026-08-07).
+ *
+ * Replaced a scrollable column of small static curve charts. Charts describe an
+ * easing; a coaster lets you feel one.
+ *
+ * ── The idea that makes it read ─────────────────────────────────────────────
+ *
+ * The track *is* the curve. The train advances at a constant rate horizontally
+ * — equal time per unit of x — while its height follows the easing. So where
+ * the curve is steep the train covers far more track per second and visibly
+ * accelerates, and where it flattens it coasts.
+ *
+ * That is not a metaphor bolted on: it is exactly what an easing curve means.
+ * Linear is a constant slope and a constant speed. Ease-in creeps along the
+ * crest and then plunges. Ease-out drops off the edge and coasts to the
+ * station. Bounce hits the bottom and bounces. Nobody has to be told.
+ *
+ * The alternative — driving the train's x by the easing along a flat track —
+ * was rejected: the track shape would then mean nothing, and the whole point is
+ * that the shape is the thing being explained.
+ */
 
 const bounceOut = (t: number): number => {
   const n1 = 7.5625;
   const d1 = 2.75;
-  if (t < 1 / d1) {
-    return n1 * t * t;
-  } else if (t < 2 / d1) {
-    return n1 * (t -= 1.5 / d1) * t + 0.75;
-  } else if (t < 2.5 / d1) {
-    return n1 * (t -= 2.25 / d1) * t + 0.9375;
-  } else {
-    return n1 * (t -= 2.625 / d1) * t + 0.984375;
-  }
+  if (t < 1 / d1) return n1 * t * t;
+  if (t < 2 / d1) return n1 * (t -= 1.5 / d1) * t + 0.75;
+  if (t < 2.5 / d1) return n1 * (t -= 2.25 / d1) * t + 0.9375;
+  return n1 * (t -= 2.625 / d1) * t + 0.984375;
 };
 
+interface Curve {
+  id: string;
+  label: string;
+  note: string;
+  fn: (t: number) => number;
+}
+
+/*
+ * Eight, not the twenty-five the old chart list carried. Every one here has a
+ * silhouette you can tell apart at a glance from the others, which is the whole
+ * requirement for a row of chips.
+ */
 const CURVES: Curve[] = [
-  { id: 'linear', label: 'Linear', easingFn: (t) => t },
-
-  { id: 'ease-in', label: 'Ease In', easingFn: (t) => t * t },
-  { id: 'ease-in-cubic', label: 'Ease In Cubic', easingFn: (t) => t * t * t },
-  { id: 'ease-in-quart', label: 'Ease In Quart', easingFn: (t) => t * t * t * t },
-  { id: 'ease-in-quint', label: 'Ease In Quint', easingFn: (t) => t * t * t * t * t },
-  { id: 'ease-in-expo', label: 'Ease In Expo', easingFn: (t) => (t === 0 ? 0 : Math.pow(2, 10 * t - 10)) },
-  { id: 'ease-in-circ', label: 'Ease In Circ', easingFn: (t) => 1 - Math.sqrt(1 - Math.pow(t, 2)) },
-  { id: 'ease-in-back', label: 'Ease In Back', easingFn: (t) => 2.70158 * t * t * t - 1.70158 * t * t },
+  { id: 'linear', label: 'Linear', note: 'One speed, start to finish.', fn: (t) => t },
+  { id: 'ease-in', label: 'Ease in', note: 'Creeps over the crest, then plunges.', fn: (t) => t * t * t },
+  { id: 'ease-out', label: 'Ease out', note: 'Drops off the edge and coasts in.', fn: (t) => 1 - Math.pow(1 - t, 3) },
   {
-    id: 'elastic-in',
-    label: 'Ease In Elastic',
-    easingFn: (t) => {
-      if (t === 0) return 0;
-      if (t === 1) return 1;
-      const p = 0.3;
-      return -Math.pow(2, 10 * (t - 1)) * Math.sin(((t - 1 - p / 4) * (2 * Math.PI)) / p);
-    },
-  },
-  { id: 'bounce-in', label: 'Ease In Bounce', easingFn: (t) => 1 - bounceOut(1 - t) },
-
-  { id: 'ease-out', label: 'Ease Out', easingFn: (t) => t * (2 - t) },
-  { id: 'ease-out-cubic', label: 'Ease Out Cubic', easingFn: (t) => --t * t * t + 1 },
-  { id: 'ease-out-quart', label: 'Ease Out Quart', easingFn: (t) => 1 - --t * t * t * t },
-  { id: 'ease-out-quint', label: 'Ease Out Quint', easingFn: (t) => 1 + --t * t * t * t * t },
-  { id: 'ease-out-expo', label: 'Ease Out Expo', easingFn: (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t)) },
-  { id: 'ease-out-circ', label: 'Ease Out Circ', easingFn: (t) => Math.sqrt(1 - Math.pow(t - 1, 2)) },
-  {
-    id: 'ease-out-back',
-    label: 'Ease Out Back',
-    easingFn: (t) => 1 + 2.70158 * Math.pow(t - 1, 3) + 1.70158 * Math.pow(t - 1, 2),
+    id: 'ease-in-out',
+    label: 'Ease in out',
+    note: 'Slow, fast, slow — the classic hill.',
+    fn: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
   },
   {
-    id: 'elastic-out',
-    label: 'Ease Out Elastic',
-    easingFn: (t) => {
+    id: 'expo',
+    label: 'Expo',
+    note: 'Almost nothing, then everything at once.',
+    fn: (t) => (t === 0 ? 0 : Math.pow(2, 10 * t - 10)),
+  },
+  {
+    id: 'back',
+    label: 'Back',
+    note: 'Rolls back up before it commits.',
+    fn: (t) => 2.70158 * t * t * t - 1.70158 * t * t,
+  },
+  { id: 'bounce', label: 'Bounce', note: 'Lands hard and bounces twice.', fn: bounceOut },
+  {
+    id: 'elastic',
+    label: 'Elastic',
+    note: 'Overshoots the station and springs back.',
+    fn: (t) => {
       if (t === 0) return 0;
       if (t === 1) return 1;
       const p = 0.3;
       return Math.pow(2, -10 * t) * Math.sin(((t - p / 4) * (2 * Math.PI)) / p) + 1;
     },
   },
-  { id: 'bounce-out', label: 'Ease Out Bounce', easingFn: bounceOut },
-
-  { id: 'ease-in-out', label: 'Ease In Out', easingFn: (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t) },
-  {
-    id: 'ease-in-out-cubic',
-    label: 'Ease In Out Cubic',
-    easingFn: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
-  },
-  {
-    id: 'ease-in-out-quart',
-    label: 'Ease In Out Quart',
-    easingFn: (t) => (t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2),
-  },
-  {
-    id: 'elastic-in-out',
-    label: 'Ease In Out Elastic',
-    easingFn: (t) => {
-      if (t === 0) return 0;
-      if (t === 1) return 1;
-      const p = 0.45;
-      if (t < 0.5) {
-        return -0.5 * Math.pow(2, 20 * t - 10) * Math.sin(((20 * t - 11.125) * (2 * Math.PI)) / p);
-      }
-      return 0.5 * Math.pow(2, -20 * t + 10) * Math.sin(((20 * t - 11.125) * (2 * Math.PI)) / p) + 1;
-    },
-  },
-
-  {
-    id: 'spring',
-    label: 'Spring',
-    easingFn: (t) => 1 - Math.cos(t * Math.PI * 4.5) * Math.exp(-t * 6),
-  },
 ];
 
-function generateMiniCurvePath(easingFn: (t: number) => number): string {
-  const points: [number, number][] = [];
-  const samples = 60;
-  const width = 80;
-  const height = 48;
+/** Samples across the track. Enough that the rail reads as smooth. */
+const N = 220;
 
-  for (let i = 0; i <= samples; i++) {
-    const t = i / samples;
-    const x = t * width;
-    const y = height - easingFn(t) * height;
-    points.push([x, y]);
-  }
+/*
+ * A fixed vertical range shared by every curve, rather than fitting each one to
+ * the frame. Back and elastic overshoot past 0 and 1, and rescaling per curve
+ * would make a gentle ease look as dramatic as a bounce — the comparison
+ * between them is the point.
+ */
+const V_MIN = -0.32;
+const V_MAX = 1.32;
+const yOf = (v: number) => (v - V_MIN) / (V_MAX - V_MIN);
 
-  return points.map((p) => p.join(',')).join(' ');
+/** Seconds for one run, and how long the train waits at the station. */
+const RIDE = 2.9;
+const PAUSE = 900;
+
+/** Carriages, and the gap between them in track-time. */
+const CARS = 5;
+const CAR_GAP = 0.028;
+
+const MORPH = 520;
+
+function sample(fn: (t: number) => number): Float64Array {
+  const out = new Float64Array(N + 1);
+  for (let i = 0; i <= N; i++) out[i] = fn(i / N);
+  return out;
 }
-
-function generateSmoothCurvePath(
-  easingFn: (t: number) => number,
-  width: number,
-  height: number,
-  padding: { left: number; right: number; top: number; bottom: number }
-): string {
-  const samples = 120;
-  const points: [number, number][] = [];
-
-  const graphWidth = width - padding.left - padding.right;
-  const graphHeight = height - padding.top - padding.bottom;
-
-  for (let i = 0; i <= samples; i++) {
-    const t = i / samples;
-    const value = easingFn(t);
-    const x = padding.left + t * graphWidth;
-    const y = padding.top + (1 - value) * graphHeight;
-    points.push([x, y]);
-  }
-
-  if (points.length === 0) return '';
-
-  let d = `M ${points[0][0]} ${points[0][1]}`;
-
-  for (let i = 1; i < points.length; i++) {
-    const prev = points[i - 1];
-    const curr = points[i];
-    const next = points[i + 1];
-
-    if (i === 1) {
-      d += ` L ${curr[0]} ${curr[1]}`;
-    } else {
-      const tension = 0.3;
-      const cp1x = prev[0] + (curr[0] - (points[i - 2]?.[0] ?? prev[0])) * tension;
-      const cp1y = prev[1] + (curr[1] - (points[i - 2]?.[1] ?? prev[1])) * tension;
-      const cp2x = curr[0] - (next ? next[0] - prev[0] : curr[0] - prev[0]) * tension;
-      const cp2y = curr[1] - (next ? next[1] - prev[1] : curr[1] - prev[1]) * tension;
-
-      d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${curr[0]} ${curr[1]}`;
-    }
-  }
-
-  return d;
-}
-
-const GRAPH_VIEWPORT_W = 440;
-const GRAPH_VIEWPORT_H = 440;
-const PADDING = { left: 36, right: 36, top: 36, bottom: 36 };
-const GRAPH_INNER_W = GRAPH_VIEWPORT_W - PADDING.left - PADDING.right;
-const GRAPH_INNER_H = GRAPH_VIEWPORT_H - PADDING.top - PADDING.bottom;
 
 export function KeyframeInterpolation() {
-  const [selectedId, setSelectedId] = useState('ease-in-quart');
-  const cardRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [curveId, setCurveId] = useState('linear');
+  const [running, setRunning] = useState(false);
 
-  const selectedCurve = CURVES.find((c) => c.id === selectedId) || CURVES[0];
+  const stage = useRef<HTMLDivElement>(null);
+  const rail = useRef<SVGPathElement>(null);
+  const bed = useRef<SVGPathElement>(null);
+  const pillars = useRef<SVGGElement>(null);
+  const cars = useRef<(HTMLDivElement | null)[]>([]);
+  const readout = useRef<HTMLSpanElement>(null);
 
+  /* Live values live in refs: at 60 fps a setState per frame would reconcile
+     the chips, the track and every carriage sixty times a second. */
+  const samples = useRef(sample(CURVES[0].fn));
+  const morphFrom = useRef<Float64Array | null>(null);
+  const morphTo = useRef<Float64Array | null>(null);
+  const morphAt = useRef(0);
+  const progress = useRef(0);
+  const runningRef = useRef(false);
+  const box = useRef({ w: 1, h: 1 });
+  /** Wakes the loop. Set by the effect, called by the handlers. */
+  const wake = useRef<(() => void) | null>(null);
+
+  const curve = CURVES.find((c) => c.id === curveId) ?? CURVES[0];
+
+  /** Height at t, reading the live (possibly mid-morph) track. */
+  const valueAt = useCallback((t: number) => {
+    const s = samples.current;
+    const x = Math.min(1, Math.max(0, t)) * N;
+    const i = Math.floor(x);
+    const f = x - i;
+    return i >= N ? s[N] : s[i] + (s[i + 1] - s[i]) * f;
+  }, []);
+
+  const paintTrack = useCallback(() => {
+    const s = samples.current;
+    let d = '';
+    for (let i = 0; i <= N; i++) {
+      d += `${i ? 'L' : 'M'}${((i / N) * 1000).toFixed(2)} ${(yOf(s[i]) * 1000).toFixed(2)}`;
+    }
+    rail.current?.setAttribute('d', d);
+    bed.current?.setAttribute('d', d);
+
+    // Supports drop from the rail to the ground, so the track reads as built
+    // rather than floating.
+    if (pillars.current) {
+      const ground = yOf(V_MAX) * 1000;
+      let g = '';
+      for (let k = 0; k <= 26; k++) {
+        const t = k / 26;
+        const x = (t * 1000).toFixed(2);
+        const y = (yOf(valueAt(t)) * 1000).toFixed(2);
+        g += `<line x1="${x}" y1="${y}" x2="${x}" y2="${ground}" stroke="rgba(245,197,24,0.16)" stroke-width="2" vector-effect="non-scaling-stroke" />`;
+      }
+      pillars.current.innerHTML = g;
+    }
+  }, [valueAt]);
+
+  const paintTrain = useCallback(() => {
+    const { w, h } = box.current;
+    const head = progress.current;
+    for (let i = 0; i < CARS; i++) {
+      const node = cars.current[i];
+      if (!node) continue;
+      const t = Math.min(1, Math.max(0, head - i * CAR_GAP));
+      const v = valueAt(t);
+
+      // Tangent in pixels, not in curve units — the angle depends on the
+      // frame's aspect ratio, and a percentage-space angle would be wrong on
+      // every screen but one.
+      const d = 0.006;
+      const a = yOf(valueAt(Math.max(0, t - d))) * h;
+      const b = yOf(valueAt(Math.min(1, t + d))) * h;
+      const angle = (Math.atan2(b - a, 2 * d * w) * 180) / Math.PI;
+
+      node.style.left = `${t * 100}%`;
+      node.style.top = `${yOf(v) * 100}%`;
+      node.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+    }
+    if (readout.current) {
+      readout.current.textContent = `${Math.round(progress.current * 100)}% · value ${valueAt(progress.current).toFixed(2)}`;
+    }
+  }, [valueAt]);
+
+  /* ── One loop for morphing, riding and resizing ───────────────────────── */
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const currentIndex = CURVES.findIndex((c) => c.id === selectedId);
-      let newIndex = currentIndex;
+    const el = stage.current;
+    if (!el) return;
 
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        newIndex = Math.min(currentIndex + 1, CURVES.length - 1);
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        newIndex = Math.max(currentIndex - 1, 0);
+    const measure = () => {
+      const r = el.getBoundingClientRect();
+      box.current = { w: r.width || 1, h: r.height || 1 };
+      paintTrack();
+      paintTrain();
+    };
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    measure();
+
+    let frame = 0;
+    let last = 0;
+
+    const tick = (now: number) => {
+      if (!last) last = now;
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+
+      let busy = false;
+
+      if (morphTo.current && morphFrom.current) {
+        morphAt.current += dt * 1000;
+        const u = Math.min(1, morphAt.current / MORPH);
+        const e = u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+        const from = morphFrom.current;
+        const to = morphTo.current;
+        const s = samples.current;
+        for (let i = 0; i <= N; i++) s[i] = from[i] + (to[i] - from[i]) * e;
+        paintTrack();
+        if (u >= 1) {
+          morphFrom.current = null;
+          morphTo.current = null;
+        }
+        busy = true;
       }
 
-      if (newIndex !== currentIndex) {
-        const newId = CURVES[newIndex].id;
-        setSelectedId(newId);
-        cardRefs.current[newId]?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      if (runningRef.current) {
+        progress.current = Math.min(1, progress.current + dt / RIDE);
+        if (progress.current >= 1) {
+          runningRef.current = false;
+          window.setTimeout(() => {
+            progress.current = 0;
+            setRunning(false);
+            paintTrain();
+          }, PAUSE);
+        }
+        busy = true;
+      }
+
+      paintTrain();
+      frame = busy ? requestAnimationFrame(tick) : 0;
+      if (!busy) last = 0;
+    };
+
+    wake.current = () => {
+      if (!frame) {
+        last = 0;
+        frame = requestAnimationFrame(tick);
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedId]);
+    return () => {
+      wake.current = null;
+      cancelAnimationFrame(frame);
+      ro.disconnect();
+    };
+  }, [paintTrack, paintTrain]);
+
+  const pick = (c: Curve) => {
+    if (c.id === curveId) return;
+    setCurveId(c.id);
+    morphFrom.current = Float64Array.from(samples.current);
+    morphTo.current = sample(c.fn);
+    morphAt.current = 0;
+    // Send the train back to the station: watching it teleport onto a track
+    // that is still bending would undo the illusion.
+    progress.current = 0;
+    runningRef.current = false;
+    setRunning(false);
+    wake.current?.();
+  };
+
+  const ride = () => {
+    progress.current = 0;
+    runningRef.current = true;
+    setRunning(true);
+    wake.current?.();
+  };
 
   return (
-    <section id="keyframe-interpolation" className="relative w-full py-12 md:py-16 bg-fx-bg-base">
-      <div className="max-w-[1100px] mx-auto px-6">
-        <div className="text-center mb-12">
-          {/*
-            An <h3> in the subheading style, not the huge gradient <h2> this
-            used to carry: it now sits under "Everything you need to animate"
-            and should read as part of it rather than as a rival title.
-          */}
-          <motion.h3
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-3xl sm:text-4xl md:text-5xl leading-[1.06] text-white mb-4"
-            style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 700, letterSpacing: '-0.035em' }}
-          >
-            Keyframe interpolation
-          </motion.h3>
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-fx-text-secondary text-xl md:text-2xl max-w-3xl mx-auto"
-          >
-            Click any curve to preview its shape
-          </motion.p>
-        </div>
+    <section id="keyframe-interpolation" className="relative w-full py-12 md:py-16">
+      <div className="px-6">
+        <h3
+          className="text-center text-3xl sm:text-4xl md:text-5xl leading-[1.06] text-white mb-3"
+          style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 700, letterSpacing: '-0.035em' }}
+        >
+          Keyframe interpolation
+        </h3>
+        <p className="text-center text-fx-text-secondary text-base md:text-lg max-w-2xl mx-auto">
+          The track is the curve. Pick one, then send the train — it speeds up
+          wherever the track steepens.
+        </p>
 
-        <div className="flex gap-6 justify-center items-start">
-          <div
-            ref={scrollContainerRef}
-            className="relative h-[520px] overflow-y-scroll flex-shrink-0"
-            style={{
-              width: '200px',
-              scrollbarWidth: 'none',
-              WebkitMaskImage:
-                'linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%)',
-              maskImage: 'linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%)',
-            }}
-          >
-            <style jsx>{`
-              div::-webkit-scrollbar {
-                display: none;
-              }
-            `}</style>
-            <div className="flex flex-col gap-[8px] py-5 px-1">
-              {CURVES.map((curve) => {
-                const isSelected = curve.id === selectedId;
-                return (
-                  <motion.button
-                    key={curve.id}
-                    ref={(el) => {
-                      cardRefs.current[curve.id] = el;
-                    }}
-                    onClick={() => setSelectedId(curve.id)}
-                    aria-label={curve.label}
-                    aria-pressed={isSelected}
-                    className="relative w-full h-[80px] rounded-xl cursor-pointer transition-all duration-150 flex flex-col items-center justify-center"
-                    style={{
-                      background: isSelected ? 'rgba(245, 197, 24, 0.12)' : '#1c2952',
-                      border: isSelected
-                        ? '1px solid rgba(245, 197, 24, 0.5)'
-                        : '1px solid #243060',
-                    }}
-                    whileHover={{
-                      background: isSelected ? 'rgba(245, 197, 24, 0.12)' : '#1c2e63',
-                      borderColor: isSelected ? 'rgba(245, 197, 24, 0.5)' : 'rgba(245, 197, 24, 0.2)',
-                    }}
-                  >
-                    <svg width="80" height="42" className="mb-1">
-                      <polyline
-                        points={generateMiniCurvePath(curve.easingFn)}
-                        fill="none"
-                        stroke={isSelected ? '#F5C518' : 'rgba(245, 197, 24, 0.7)'}
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <p
-                      style={{
-                        fontFamily: 'Outfit, sans-serif',
-                        fontWeight: 400,
-                        fontSize: '0.65rem',
-                        color: isSelected ? '#F5C518' : '#8B949E',
-                      }}
-                    >
-                      {curve.label}
-                    </p>
-                  </motion.button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <div
-              className="relative rounded-xl overflow-hidden"
-              style={{
-                background: '#1c2952',
-                border: '1px solid #243060',
-                height: '520px',
-                width: '520px',
-              }}
+        <div className="mt-7 flex flex-wrap justify-center gap-2 max-w-4xl mx-auto">
+          {CURVES.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => pick(c)}
+              className={`px-3.5 py-1.5 rounded-full border font-mono text-[11px] tracking-wide transition-colors duration-200 ${
+                c.id === curveId
+                  ? 'bg-fx-accent-yellow text-fx-bg-base border-fx-accent-yellow'
+                  : 'text-fx-text-secondary border-fx-border hover:border-fx-accent-yellow/50 hover:text-fx-text-primary'
+              }`}
             >
-              <svg
-                viewBox={`0 0 ${GRAPH_VIEWPORT_W} ${GRAPH_VIEWPORT_H}`}
-                width="100%"
-                height="100%"
-                preserveAspectRatio="xMidYMid meet"
-                role="img"
-                aria-label={`${selectedCurve.label} easing curve graph`}
-                style={{ display: 'block' }}
-              >
-                <defs>
-                  <linearGradient id="curveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#F5C518" />
-                    <stop offset="100%" stopColor="#F5C518" />
-                  </linearGradient>
-                </defs>
-
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <line
-                    key={`h-${i}`}
-                    x1={PADDING.left}
-                    y1={PADDING.top + (i * GRAPH_INNER_H) / 4}
-                    x2={GRAPH_VIEWPORT_W - PADDING.right}
-                    y2={PADDING.top + (i * GRAPH_INNER_H) / 4}
-                    stroke="rgba(245,197,24,0.08)"
-                    strokeWidth="1"
-                    strokeDasharray="4 4"
-                  />
-                ))}
-
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <line
-                    key={`v-${i}`}
-                    x1={PADDING.left + (i * GRAPH_INNER_W) / 4}
-                    y1={PADDING.top}
-                    x2={PADDING.left + (i * GRAPH_INNER_W) / 4}
-                    y2={GRAPH_VIEWPORT_H - PADDING.bottom}
-                    stroke="rgba(245,197,24,0.08)"
-                    strokeWidth="1"
-                    strokeDasharray="4 4"
-                  />
-                ))}
-
-                <line
-                  x1={PADDING.left}
-                  y1={GRAPH_VIEWPORT_H - PADDING.bottom}
-                  x2={GRAPH_VIEWPORT_W - PADDING.right}
-                  y2={GRAPH_VIEWPORT_H - PADDING.bottom}
-                  stroke="rgba(245,197,24,0.2)"
-                  strokeWidth="1"
-                />
-                <line
-                  x1={PADDING.left}
-                  y1={PADDING.top}
-                  x2={PADDING.left}
-                  y2={GRAPH_VIEWPORT_H - PADDING.bottom}
-                  stroke="rgba(245,197,24,0.2)"
-                  strokeWidth="1"
-                />
-
-                <motion.path
-                  d={generateSmoothCurvePath(selectedCurve.easingFn, GRAPH_VIEWPORT_W, GRAPH_VIEWPORT_H, PADDING)}
-                  fill="none"
-                  stroke="#F5C518"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  initial={false}
-                  animate={{ d: generateSmoothCurvePath(selectedCurve.easingFn, GRAPH_VIEWPORT_W, GRAPH_VIEWPORT_H, PADDING) }}
-                  transition={{ duration: 0.35, ease: 'easeInOut' }}
-                />
-
-                <circle cx={PADDING.left} cy={GRAPH_VIEWPORT_H - PADDING.bottom} r="6" fill="#F5C518" />
-                <circle cx={GRAPH_VIEWPORT_W - PADDING.right} cy={PADDING.top} r="6" fill="#F5C518" />
-              </svg>
-            </div>
-
-            <div className="text-center mt-4">
-              <p
-                style={{
-                  fontFamily: 'Outfit, sans-serif',
-                  fontWeight: 700,
-                  fontSize: '1rem',
-                  color: '#F5C518',
-                }}
-              >
-                {selectedCurve.label}
-              </p>
-            </div>
-          </div>
+              {c.label}
+            </button>
+          ))}
         </div>
+      </div>
+
+      {/* Full width and uncontained, like the timelines above it. */}
+      <div ref={stage} className="relative w-full h-[42vh] min-h-[260px] md:h-[48vh] mt-8 select-none">
+        <svg
+          viewBox="0 0 1000 1000"
+          preserveAspectRatio="none"
+          className="absolute inset-0 w-full h-full"
+          aria-hidden="true"
+        >
+          <g ref={pillars} />
+          {/* Two passes: a soft bed under a bright rail, so the track has depth
+              at any width. `non-scaling-stroke` keeps them even, because
+              preserveAspectRatio="none" would otherwise stretch the stroke. */}
+          <path
+            ref={bed}
+            fill="none"
+            stroke="rgba(245,197,24,0.18)"
+            strokeWidth="14"
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+          />
+          <path
+            ref={rail}
+            fill="none"
+            stroke="#F5C518"
+            strokeWidth="3"
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+
+        {Array.from({ length: CARS }, (_, i) => (
+          <div
+            key={i}
+            ref={(node) => {
+              cars.current[i] = node;
+            }}
+            className="absolute will-change-transform"
+            style={{ left: 0, top: 0 }}
+          >
+            <svg width={i === 0 ? 46 : 40} height={26} viewBox="0 0 46 26" className="drop-shadow-lg">
+              <rect
+                x="3"
+                y="3"
+                width="40"
+                height="14"
+                rx="5"
+                fill={i === 0 ? '#F5C518' : '#7C5CBF'}
+                stroke="rgba(0,0,0,0.35)"
+              />
+              <rect x="8" y="6" width="11" height="8" rx="2" fill="rgba(10,14,26,0.75)" />
+              <rect x="23" y="6" width="11" height="8" rx="2" fill="rgba(10,14,26,0.75)" />
+              <circle cx="13" cy="20" r="4.5" fill="#0a0e1a" stroke={i === 0 ? '#F5C518' : '#7C5CBF'} strokeWidth="1.5" />
+              <circle cx="33" cy="20" r="4.5" fill="#0a0e1a" stroke={i === 0 ? '#F5C518' : '#7C5CBF'} strokeWidth="1.5" />
+            </svg>
+          </div>
+        ))}
+      </div>
+
+      <div className="px-6 mt-6 flex flex-col items-center gap-3">
+        <button
+          onClick={ride}
+          disabled={running}
+          className="fx-cta group inline-flex items-center gap-2.5 rounded-full px-7 py-3 text-fx-bg-base font-semibold text-base sm:text-lg tracking-tight disabled:opacity-70"
+          style={{ fontFamily: 'var(--font-inter), sans-serif' }}
+        >
+          {running ? <RotateCcw className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5 fill-current" />}
+          {running ? 'Riding…' : 'Simulate'}
+        </button>
+
+        <p className="font-mono text-[11px] text-fx-text-secondary/70 text-center">
+          {curve.note} <span ref={readout} className="text-fx-accent-yellow ml-1" />
+        </p>
       </div>
     </section>
   );
