@@ -78,7 +78,20 @@ export function DemoShell({
         )}
       </div>
 
-      <div className="relative flex-1 min-h-0">{children}</div>
+      {/*
+        `flex flex-col` is load-bearing, not styling.
+
+        This was a plain block container, so a child with `flex-1` — which is
+        how both timelines ask to fill the panel — had nothing to flex against
+        and collapsed to the height of its text. The timelines rendered as a
+        thin strip at the top with three quarters of the card empty below, and
+        making the card taller only made the gap bigger.
+
+        Demos that position their content `absolute inset-0` (cube, easing,
+        presets, share) are out of flow and unaffected either way; `relative`
+        is what they need and it stays.
+      */}
+      <div className="relative flex-1 min-h-0 flex flex-col">{children}</div>
     </div>
   );
 }
