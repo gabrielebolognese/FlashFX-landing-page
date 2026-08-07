@@ -108,7 +108,7 @@ of how good it looks.
 |---|---|---|
 | I1 | The motion system | DONE |
 | I2 | Living borders and edges | DONE |
-| I3 | Show the editor, do not film it | NOT_STARTED |
+| I3 | Show the editor, do not film it | DONE (embeds 13 → 8; see *What remains*) |
 | I4 | One continuous space | NOT_STARTED |
 | I5 | Break the rhythm | NOT_STARTED |
 | I6 | Ambient motion and cursor presence | NOT_STARTED |
@@ -308,7 +308,8 @@ anyone sees it. That is the exact bug P6 found in `CreatorStories`.
 
 ## I3 — Show the editor, do not film it
 
-**Status:** NOT_STARTED
+**Status:** DONE — 2026-08-07. Every `VideoPlaceholder` slot is now a live demo.
+Eight embeds remain outside that component; see *What remains*.
 **Impact:** the largest of the seven, for both feel and weight.
 
 ### Why
@@ -352,12 +353,72 @@ show something a recreation genuinely cannot.
 
 ### Acceptance criteria
 
-- [ ] The two empty "Video Coming Soon" boxes are gone
-- [ ] YouTube embeds on the homepage drop from 13 to **8 or fewer**
-- [ ] Each demo is `dynamic()`-imported with `ssr: false` and a sized placeholder
-- [ ] Each demo pauses fully off-screen
-- [ ] Homepage First Load JS still under 200 kB
-- [ ] Under reduced motion each demo shows a composed still frame, not a blank
+- [x] The two empty "Video Coming Soon" boxes are gone
+- [x] YouTube embeds on the homepage drop from 13 to **8**
+- [x] Each demo is `dynamic()`-imported with `ssr: false` and a sized placeholder
+- [x] Each demo pauses fully off-screen — all run through `useAmbient`
+- [x] Homepage First Load JS still under 200 kB — **179 kB**
+- [x] Under reduced motion each demo shows a composed still frame, not a blank
+
+### What was built
+
+`components/demos/` — a kit, five demos and a registry.
+
+| Demo | Section | Replaced |
+|---|---|---|
+| `TimelineDemo` | Intuitive Timeline Editing | embed `bHdIvt_lUrE` |
+| `TimelineDemo` `chrome="browser"` | All Web Editing | embed `-zyusYiQNEc` |
+| `PresetWallDemo` | Animation Presets | embed `Rk9hf3QI5Is` |
+| `CubeDemo` | 3D Support | **dead box** |
+| `EasingCurveDemo` | Keyframe Interpolation | embed `fkQhKYaSv0Q` |
+| `ShareDemo` | Share Projects | embed `sqdlJULYNZA` |
+| `PresetWallDemo` | Templates & Presets | **dead box** |
+
+**The two dead boxes went first**, as planned — no video to lose, so no risk in
+proving the pattern there.
+
+**`youtubeId` is left in place** on every converted slot even though `demo`
+takes precedence. Reverting any single section is deleting one word.
+
+**All five are `dynamic({ ssr: false })`.** Verified by a string that exists
+nowhere else in the codebase: `kd8f2a`, the share link in `ShareDemo`, appears
+only in chunk `945`, which is not among the chunks the homepage loads eagerly.
+That is why five new animated components moved First Load JS by 1 kB.
+
+**Each demo holds a governor slot at `DEMO_PRIORITY = 3`**, above decoration's
+0. This is what I1's priority ordering was built for: a live demo of the product
+is the point of its section, so it takes a slot from a floating shape rather
+than queueing behind one. Without a slot each demo renders a composed still —
+the playhead parked at 38%, the cube at an angle showing three faces — never a
+blank panel.
+
+**No three.js.** `CubeDemo` is six faces and `preserve-3d`. The budget allows
+one WebGL context and I4 wants it for the page-wide backdrop; spending it on a
+cube would be a poor trade.
+
+### What remains
+
+Eight embeds are still on the homepage, none of them in `VideoPlaceholder`:
+
+- **5 shorts** in `WhatIsFlashFX`
+- **3 `LazyYouTube`** in `SolutionSection`, `LoadTime`, `SplitHero`
+
+Reaching the owner's 0–2 target means converting these, but they are a
+different proposition from the seven above: those were *videos of the editor's
+UI*, which a recreation can show more directly. The shorts are **real output** —
+finished work made with the product. Replacing genuine results with a simulation
+is a different kind of claim, and worth an explicit decision rather than an
+assumption. Recorded as open question 6.
+
+### Verify
+
+```bash
+grep -o '<iframe' .next/server/app/index.html | wc -l          # 0, unchanged
+grep -o 'fx-vl--idle' .next/server/app/index.html | wc -l      # 8, was 13
+grep -c 'Video Coming Soon' .next/server/app/index.html        # 0, was 2
+# demo code must not be in an eagerly-loaded chunk:
+grep -l 'kd8f2a' .next/static/chunks/*.js                      # not in index.html
+```
 
 ### Verify
 
@@ -551,6 +612,13 @@ These block specific milestones and are the owner's call, not mine.
 5. **Does the editor have a screen recording or asset kit** that the demos
    should match visually, so the site's timeline looks like the real one?
    *Affects I3 fidelity.*
+6. **Should the five shorts in `WhatIsFlashFX` become demos too?** They are the
+   difference between 8 embeds and 3. Unlike the seven already converted — which
+   were videos of the editor's own UI, and so a recreation shows the same thing
+   more directly — the shorts are **real finished output**. Swapping genuine
+   results for a simulation is a different kind of claim. The three `LazyYouTube`
+   embeds in `SolutionSection`, `LoadTime` and `SplitHero` are the same
+   question. *Blocks reaching the 0–2 target.*
 
 ---
 

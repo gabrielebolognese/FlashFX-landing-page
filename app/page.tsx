@@ -150,10 +150,16 @@ export default function Home() {
         <WhatIsFlashFX />
         <ImageCarousel />
         <SolutionSection />
-        <VideoPlaceholder title="Intuitive Timeline Editing" description="Keyframe animation made simple for everyone" youtubeId="bHdIvt_lUrE" sectionHeading="Intuitive Timeline Editing" />
+        {/*
+          Every one of these was a YouTube embed of someone else's screen. They
+          are now live demos of the product (immersionmilestones.md I3) — the
+          `youtubeId` stays recorded so reverting any single section is a
+          one-word edit.
+        */}
+        <VideoPlaceholder title="Intuitive Timeline Editing" description="Keyframe animation made simple for everyone" demo="timeline" youtubeId="bHdIvt_lUrE" sectionHeading="Intuitive Timeline Editing" />
         <FeaturesIntro />
         <AllWebEditing />
-        <VideoPlaceholder title="All Web Editing" description="Professional editing, right in your browser" gridBackground youtubeId="-zyusYiQNEc" />
+        <VideoPlaceholder title="All Web Editing" description="Professional editing, right in your browser" gridBackground demo="browser" youtubeId="-zyusYiQNEc" />
         {/*
           Sits between All Web Editing and Easy Animations to match the order of
           the Navbar Features dropdown (Navbar.tsx FEATURES). It carries
@@ -162,15 +168,15 @@ export default function Home() {
         */}
         <DualTimeline />
         <EasyAnimations />
-        <VideoPlaceholder title="Animation Presets" description="Bring your ideas to life effortlessly" gridBackground youtubeId="Rk9hf3QI5Is" />
+        <VideoPlaceholder title="Animation Presets" description="Bring your ideas to life effortlessly" gridBackground demo="presets" youtubeId="Rk9hf3QI5Is" />
         <ThreeDSupport />
-        <VideoPlaceholder title="3D Support" description="Create stunning 3D motion graphics that captivate your audience" gridBackground />
+        <VideoPlaceholder title="3D Support" description="Create stunning 3D motion graphics that captivate your audience" gridBackground demo="cube" />
         <KeyframeInterpolation />
-        <VideoPlaceholder title="Keyframe Interpolation" description="Click any curve to preview its shape" gridBackground youtubeId="fkQhKYaSv0Q" />
+        <VideoPlaceholder title="Keyframe Interpolation" description="Click any curve to preview its shape" gridBackground demo="easing" youtubeId="fkQhKYaSv0Q" />
         {/* id is what the Navbar Features dropdown scrolls to for Share Projects. */}
-        <VideoPlaceholder id="share-projects" title="Share Projects" description="Collaborate and share your work with anyone, instantly" gridBackground youtubeId="sqdlJULYNZA" sectionHeading="Share Projects" />
+        <VideoPlaceholder id="share-projects" title="Share Projects" description="Collaborate and share your work with anyone, instantly" gridBackground demo="share" youtubeId="sqdlJULYNZA" sectionHeading="Share Projects" />
         <SplitHero />
-        <VideoPlaceholder title="Templates & Presets" description="Start creating instantly with pre-built motion graphics" />
+        <VideoPlaceholder title="Templates & Presets" description="Start creating instantly with pre-built motion graphics" demo="presets" />
         <CreatorStories />
         {/*
           Seams mark the transitions between the page's acts rather than every

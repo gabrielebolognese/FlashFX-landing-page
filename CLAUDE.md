@@ -92,6 +92,8 @@ Existing routes: `/`, `/about`, `/after-effects-alternative`, `/free-motion-grap
 
 `typewriter.tsx` and `shape-landing-hero.tsx` still contain raw `repeat: Infinity`. Both are dead code reaching zero built chunks — don't treat them as precedent.
 
+**Live demos**: `components/demos/` (I3) replaced seven YouTube embeds with in-page recreations of the editor — timeline, 3D cube, easing curve, preset wall, share. Add one by giving `VideoPlaceholder` a `demo` prop (`DemoKind`), which takes precedence over `youtubeId`; the ids are left in place so reverting a section is a one-word edit. Every demo is `dynamic({ ssr: false })` via `components/demos/index.tsx` — **register new ones there, not with a direct import**, or they land in the initial bundle. Each holds a governor slot at `DEMO_PRIORITY` (above decoration) and must render a composed still frame when `active` is false, never a blank.
+
 **Borders**: `components/ui/beam-border.tsx` (I2) puts a travelling light on an element's edge. Drop `<BeamBorder />` inside anything `relative` with a border radius. **Default to `trace`** (hover-driven, ungoverned, costs nothing idle) — there are 183 of those and only **1** `ambient` on the whole site, which is the point: `ambient` and `pulse` run continuously and take a governor slot, so they're for the two or three elements that genuinely earn the attention. `trace` requires `group` on the host, since the hover selector keys off it. `SectionSeam` is the divider sweep; it fires from an IntersectionObserver, never on mount.
 
 ### Section components

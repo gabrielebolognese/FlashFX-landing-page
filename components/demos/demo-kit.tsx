@@ -1,0 +1,96 @@
+'use client';
+
+import { useAmbient } from '@/lib/motion';
+import { cn } from '@/lib/utils';
+
+/*
+ * Shared parts for the live product demos (immersionmilestones.md I3).
+ *
+ * The site sells a motion graphics tool and, until this milestone, every
+ * demonstration of it was a video of someone else's screen inside a rounded
+ * box. Two of those boxes had no video at all. A page for an animation product
+ * that never animates the product is an argument against it.
+ *
+ * Each demo replaces a YouTube embed, so this milestone makes the page lighter
+ * as it makes it livelier: an embed is 1–2 MB of third-party JavaScript and its
+ * own rendering context, and these are a few kB of ours.
+ */
+
+/**
+ * Every demo runs through the I1 governor at a priority above decoration.
+ *
+ * This is what priority is for: a live demo of the product is the point of the
+ * section it sits in, so it should take a loop slot from a floating shape
+ * rather than queue behind one.
+ */
+export const DEMO_PRIORITY = 3;
+
+export function useDemo() {
+  return useAmbient<HTMLDivElement>({ priority: DEMO_PRIORITY });
+}
+
+/**
+ * The editor-style surface the demos sit on: a dark panel, a title strip and
+ * three window dots.
+ *
+ * `chrome` swaps the title strip for a browser address bar, which is how the
+ * "All Web Editing" section makes its point without saying it.
+ */
+export function DemoShell({
+  label,
+  chrome,
+  children,
+  className,
+  innerRef,
+}: {
+  label: string;
+  chrome?: 'editor' | 'browser';
+  children: React.ReactNode;
+  className?: string;
+  innerRef?: React.Ref<HTMLDivElement>;
+}) {
+  return (
+    <div
+      ref={innerRef}
+      className={cn(
+        'absolute inset-0 flex flex-col overflow-hidden bg-fx-bg-base select-none',
+        className
+      )}
+    >
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-fx-border bg-fx-bg-surface/70 flex-shrink-0">
+        <span className="flex gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-white/15" />
+          <span className="w-2.5 h-2.5 rounded-full bg-white/15" />
+          <span className="w-2.5 h-2.5 rounded-full bg-white/15" />
+        </span>
+
+        {chrome === 'browser' ? (
+          <span className="ml-2 flex-1 min-w-0 flex items-center gap-2 px-2.5 py-1 rounded-full bg-fx-bg-base border border-fx-border">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/70 flex-shrink-0" />
+            <span className="font-mono text-[10px] text-fx-text-secondary truncate">
+              editor.flashfx.app
+            </span>
+          </span>
+        ) : (
+          <span className="ml-2 font-mono text-[10px] uppercase tracking-widest text-fx-text-secondary truncate">
+            {label}
+          </span>
+        )}
+      </div>
+
+      <div className="relative flex-1 min-h-0">{children}</div>
+    </div>
+  );
+}
+
+/**
+ * Positions for the keyframe pop, as framer-motion `times`.
+ *
+ * The diamond scales up exactly as the playhead reaches it. Keyframes are kept
+ * inside 8–92% of the track so the `times` array stays strictly increasing at
+ * both ends — a duplicate 0 or 1 makes framer-motion drop the sequence.
+ */
+export function keyframeTimes(percent: number): number[] {
+  const p = Math.min(0.92, Math.max(0.08, percent / 100));
+  return [0, p - 0.05, p, p + 0.07, 1];
+}

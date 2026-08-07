@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { ElegantShapesBackground } from '@/components/ui/elegant-shapes';
 import { VideoLoading, useVideoEmbed } from '@/components/ui/video-loading';
+import { Demo, type DemoKind } from '@/components/demos';
 
 interface VideoPlaceholderProps {
   title: string;
@@ -13,6 +14,14 @@ interface VideoPlaceholderProps {
   gridBackground?: boolean;
   youtubeId?: string;
   sectionHeading?: string;
+  /**
+   * Render a live in-page demo instead of a YouTube embed
+   * (immersionmilestones.md I3).
+   *
+   * Takes precedence over `youtubeId`, so a section can keep its video id
+   * recorded while showing the demo — reverting one section is a one-word edit.
+   */
+  demo?: DemoKind;
   /**
    * Anchor id for the <section>. Added 2026-08-06 so the Navbar Features
    * dropdown can scroll to the Share Projects section, which had the content
@@ -103,7 +112,7 @@ function YouTubeEmbed({ youtubeId, title }: { youtubeId: string; title: string }
   );
 }
 
-export function VideoPlaceholder({ title, description, isMainDemo, gridBackground, youtubeId, sectionHeading, id }: VideoPlaceholderProps) {
+export function VideoPlaceholder({ title, description, isMainDemo, gridBackground, youtubeId, sectionHeading, id, demo }: VideoPlaceholderProps) {
   return (
     <section
       id={id}
@@ -136,7 +145,9 @@ export function VideoPlaceholder({ title, description, isMainDemo, gridBackgroun
           transition={{ duration: 0.5 }}
           className={`relative w-full rounded-[32px] bg-fx-bg-surface border border-fx-border overflow-hidden group ${youtubeId ? '' : 'cursor-pointer'} ${isMainDemo ? 'flex-1 min-h-0' : 'aspect-video'}`}
         >
-          {youtubeId ? (
+          {demo ? (
+            <Demo kind={demo} />
+          ) : youtubeId ? (
             <YouTubeEmbed youtubeId={youtubeId} title={title} />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
