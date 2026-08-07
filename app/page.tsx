@@ -9,7 +9,6 @@ import { AllOnWeb } from '@/components/sections/AllOnWeb';
 import { ThreeDSupport } from '@/components/sections/ThreeDSupport';
 import { KeyframeInterpolation } from '@/components/sections/KeyframeInterpolation';
 import { EverythingToAnimate } from '@/components/sections/EverythingToAnimate';
-import { SplitHero } from '@/components/sections/SplitHero';
 import { FeatureHighlights } from '@/components/sections/FeatureHighlights';
 import { ComparisonTeaser } from '@/components/sections/ComparisonTeaser';
 import { FAQSection } from '@/components/sections/FAQSection';
@@ -167,7 +166,6 @@ export default function Home() {
         <KeyframeInterpolation />
         {/* id is what the Navbar Features dropdown scrolls to for Share Projects. */}
         <VideoPlaceholder id="share-projects" title="Share Projects" description="Collaborate and share your work with anyone, instantly" demo="share" youtubeId="sqdlJULYNZA" sectionHeading="Share Projects" />
-        <SplitHero />
         <CreatorStories />
         {/*
           Seams mark the transitions between the page's acts rather than every
