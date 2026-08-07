@@ -35,8 +35,12 @@ import { DEMO_PRIORITY } from './demo-kit';
 const LOGO_ROWS = 34;
 const TEXT_ROWS = 30;
 
-/** World units between cube centres. */
+/** World units between cube centres, before each block's own scale. */
 const PITCH = 1;
+
+/** Relative sizes of the two blocks. The logo reads larger than the word. */
+const LOGO_SCALE = 1.4;
+const TEXT_SCALE = 0.8;
 
 /** How far the logo's cubes stretch in z once assembled, so it reads as a slab. */
 const LOGO_EXTRUDE = 3.4;
@@ -50,8 +54,12 @@ const BUILD = 3.5;
 /** Fraction of the build spent staggering starts across the swarm. */
 const STAGGER = 0.55;
 
-/** Text cube palette — the site's faceted six. */
-const FACES = ['#F5C518', '#7C5CBF', '#E6EDF3', '#2D6BE4', '#4ADE80', '#F97362'];
+/*
+ * The word is white. Six near-white tones rather than one flat #fff, so the
+ * cubes still read as cubes — with a single colour on every face a cube has no
+ * silhouette and the wordmark flattens into a sticker.
+ */
+const TEXT_SHADE = ['#ffffff', '#dee6f0', '#ffffff', '#bcc6d4', '#f3f7fc', '#d2dae5'];
 
 /** Logo cubes are white-based and tinted per instance by the logo's own pixels. */
 const LOGO_SHADE = ['#d8dee6', '#c6ccd6', '#ffffff', '#aab2be', '#e8edf4', '#bcc4d0'];
@@ -253,21 +261,28 @@ export function LogoAssembly({
       const logoCells = logo.cells;
       const textCells = text.cells;
 
-      const totalW = logo.cols + GAP + text.cols;
-      const halfW = (totalW * PITCH) / 2;
-      const halfH = (Math.max(logo.rows, text.rows) * PITCH) / 2;
+      // Each block is laid out at its own pitch, so the logo can be larger than
+      // the word without either being resampled at a different resolution.
+      const logoPitch = PITCH * LOGO_SCALE;
+      const textPitch = PITCH * TEXT_SCALE;
+      const logoW = logo.cols * logoPitch;
+      const textW = text.cols * textPitch;
+      const gapW = GAP * PITCH;
+
+      const halfW = (logoW + gapW + textW) / 2;
+      const halfH = Math.max(logo.rows * logoPitch, text.rows * textPitch) / 2;
 
       // Grid → world, each block centred on its own cropped box. y is flipped
       // because image and canvas rows run downward.
-      const logoOriginX = -halfW + (logo.cols * PITCH) / 2;
+      const logoOriginX = -halfW + logoW / 2;
       const toLogoLocal = (c: Cell) => [
-        (c.x - logo.cols / 2 + 0.5) * PITCH,
-        (logo.rows / 2 - c.y - 0.5) * PITCH,
+        (c.x - logo.cols / 2 + 0.5) * logoPitch,
+        (logo.rows / 2 - c.y - 0.5) * logoPitch,
         0,
       ];
       const toTextWorld = (c: Cell) => [
-        -halfW + (logo.cols + GAP + c.x + 0.5) * PITCH,
-        (text.rows / 2 - c.y - 0.5) * PITCH,
+        -halfW + logoW + gapW + (c.x + 0.5) * textPitch,
+        (text.rows / 2 - c.y - 0.5) * textPitch,
         0,
       ];
 
@@ -290,8 +305,8 @@ export function LogoAssembly({
        * when every cube is coincident at the origin, turning the single opening
        * cube into a long box.
        */
-      const logoGeo = facedBox(PITCH * 0.92, PITCH * 0.92, PITCH * 0.92, LOGO_SHADE);
-      const textGeo = facedBox(PITCH * 0.88, PITCH * 0.88, PITCH * 0.88, FACES);
+      const logoGeo = facedBox(logoPitch * 0.92, logoPitch * 0.92, logoPitch * 0.92, LOGO_SHADE);
+      const textGeo = facedBox(textPitch * 0.88, textPitch * 0.88, textPitch * 0.88, TEXT_SHADE);
       const makeMaterial = () => new THREE.MeshBasicMaterial({ vertexColors: true });
 
       const logoMesh = new THREE.InstancedMesh(logoGeo, makeMaterial(), logoCells.length);
@@ -383,7 +398,19 @@ export function LogoAssembly({
             cube.spin[2] * settle
           );
 
-          dummy.scale.set(1, 1, 1 + (extrude - 1) * smoothstep(0.6, 1, u));
+          /*
+           * Nothing is visible until it is moving. With the stagger, a cube
+           * waiting its turn would otherwise sit motionless at its start point,
+           * and several hundred of those read as a static cloud that the
+           * animation then leaves behind — the opposite of a stream.
+           *
+           * Scale, not opacity: these share one material per mesh, so there is
+           * no per-instance alpha to set, and a zero-scale instance is
+           * degenerate and never rasterised. The ramp is ~0.14 s, enough to
+           * avoid a hard pop and short enough to still read as "on the move".
+           */
+          const appear = smoothstep(0, 0.04, u);
+          dummy.scale.set(appear, appear, appear * (1 + (extrude - 1) * smoothstep(0.6, 1, u)));
           dummy.updateMatrix();
           mesh.setMatrixAt(i, dummy.matrix);
         }
