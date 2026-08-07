@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
-import ShimmerButton from '@/components/ui/shimmer-button';
+import { ArrowRight } from 'lucide-react';
 
 /*
  * The hero opens on the cube animation, not on a headline
@@ -80,8 +80,8 @@ export function Hero() {
         part. Full height gives the flight somewhere to happen; the lockup
         itself stays centred, sized by `FILL`.
 
-        `pointer-events-none` so it cannot swallow clicks on the buttons that
-        sit over it.
+        `pointer-events-none` so it cannot swallow clicks on the button that
+        sits over it.
       */}
       <LogoAssembly className="absolute inset-0 pointer-events-none" duration={3.5} />
 
@@ -93,36 +93,35 @@ export function Hero() {
           about how search engines read this page. It stays in the markup,
           server-rendered, and out of the way visually.
 
-          Note this also moves LCP off the headline and onto the sub-heading
-          below, which is server-rendered and paints immediately — the hero is
-          not gated on the animation (performancemilestones.md P1, which exists
+          With the sub-heading gone too, the button below is the only text the
+          hero paints, so LCP is now the button. It is server-rendered and not
+          gated on the animation (performancemilestones.md P1, which exists
           because a gate here once kept the LCP element out of the DOM entirely).
         */}
         <h1 className="sr-only">Make Animations with FlashFX</h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
+        {/*
+          One button, and it is now the only text the hero paints — which makes
+          it the LCP element. It is server-rendered and not gated on the cube
+          animation, so it is there at first paint whatever the WebGL chunk is
+          doing (performancemilestones.md P1).
+        */}
+        <motion.a
+          href="https://editor.flashfx.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: 'easeOut', delay: 0.15 }}
-          className="text-xl md:text-2xl text-white/80 mb-8 max-w-3xl"
-          style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
+          transition={{ duration: 0.7, ease: 'easeOut', delay: 0.25 }}
+          className="fx-cta group inline-flex items-center gap-3 sm:gap-4 rounded-full px-8 sm:px-12 py-4 sm:py-6 text-fx-bg-base font-semibold text-lg sm:text-2xl md:text-[26px] tracking-tight"
+          style={{ fontFamily: 'var(--font-inter), sans-serif' }}
         >
-          Professional motion graphics in your browser. No installation, no complexity.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.3 }}
-          className="flex flex-col sm:flex-row gap-4 items-center justify-center"
-        >
-          <a href="https://editor.flashfx.app" target="_blank" rel="noopener noreferrer">
-            <ShimmerButton>Get Started</ShimmerButton>
-          </a>
-          <a href="#demo">
-            <ShimmerButton>Watch Demo</ShimmerButton>
-          </a>
-        </motion.div>
+          Open the editor, it&rsquo;s free
+          <ArrowRight
+            className="w-5 h-5 sm:w-7 sm:h-7 flex-shrink-0 transition-transform duration-200 group-hover:translate-x-1"
+            strokeWidth={2.5}
+          />
+        </motion.a>
       </div>
     </section>
   );

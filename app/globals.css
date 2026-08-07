@@ -163,6 +163,63 @@
 }
 
 /*
+ * The hero's single call to action.
+ *
+ * Deliberately not `ShimmerButton`: that one is a dark outline chip used a
+ * dozen times across the site, and the hero now carries exactly one button, so
+ * it should not look like the others.
+ *
+ * The sheen sweeps and then rests for most of the cycle rather than travelling
+ * continuously — a light that never stops reads as a loading bar. Pure CSS, so
+ * the sitewide reduced-motion block already neutralises it.
+ */
+.fx-cta {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(135deg, #ffd84d 0%, #f5c518 44%, #e9a908 100%);
+  box-shadow:
+    0 20px 60px -14px rgba(245, 197, 24, 0.55),
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 0 0 1px rgba(245, 197, 24, 0.35);
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease-out;
+}
+
+.fx-cta:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 26px 70px -12px rgba(245, 197, 24, 0.7),
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 0 0 1px rgba(245, 197, 24, 0.5);
+}
+
+.fx-cta:active {
+  transform: translateY(0);
+}
+
+.fx-cta::after {
+  content: '';
+  position: absolute;
+  top: -60%;
+  bottom: -60%;
+  left: -40%;
+  width: 18%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  animation: fx-cta-sheen 4200ms ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes fx-cta-sheen {
+  0% {
+    transform: translateX(0) skewX(-16deg);
+  }
+  38%,
+  100% {
+    transform: translateX(760%) skewX(-16deg);
+  }
+}
+
+/*
  * The CSS cube on the interactive canvas — components/demos/CanvasStudio.tsx.
  *
  * Six faces and `preserve-3d`, not three.js. That section already carries a
