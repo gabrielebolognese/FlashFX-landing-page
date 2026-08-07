@@ -163,6 +163,49 @@
 }
 
 /*
+ * The CSS cube on the interactive canvas — components/demos/CanvasStudio.tsx.
+ *
+ * Six faces and `preserve-3d`, not three.js. That section already carries a
+ * full editor mock and a particle canvas; spending a WebGL context on one small
+ * cube would be a poor trade, and the faces are flat-shaded anyway. The tint
+ * comes in as `--fx-cube-c` so the cube matches whatever colour the object
+ * carries in the inspector.
+ */
+.fx-cube {
+  position: relative;
+  width: 58%;
+  aspect-ratio: 1;
+  transform-style: preserve-3d;
+  transform: rotateX(-24deg) rotateY(32deg);
+}
+
+.fx-cube > span {
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid var(--fx-cube-c, #7c5cbf);
+  background: color-mix(in srgb, var(--fx-cube-c, #7c5cbf) 26%, transparent);
+}
+
+/*
+ * `color-mix` is not in every browser this site still serves, and without it
+ * the faces would have no fill at all. The flat fallback below is overridden by
+ * the rule above wherever it is supported.
+ */
+@supports not (background: color-mix(in srgb, red 20%, transparent)) {
+  .fx-cube > span {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* translateZ is half the face size; 50% of the element resolves to that. */
+.fx-cube-f { transform: translateZ(50%); }
+.fx-cube-b { transform: rotateY(180deg) translateZ(50%); }
+.fx-cube-r { transform: rotateY(90deg) translateZ(50%); }
+.fx-cube-l { transform: rotateY(-90deg) translateZ(50%); }
+.fx-cube-t { transform: rotateX(90deg) translateZ(50%); }
+.fx-cube-d { transform: rotateX(-90deg) translateZ(50%); }
+
+/*
  * Beam borders — components/ui/beam-border.tsx (immersionmilestones.md I2).
  *
  * Every border on this site was a static 1px line of --color-border, and there

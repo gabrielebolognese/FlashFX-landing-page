@@ -4,6 +4,7 @@ import { VideoPlaceholder } from '@/components/sections/VideoPlaceholder';
 import { ImageCarousel } from '@/components/sections/ImageCarousel';
 import { SolutionSection } from '@/components/sections/SolutionSection';
 import { OrganizeWorkflow } from '@/components/sections/OrganizeWorkflow';
+import { InteractiveCanvas } from '@/components/sections/InteractiveCanvas';
 import { FeaturesIntro } from '@/components/sections/FeaturesIntro';
 import { AllWebEditing } from '@/components/sections/AllWebEditing';
 import { DualTimeline } from '@/components/sections/DualTimeline';
@@ -160,6 +161,7 @@ export default function Home() {
         <OrganizeWorkflow />
         <VideoPlaceholder heading="Clip timeline" title="Clip Timeline" description="Arrange footage, overlays and audio in one sequence" gridBackground demo="clips" youtubeId="-zyusYiQNEc" />
         <VideoPlaceholder heading="Animation timeline" title="Animation Timeline" description="Keyframe animation made simple for everyone" demo="timeline" youtubeId="bHdIvt_lUrE" sectionHeading="Animation Timeline" />
+        <InteractiveCanvas />
         <FeaturesIntro />
         <AllWebEditing />
         {/*
