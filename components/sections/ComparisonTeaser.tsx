@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Check, X } from 'lucide-react';
-import ShimmerButton from '@/components/ui/shimmer-button';
+import { CtaButton } from '@/components/ui/cta-button';
 import { BeamBorder } from '@/components/ui/beam-border';
 
 const comparisons = [
@@ -72,9 +72,12 @@ export function ComparisonTeaser() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="flex justify-center mt-8"
         >
-          <a href="/after-effects-alternative">
-            <ShimmerButton>Full Comparison</ShimmerButton>
-          </a>
+          {/* `lg`, the hero's size: this is the one link out of the section and
+              the dark outline chip made it look optional. CtaButton drops
+              target="_blank" for an internal href, so it stays in the tab. */}
+          <CtaButton href="/after-effects-alternative" size="lg">
+            See full comparison
+          </CtaButton>
         </motion.div>
       </div>
     </section>

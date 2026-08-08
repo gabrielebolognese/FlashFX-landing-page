@@ -38,18 +38,6 @@ export function ProceduralAnimation() {
         <span style={{ color: '#f5c842' }}>Say less!</span>
       </motion.h2>
 
-      <motion.p
-        initial={{ opacity: 0, y: 18 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        className="mt-5 px-6 text-center text-base md:text-lg text-fx-text-secondary max-w-2xl mx-auto"
-      >
-        Six hundred squares, five formations, no keyframes anywhere. Every arrangement
-        is a rule evaluated against the clock &mdash; which is why none of them stop
-        moving, not even while they are becoming each other.
-      </motion.p>
-
       {/* Full-bleed, because two of the formations — the waveform and the ribbon
           — are written to reach the frame edge, and a centred column would cut
           exactly the part that makes them read. */}
@@ -59,7 +47,7 @@ export function ProceduralAnimation() {
 
       <div className="mt-10 flex justify-center px-6">
         <CtaButton href="https://editor.flashfx.app" size="md">
-          Build one yourself
+          It&apos;s easier than you think
         </CtaButton>
       </div>
     </section>

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Paperclip, Image as ImageIcon, Mic, Sparkles, ArrowRight, Copy } from 'lucide-react';
+import { CtaButton } from '@/components/ui/cta-button';
 import { useDemo } from './demo-kit';
 
 /*
@@ -745,6 +746,30 @@ export function PromptToArt() {
             opacity: { duration: 0.14 },
           }}
         />
+      </div>
+
+      {/*
+        The invitation, arriving once the box has made room for it.
+
+        On `lg` it sits under where the box comes to rest, in the left half. On
+        anything narrower the box leaves the frame entirely, so "under it" has no
+        meaning and it centres at the foot of the stage instead.
+
+        Not `pointer-events-none`, unlike every other layer here — this is the
+        one thing in the demo anybody is meant to click.
+      */}
+      <div className="absolute bottom-[4%] inset-x-0 lg:right-auto lg:w-[50vw] flex justify-center px-4 z-20">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={slid ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+          /* Held back past the 1.4s exit, so it arrives after the box has
+             settled rather than racing it across the screen. */
+          transition={{ duration: 0.6, delay: slid ? 0.9 : 0, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <CtaButton href="https://editor.flashfx.app" size="lg">
+            What do you want to build?
+          </CtaButton>
+        </motion.div>
       </div>
 
       {/* The chat box. Centred by the flex parent, then moved with `x`, so no
