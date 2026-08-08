@@ -159,7 +159,14 @@ export function InspiredFrom() {
             return (
               <motion.div
                 key={s.name}
-                className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+                /*
+                  No `flex-col` here, and the labels below are out of flow. With
+                  them in it, this box was as tall as the tile *plus* both lines
+                  of text, so `-translate-y-1/2` centred that whole column on the
+                  cable's endpoint and left the tile floating above it. The box
+                  is exactly the tile now, so the tile is what gets centred.
+                */
+                className="absolute -translate-x-1/2 -translate-y-1/2"
                 style={{ left: `${(seat.x / VB.w) * 100}%`, top: `${(seat.y / VB.h) * 100}%` }}
                 initial={{ opacity: 0, y: -14 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -197,22 +204,29 @@ export function InspiredFrom() {
                   />
                 </motion.div>
 
-                <span
-                  className="mt-2.5 font-mono text-[10px] sm:text-xs uppercase tracking-widest whitespace-nowrap"
-                  style={{ color: 'rgba(230,237,243,0.72)' }}
-                >
-                  {s.name}
-                </span>
-                <span className="font-mono text-[9px] sm:text-[10px] whitespace-nowrap" style={{ color: '#f5c842' }}>
-                  {s.trait}
-                </span>
+                {/* Absolute, so the name and trait hang under the tile without
+                    adding to the box that gets centred. */}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2.5 flex flex-col items-center pointer-events-none">
+                  <span
+                    className="font-mono text-[10px] sm:text-xs uppercase tracking-widest whitespace-nowrap"
+                    style={{ color: 'rgba(230,237,243,0.72)' }}
+                  >
+                    {s.name}
+                  </span>
+                  <span className="font-mono text-[9px] sm:text-[10px] whitespace-nowrap" style={{ color: '#f5c842' }}>
+                    {s.trait}
+                  </span>
+                </div>
               </motion.div>
             );
           })}
 
           {/* FlashFX, where every cable ends. */}
           <motion.div
-            className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+            /* Same correction as the sources: the wordmark below is out of flow
+               so the socket lines up with the tile rather than with the tile and
+               its caption together. */
+            className="absolute -translate-x-1/2 -translate-y-1/2"
             style={{ left: '50%', top: `${(CENTRE.y / VB.h) * 100}%` }}
             initial={{ opacity: 0, scale: 0.85 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -233,7 +247,7 @@ export function InspiredFrom() {
               <Image src="/android-chrome-192x192.png" alt="FlashFX" width={140} height={140} className="w-[64%] h-[64%] object-contain rounded-lg" />
             </motion.div>
             <span
-              className="mt-2.5 text-lg sm:text-2xl"
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-2.5 text-lg sm:text-2xl whitespace-nowrap pointer-events-none"
               style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 700, letterSpacing: '-0.02em', color: '#f5c842' }}
             >
               FlashFX

@@ -733,8 +733,12 @@ export function Endless() {
           key={f.label}
           type="button"
           onClick={() => setExtra((e) => ({ ...e, [f.label]: (e[f.label] ?? 0) + 1 }))}
-          className="absolute -translate-x-1/2 flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-transform duration-150 active:scale-95"
-          style={{ left: `${(f.x / TVB.w) * 100}%`, top: `${(442 / TVB.h) * 100}%` }}
+          /* Centred on the box it labels, not hung from its top edge. The box
+             is drawn in viewBox units (y 430 to 496, so 463 is its middle) while
+             this is DOM with real pixels, so anchoring by an edge drifts as the
+             section resizes. Both axes translate now. */
+          className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-transform duration-150 active:scale-95"
+          style={{ left: `${(f.x / TVB.w) * 100}%`, top: `${(463 / TVB.h) * 100}%` }}
         >
           <f.Icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: f.colour }} strokeWidth={2.5} />
           <span className="font-mono text-[8px] sm:text-[10px] uppercase tracking-widest" style={{ color: f.colour }}>
