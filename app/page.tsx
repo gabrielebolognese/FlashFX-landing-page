@@ -162,6 +162,9 @@ export default function Home() {
           one-word edit.
         */}
         <OrganizeWorkflow />
+        {/* First under "Organized workflow": nothing can be cut together until
+            something has been brought in. */}
+        <VideoPlaceholder heading="Media pool" title="Media Pool" description="Bring footage, images and audio into one place" demo="mediapool" />
         <VideoPlaceholder heading="Clip timeline" title="Clip Timeline" description="Arrange footage, overlays and audio in one sequence" demo="clips" youtubeId="-zyusYiQNEc" />
         <VideoPlaceholder heading="Animation timeline" title="Animation Timeline" description="Keyframe animation made simple for everyone" demo="timeline" youtubeId="bHdIvt_lUrE" sectionHeading="Animation Timeline" />
         <InteractiveCanvas />

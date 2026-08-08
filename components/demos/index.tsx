@@ -30,7 +30,12 @@ const PresetWallDemo = dynamic(() => import('./PresetWallDemo').then((m) => m.Pr
   ssr: false,
   loading: holding,
 });
-export type DemoKind = 'timeline' | 'clips' | 'presets';
+const MediaPoolDemo = dynamic(() => import('./MediaPoolDemo').then((m) => m.MediaPoolDemo), {
+  ssr: false,
+  loading: holding,
+});
+
+export type DemoKind = 'timeline' | 'clips' | 'presets' | 'mediapool';
 
 /**
  * The frame each demo wants.
@@ -66,6 +71,13 @@ export const demoFrame: Record<
    * shapes nowhere to move vertically.
    */
   presets: { width: 'max-w-6xl', aspect: 'aspect-square sm:aspect-[4/3] lg:aspect-[16/11]', bare: true },
+  /*
+   * Two panels side by side from `lg`, stacked below it — hence the ratio
+   * changing so much across the range. Wider than the preset wall because the
+   * pool needs a sidebar, a header and three columns of clips before it reads
+   * as a media pool rather than a grid of pictures.
+   */
+  mediapool: { width: 'max-w-7xl', aspect: 'aspect-[3/4] sm:aspect-[4/3] lg:aspect-[16/7]', bare: true },
 };
 
 export function Demo({ kind }: { kind: DemoKind }) {
@@ -82,5 +94,7 @@ export function Demo({ kind }: { kind: DemoKind }) {
       return <ClipTimelineDemo />;
     case 'presets':
       return <PresetWallDemo />;
+    case 'mediapool':
+      return <MediaPoolDemo />;
   }
 }
