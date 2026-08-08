@@ -160,6 +160,38 @@ and ask.
   editor until there is somewhere better; a button of that name pointing at a
   URL that does not exist is the M6 failure again.
 
+- **The AI block ("Not convinced yet?").** Stated by the owner 2026-08-07, for
+  the five sections between the feature run and pricing.
+
+  1. **Multi-agent editing.** Several AI agents work different spans of one
+     timeline at the same time — one across 0-20s, another 20-35s, and so on.
+     **Six agents maximum.** That ceiling is a fact, not a round number.
+  2. **Non-destructive, and the central claim of the whole block.** FlashFX's AI
+     **does not generate video.** It *operates the editor*: it edits long videos,
+     works on your own footage, and builds real animation, and every element it
+     touches stays editable at full scale afterwards. It may call other AI tools
+     when it needs them. The distinction from competitors is exact and must not
+     be blurred — **they generate a video, this edits one, and then you export
+     it.** Do not let this drift into "AI video generation" in any rewrite.
+  3. **AI as a guide.** Ask it how to do something ("how do I edit the
+     interpolation") and it explains, for people who would rather do the work
+     themselves. YouTube tutorials are the other route.
+  4. **Inspired by CapCut, Premiere Pro and especially Figma.** The owner's
+     framing: the best of each, aimed at something quick and easy that is still
+     deep.
+  5. **Plugins, templates and presets** — official FlashFX ones and user-made
+     ones.
+
+  ⚠ **Item 5 contradicts what the site already says.** `FeatureComparisonTable`
+  in `/after-effects-alternative` lists FlashFX's Plugin Ecosystem as **"Curated
+  built-ins"** and awards that row to After Effects. Either that table is stale
+  or user-made plugins are roadmap rather than shipped. **The new section is
+  written to the owner's statement; the table has not been changed.** One of the
+  two needs correcting, and the answer decides which.
+
+  (`faqData.ts` also says "no installer, no plugin" — that is about browser
+  extensions, a different sense of the word, and not in conflict.)
+
 - **Personal site:** `https://gabrielebolognese.blog`
 - **Verified logo URL:** `https://flashfx.app/android-chrome-192x192.png`
   — confirmed live 2026-08-03, 200 OK, PNG, 192×192, 13.1 KB. Clears Google's
