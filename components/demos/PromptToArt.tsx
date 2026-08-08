@@ -646,12 +646,12 @@ export function PromptToArt() {
   const claudeClicking = step === S.half || dupPressed || buttonPressed;
 
   return (
-    <div ref={ref} className="relative w-full h-[64vh] min-h-[440px] md:min-h-[560px] overflow-hidden">
+    <div ref={ref} className="relative w-full h-[76vh] min-h-[460px] md:min-h-[620px] overflow-hidden">
       {/* Artwork. Positioning on the wrapper, animation on the child — an inline
           transform from framer would otherwise overwrite Tailwind's translate. */}
-      <div className="absolute inset-y-0 right-0 w-full lg:w-[54%] flex items-center justify-center px-4 pointer-events-none">
+      <div className="absolute inset-y-0 right-0 w-full lg:w-[50vw] flex items-center justify-center px-4 pointer-events-none">
         <motion.div
-          className="relative w-full max-w-[560px] aspect-[400/330]"
+          className="relative w-full lg:w-[48vw] max-h-full aspect-[400/330]"
           initial={{ opacity: 0, scale: 0.92 }}
           animate={artIn ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.92 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
@@ -735,7 +735,7 @@ export function PromptToArt() {
       </div>
 
       {/* The wait, where the artwork will be. */}
-      <div className="absolute inset-y-0 right-0 w-full lg:w-[54%] flex items-center justify-center pointer-events-none">
+      <div className="absolute inset-y-0 right-0 w-full lg:w-[50vw] flex items-center justify-center pointer-events-none">
         <motion.span
           className="w-9 h-9 rounded-full border-2 border-fx-border"
           style={{ borderTopColor: YELLOW }}
@@ -751,7 +751,7 @@ export function PromptToArt() {
           Tailwind translate is involved for framer to overwrite. */}
       <div className="absolute inset-0 flex items-center justify-center px-4 pointer-events-none">
         <motion.div
-          className="relative w-[92vw] sm:w-[74vw] lg:w-[50vw] rounded-[28px] sm:rounded-[34px] border flex flex-col p-5 sm:p-6"
+          className="relative w-[92vw] sm:w-[74vw] lg:w-[48vw] rounded-[28px] sm:rounded-[34px] border flex flex-col p-5 sm:p-6"
           style={{
             minHeight: '20vh',
             background: 'rgba(22, 33, 68, 0.94)',

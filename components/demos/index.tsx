@@ -77,7 +77,13 @@ export const demoFrame: Record<
    * below it. The panels declare `aspect-video` themselves and centre in
    * whatever slack is left, so this ratio only has to be close, not exact.
    */
-  mediapool: { width: 'max-w-7xl', aspect: 'aspect-[16/19] lg:aspect-[32/9.4]', bare: true },
+  /*
+   * No `max-w`: the two panels are 48vw each and are meant to run the width of
+   * the viewport, so a container capped at 1280px would have held them to two
+   * thirds of it on a large screen. They are flex children, so if the section's
+   * own padding leaves less than 96vw they shrink to fit rather than overflow.
+   */
+  mediapool: { width: '', aspect: 'aspect-[16/19] lg:aspect-[100/28]', bare: true },
 };
 
 export function Demo({ kind }: { kind: DemoKind }) {

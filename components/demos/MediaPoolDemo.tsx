@@ -406,7 +406,7 @@ export function MediaPoolDemo() {
     >
       {/* ── Media pool, 16:9 ─────────────────────────────────────────────── */}
       <motion.div
-        className="relative w-full lg:w-1/2 aspect-video rounded-xl border border-fx-border overflow-hidden flex"
+        className="relative w-full lg:w-[48vw] aspect-video rounded-xl border border-fx-border overflow-hidden flex"
         style={{ background: 'rgba(18, 27, 58, 0.9)' }}
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: poolIn ? 1 : 0, y: poolIn ? 0 : 16 }}
@@ -559,7 +559,7 @@ export function MediaPoolDemo() {
       </motion.div>
 
       {/* ── Preview, 16:9 ────────────────────────────────────────────────── */}
-      <div ref={dropRef} className="relative w-full lg:w-1/2 aspect-video rounded-xl border border-fx-border overflow-hidden">
+      <div ref={dropRef} className="relative w-full lg:w-[48vw] aspect-video rounded-xl border border-fx-border overflow-hidden">
         {/* The same placeholder the YouTube embeds use, running from the first
             frame — so this side is busy while the other is being worked on,
             exactly as it would be while a preview renders. It fades out rather
