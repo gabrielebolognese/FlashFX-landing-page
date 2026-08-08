@@ -164,9 +164,9 @@ export default function Home() {
         <OrganizeWorkflow />
         {/* First under "Organized workflow": nothing can be cut together until
             something has been brought in. */}
-        <VideoPlaceholder heading="Media pool" title="Media Pool" description="Bring footage, images and audio into one place" demo="mediapool" />
-        <VideoPlaceholder heading="Clip timeline" title="Clip Timeline" description="Arrange footage, overlays and audio in one sequence" demo="clips" youtubeId="-zyusYiQNEc" />
-        <VideoPlaceholder heading="Animation timeline" title="Animation Timeline" description="Keyframe animation made simple for everyone" demo="timeline" youtubeId="bHdIvt_lUrE" sectionHeading="Animation Timeline" />
+        <VideoPlaceholder id="media-pool" heading="Media pool" title="Media Pool" description="Bring footage, images and audio into one place" demo="mediapool" />
+        <VideoPlaceholder id="clip-timeline" heading="Clip timeline" title="Clip Timeline" description="Arrange footage, overlays and audio in one sequence" demo="clips" youtubeId="-zyusYiQNEc" />
+        <VideoPlaceholder id="animation-timeline" heading="Animation timeline" title="Animation Timeline" description="Keyframe animation made simple for everyone" demo="timeline" youtubeId="bHdIvt_lUrE" sectionHeading="Animation Timeline" />
         <InteractiveCanvas />
         <ThreeDSupport />
         <ParticleGeneration />
@@ -174,7 +174,7 @@ export default function Home() {
         <ImageCarousel />
         <WhatIsFlashFX />
         <EverythingToAnimate />
-        <VideoPlaceholder heading="Animation presets" title="Animation Presets" description="Bring your ideas to life effortlessly" demo="presets" youtubeId="Rk9hf3QI5Is" />
+        <VideoPlaceholder id="animation-presets" heading="Animation presets" title="Animation Presets" description="Bring your ideas to life effortlessly" demo="presets" youtubeId="Rk9hf3QI5Is" />
         <KeyframeInterpolation />
         <CreatorStories />
         {/*

@@ -21,8 +21,12 @@ import { cn } from '@/lib/utils';
 interface CtaButtonProps {
   href: string;
   children: React.ReactNode;
-  /** `lg` is the hero and the closing CTA. `md` is 80% of it, for sections in between. */
-  size?: 'lg' | 'md';
+  /**
+   * `lg` is the hero and the closing CTA. `md` is 80% of it, for sections in
+   * between. `sm` is the navigation bar — same gradient, sheen and lift, at a
+   * size that belongs in a 56px-tall bar.
+   */
+  size?: 'lg' | 'md' | 'sm';
   className?: string;
 }
 
@@ -34,6 +38,10 @@ const SIZES = {
   md: {
     box: 'px-6 sm:px-10 py-3 sm:py-5 text-base sm:text-xl md:text-[21px] gap-2.5 sm:gap-3',
     arrow: 'w-4 h-4 sm:w-6 sm:h-6',
+  },
+  sm: {
+    box: 'px-4 sm:px-5 py-2 text-sm gap-1.5',
+    arrow: 'w-3.5 h-3.5',
   },
 } as const;
 
