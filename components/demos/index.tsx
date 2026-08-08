@@ -72,12 +72,12 @@ export const demoFrame: Record<
    */
   presets: { width: 'max-w-6xl', aspect: 'aspect-square sm:aspect-[4/3] lg:aspect-[16/11]', bare: true },
   /*
-   * Two panels side by side from `lg`, stacked below it — hence the ratio
-   * changing so much across the range. Wider than the preset wall because the
-   * pool needs a sidebar, a header and three columns of clips before it reads
-   * as a media pool rather than a grid of pictures.
+   * Both panels are 16:9 in their own right, so the frame has to be twice that
+   * wide side by side — hence roughly 32:9 from `lg`, and two stacked 16:9s
+   * below it. The panels declare `aspect-video` themselves and centre in
+   * whatever slack is left, so this ratio only has to be close, not exact.
    */
-  mediapool: { width: 'max-w-7xl', aspect: 'aspect-[3/4] sm:aspect-[4/3] lg:aspect-[16/7]', bare: true },
+  mediapool: { width: 'max-w-7xl', aspect: 'aspect-[16/19] lg:aspect-[32/9.4]', bare: true },
 };
 
 export function Demo({ kind }: { kind: DemoKind }) {
