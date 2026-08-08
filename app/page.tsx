@@ -155,7 +155,7 @@ export default function Home() {
           one-word edit.
         */}
         <OrganizeWorkflow />
-        <VideoPlaceholder heading="Clip timeline" title="Clip Timeline" description="Arrange footage, overlays and audio in one sequence" gridBackground demo="clips" youtubeId="-zyusYiQNEc" />
+        <VideoPlaceholder heading="Clip timeline" title="Clip Timeline" description="Arrange footage, overlays and audio in one sequence" demo="clips" youtubeId="-zyusYiQNEc" />
         <VideoPlaceholder heading="Animation timeline" title="Animation Timeline" description="Keyframe animation made simple for everyone" demo="timeline" youtubeId="bHdIvt_lUrE" sectionHeading="Animation Timeline" />
         <InteractiveCanvas />
         <ThreeDSupport />
@@ -164,11 +164,6 @@ export default function Home() {
         <ImageCarousel />
         <WhatIsFlashFX />
         <EverythingToAnimate />
-        {/*
-          No `gridBackground`. It paints an opaque `bg-fx-bg-base` plus a 40px
-          rule grid, which both dates the section and punches a hole in the site
-          backdrop the whole page otherwise sits on (immersionmilestones.md I4).
-        */}
         <VideoPlaceholder heading="Animation presets" title="Animation Presets" description="Bring your ideas to life effortlessly" demo="presets" youtubeId="Rk9hf3QI5Is" />
         <KeyframeInterpolation />
         <CreatorStories />

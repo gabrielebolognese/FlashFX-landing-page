@@ -10,7 +10,6 @@ interface VideoPlaceholderProps {
   title: string;
   description?: string;
   isMainDemo?: boolean;
-  gridBackground?: boolean;
   youtubeId?: string;
   sectionHeading?: string;
   /**
@@ -120,35 +119,29 @@ function YouTubeEmbed({ youtubeId, title }: { youtubeId: string; title: string }
   );
 }
 
-export function VideoPlaceholder({ title, description, isMainDemo, gridBackground, youtubeId, sectionHeading, id, demo, heading }: VideoPlaceholderProps) {
+export function VideoPlaceholder({ title, description, isMainDemo, youtubeId, sectionHeading, id, demo, heading }: VideoPlaceholderProps) {
   return (
     <section
       id={id}
-      className={`relative w-full px-6 overflow-hidden ${isMainDemo ? 'flex flex-col justify-center' : 'py-12 md:py-20'} ${gridBackground ? 'bg-fx-bg-base' : ''}`}
+      className={`relative w-full px-6 overflow-hidden ${isMainDemo ? 'flex flex-col justify-center' : 'py-12 md:py-20'}`}
       style={isMainDemo ? { height: '100vh', minHeight: '100vh' } : undefined}
     >
       {/*
-        The floating shapes are gone (immersionmilestones.md I4). Five copies of
-        this section each drew five of them — twenty-five elements and five
+        This section paints no background of its own, and there is no longer a
+        prop to make it.
+
+        The floating shapes went first (immersionmilestones.md I4): five copies
+        of this section each drew five of them — twenty-five elements and five
         governed loops — behind demos that are now full-bleed and edge-faded,
-        where a drifting yellow blob under a timeline is just noise. The site
-        backdrop supplies the ambient depth they were there for.
+        where a drifting yellow blob under a timeline is just noise.
+
+        `gridBackground` followed on 2026-08-07. It painted an opaque
+        `bg-fx-bg-base`, a 40px rule grid over it and a gradient over both, which
+        dated the section and punched a hole in the one continuous field of light
+        the page otherwise sits on. Its last caller was the clip timeline; with
+        that gone the prop was config that no longer configured anything, so it
+        is gone too rather than left to read as though it still applies.
       */}
-      {gridBackground && (
-        <div
-          className="absolute inset-0 pointer-events-none z-[1]"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px',
-          }}
-        />
-      )}
-      {gridBackground && (
-        <div className="absolute inset-0 pointer-events-none z-[2] bg-gradient-to-b from-fx-bg-base via-transparent to-fx-bg-base" />
-      )}
 
       {heading && (
         <motion.h3

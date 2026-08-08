@@ -281,19 +281,18 @@ export function PricingSection() {
   const tablePlans = buildTablePlans();
 
   return (
-    <section id="pricing" className="relative w-full py-20 overflow-hidden" style={{ backgroundColor: '#141f40' }}>
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px',
-        }}
-      />
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-fx-bg-base via-transparent to-fx-bg-base" />
+    /*
+      No background of its own (2026-08-07). This painted a solid #141f40, a 40px
+      rule grid over it, and a top-and-bottom gradient back to the same colour —
+      the last of the old grid backgrounds on the site, and three full-section
+      layers to composite.
 
+      All three are gone, so the field of light from `SiteBackdrop` runs through
+      here like the rest of the page. Safe to remove because nothing in this
+      section depends on the ground for contrast: the plan cards carry their own
+      solid fills (#1c2952, #1c2e63 for the popular tier) and their own borders.
+    */
+    <section id="pricing" className="relative w-full py-20 overflow-hidden">
       <div className="relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
