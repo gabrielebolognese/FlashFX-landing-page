@@ -10,7 +10,7 @@ import { OrganizeWorkflow } from '@/components/sections/OrganizeWorkflow';
 import { InteractiveCanvas } from '@/components/sections/InteractiveCanvas';
 import { FeaturesOpener } from '@/components/sections/FeaturesOpener';
 import { FeatureBlock } from '@/components/sections/FeatureBlock';
-import { ParticleGeneration } from '@/components/sections/ParticleGeneration';
+import { ShapeTools, ClipPlayback, VectorPen } from '@/components/demos/feature-demos';import { ParticleGeneration } from '@/components/sections/ParticleGeneration';
 import { ProceduralAnimation } from '@/components/sections/ProceduralAnimation';
 import { TemplateStart } from '@/components/sections/TemplateStart';
 import { AllOnWeb } from '@/components/sections/AllOnWeb';
@@ -191,9 +191,44 @@ export default function Home() {
           in CLAUDE.md against making up product facts.
         */}
         <FeaturesOpener />
-        <FeatureBlock id="fast-shapes" title="Fast shape creation" accent="creation" />
-        <FeatureBlock id="audio-video" title="Audio and video support" accent="support" />
-        <FeatureBlock id="vector-tools" title="Vector tool support" accent="support" />
+        <FeatureBlock
+          id="fast-shapes"
+          title="Fast shape creation"
+          accent="creation"
+          subtitle="Drag one out and it is on the canvas. Every primitive is live from the moment it exists, ready to be animated like anything else."
+          list={['Rectangle', 'Circle', 'Star', 'Polygon']}
+        >
+          <ShapeTools />
+        </FeatureBlock>
+
+        <FeatureBlock
+          id="audio-video"
+          title="Audio and video support"
+          accent="support"
+          subtitle="Footage and sound sit on the same timeline as your graphics, so what you animate and what you hear stay in step."
+          /* Every line lifted from editorFeatures.ts, the site's own published
+             description of Video Support and Multi-Track Audio. */
+          list={[
+            'Import video with GPU-accelerated playback',
+            'Trim, offset, transform and filter clips',
+            'Unlimited audio tracks with waveform view',
+            'Fade in and out, per-clip volume, solo and mute',
+          ]}
+        >
+          <ClipPlayback />
+        </FeatureBlock>
+
+        {/* Full width, and no list: the canvas is the argument, and a column of
+            bullets beside it would halve the space the curve needs. */}
+        <FeatureBlock
+          id="vector-tools"
+          title="Vector tool support"
+          accent="support"
+          layout="full"
+          subtitle="Place points, pull the handles, and the curve follows. Grab one below and it is yours to bend."
+        >
+          <VectorPen />
+        </FeatureBlock>
 
         <ThreeDSupport />
         <ParticleGeneration />
