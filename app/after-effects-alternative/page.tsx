@@ -98,7 +98,7 @@ const faqSchema = {
       name: 'Does FlashFX work on a low-end PC or Chromebook?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. FlashFX is optimized to run in any modern web browser and requires approximately 2GB of RAM for smooth operation. It works perfectly on Chromebooks, older Windows laptops, and budget MacBooks where After Effects would not install or would crash frequently. There is no need for a dedicated GPU or high-end processor. If you can browse the web, you can use FlashFX.',
+        text: 'Yes. FlashFX is optimized to run in any modern web browser and requires approximately 4GB of RAM for smooth operation. It works perfectly on Chromebooks, older Windows laptops, and budget MacBooks where After Effects would not install or would crash frequently. There is no need for a dedicated GPU or high-end processor. If you can browse the web, you can use FlashFX.',
       },
     },
     {

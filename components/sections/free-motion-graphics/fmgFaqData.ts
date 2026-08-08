@@ -17,7 +17,7 @@ export const fmgFaqData = [
   },
   {
     question: 'Does free motion graphics software work on low-end hardware?',
-    answer: 'FlashFX is optimized for low-end hardware by design. Because it runs in the browser using optimized WebGL rendering, it does not require a dedicated GPU, high clock-speed CPU, or large amounts of RAM. It works on Chromebooks, older Windows laptops, and budget MacBooks where After Effects or DaVinci Resolve would fail to install or run acceptably. You need approximately 2 GB of available RAM and a modern browser — that is all.',
+    answer: 'FlashFX is optimized for low-end hardware by design. Because it runs in the browser using optimized WebGL rendering, it does not require a dedicated GPU, high clock-speed CPU, or large amounts of RAM. It works on Chromebooks, older Windows laptops, and budget MacBooks where After Effects or DaVinci Resolve would fail to install or run acceptably. You need approximately 4 GB of available RAM and a modern browser — that is all.',
   },
   {
     question: 'How does FlashFX compare to CapCut for free motion graphics?',

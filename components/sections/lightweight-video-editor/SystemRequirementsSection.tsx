@@ -5,7 +5,7 @@ import { Check, X } from 'lucide-react';
 
 const flashfxReqs = [
   { spec: 'Operating System', value: 'Any — Chrome, Firefox, Safari, Edge' },
-  { spec: 'RAM', value: '2 GB minimum / 4 GB recommended' },
+  { spec: 'RAM', value: '4 GB minimum' },
   { spec: 'CPU', value: 'Any dual-core processor (2010 or newer)' },
   { spec: 'GPU', value: 'Not required — CPU rendering fallback included' },
   { spec: 'Storage', value: '0 GB — no installation required' },
@@ -48,7 +48,7 @@ const competitorReqs = [
   },
   {
     tool: 'FlashFX',
-    ram: '2 GB minimum',
+    ram: '4 GB minimum',
     storage: '0 GB — browser-based',
     gpu: 'Not required',
     os: 'Any modern browser',

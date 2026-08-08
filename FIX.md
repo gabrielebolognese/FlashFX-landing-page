@@ -117,10 +117,29 @@ and ask.
   disk, it wants a dedicated card, it opens one project at a time. **Do not add
   a figure without checking helpx.adobe.com first.**
 
-  ⚠ **Open contradiction, unrelated to this section but found while checking:**
-  `app/lightweight-video-editor/page.tsx` claims "Works on 4 GB RAM" on lines 14
-  and 33 and "Requires only 2 GB RAM" on line 64. One of the two is wrong and
-  they are on the same page. Needs an answer before either is repeated.
+- **RAM floor: 4 GB. Settled 2026-08-07 — this is now the only figure.**
+
+  It had been contradictory across seven files: `/lightweight-video-editor`
+  alone said "Works on 4 GB RAM" twice and "Requires only 2 GB RAM" once, plus
+  "2 GB minimum / 4 GB recommended" in its requirements table and "2 GB minimum"
+  in its comparison row. `/after-effects-alternative` and
+  `/free-motion-graphics` each said 2 GB; the homepage FAQ said 4 GB. Every one
+  of them now reads **4 GB**, verified across the built HTML of all routes.
+
+  Do not reintroduce 2 GB anywhere, including as a "minimum" alongside 4 GB as
+  a "recommended" — that pairing is what allowed the contradiction to look
+  deliberate for as long as it did.
+
+  Untouched, and must stay untouched: every competitor and test-machine figure
+  (After Effects 16 GB, DaVinci 8/16 GB, Premiere 16 GB, CapCut 4 GB, the 8 GB
+  benchmark laptop).
+
+  ℹ **The site already publishes an After Effects install size**, which the new
+  `LoadTime` section deliberately does not quote:
+  `SystemRequirementsSection.tsx` line 20 states **"15+ GB installation"**. It
+  is unverified against helpx.adobe.com — Adobe's pages would not load — but it
+  is already live, so `LoadTime` could use the same figure for consistency if
+  the owner confirms it. Ask before adding it.
 
 - **Templates: ten tutorial templates.** Stated by the owner 2026-08-07, for the
   `TemplateStart` section. The count is the only figure claimed; the four cards

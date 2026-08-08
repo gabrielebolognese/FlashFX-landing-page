@@ -1,7 +1,7 @@
 export const lightweightFaqData = [
   {
     question: 'What is the minimum RAM required to run FlashFX?',
-    answer: 'FlashFX requires a minimum of 2 GB of available RAM. At idle, the editor uses approximately 200 MB of browser memory, rising to around 400 MB during active editing and peaking near 800 MB during export rendering. This makes it functional on machines with as little as 2 GB total RAM, though 4 GB provides a smoother experience with other browser tabs open.',
+    answer: 'FlashFX requires a minimum of 4 GB of available RAM. At idle, the editor uses approximately 200 MB of browser memory, rising to around 400 MB during active editing and peaking near 800 MB during export rendering. That leaves plenty of headroom on a 4 GB machine for the browser itself and a few other tabs alongside it.',
   },
   {
     question: 'Does FlashFX work on a Chromebook?',

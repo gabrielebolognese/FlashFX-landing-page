@@ -61,9 +61,9 @@ const softwareSchema = {
     availability: 'https://schema.org/InStock',
   },
   // No aggregateRating — see app/page.tsx. Do not reintroduce.
-  description: 'FlashFX is a lightweight video and motion graphics editor that runs in the browser. Requires only 2 GB RAM and no GPU. Works on Chromebooks, old laptops, and budget PCs.',
+  description: 'FlashFX is a lightweight video and motion graphics editor that runs in the browser. Requires only 4 GB RAM and no GPU. Works on Chromebooks, old laptops, and budget PCs.',
   url: 'https://flashfx.app',
-  memoryRequirements: '2 GB RAM',
+  memoryRequirements: '4 GB RAM',
   processorRequirements: 'Any dual-core processor',
   storageRequirements: '0 GB — browser-based',
 };

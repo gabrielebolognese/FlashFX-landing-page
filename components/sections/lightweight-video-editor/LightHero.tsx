@@ -41,7 +41,7 @@ export function LightHero() {
           </div>
           <div className="mt-10 grid grid-cols-3 gap-6 max-w-lg">
             {[
-              { value: '2 GB', label: 'Min. RAM needed' },
+              { value: '4 GB', label: 'Min. RAM needed' },
               { value: '~200 MB', label: 'Browser memory idle' },
               { value: '0', label: 'GB to download' },
             ].map(({ value, label }) => (
