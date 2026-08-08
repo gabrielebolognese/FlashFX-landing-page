@@ -1,112 +1,197 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { LazyYouTube } from '@/components/ui/lazy-youtube';
-import { ElegantShape, ElegantShapeScope } from '@/components/ui/elegant-shapes';
+import { useEffect, useRef, useState } from 'react';
+
+/*
+ * "Tired of lag?" — the performance section.
+ *
+ * Rebuilt 2026-08-07. It used to be the word "Load Time" in a gradient over a
+ * YouTube clip, which named a topic without making a claim: a visitor could read
+ * the whole thing and not learn one fact. It is six figures now, each with the
+ * thing it is being compared against.
+ *
+ * ── What may be claimed here, and what may not ──────────────────────────────
+ *
+ * The FlashFX side is first-party and stated plainly: 0 MB, ~2s, no discrete
+ * GPU, chunked timelines, several projects at once. All of it is in FIX.md under
+ * *Canonical facts*.
+ *
+ * The After Effects side quotes **no specification at all**, deliberately.
+ * Adobe's system-requirements pages could not be fetched to confirm one, and
+ * third-party sources disagree by nearly a factor of two on install size alone.
+ * Every line about After Effects here is structural — it installs to disk, it
+ * wants a dedicated card, it opens one project at a time — which is true
+ * regardless of which version's spec sheet you read. Do not add a number
+ * without checking helpx.adobe.com first.
+ *
+ * The 50-second figure is the one measurement, and it carries its own caveat in
+ * the markup: *measured on one machine*. That label is load-bearing.
+ * `/flashfx-vs-capcut-vs-davinci` promises "no unmeasured performance claims" in
+ * its metadata, and an unqualified "50s" would put this section in conflict with
+ * the site's own stated position.
+ */
+
+type Stat = {
+  /** Counts up when it arrives. Omit for a word. */
+  to?: number;
+  word?: string;
+  unit?: string;
+  label: string;
+  /** The After Effects counterpart. Structural, never a spec. */
+  against: string;
+  /** Renders the "measured on one machine" caveat. */
+  measured?: boolean;
+};
+
+const STATS: Stat[] = [
+  { to: 0, unit: 'MB', label: 'to install', against: 'After Effects installs to disk before you open anything' },
+  {
+    to: 2,
+    unit: 's',
+    label: 'to open the editor',
+    against: 'Around 50s for After Effects on the same machine',
+    measured: true,
+  },
+  { to: 4, unit: 'GB', label: 'of RAM is enough', against: 'After Effects is built for workstation memory' },
+  { to: 0, unit: '', label: 'graphics cards required', against: 'After Effects wants a dedicated card' },
+  { word: 'Hours', label: 'of timeline, chunked', against: 'Length stops being a memory problem' },
+  { word: 'Many', label: 'projects open at once', against: 'After Effects works one project at a time' },
+];
+
+/**
+ * Count from zero when the number arrives on screen.
+ *
+ * Runs once, on an IntersectionObserver, and holds the final value afterwards —
+ * a figure that re-counts every time it is scrolled past is a distraction rather
+ * than an arrival. Reduced motion gets the final value immediately: the number
+ * is the content, the counting is decoration.
+ */
+function useCountUp(to: number, run: boolean, ms = 1100) {
+  const [value, setValue] = useState(0);
+  const done = useRef(false);
+
+  useEffect(() => {
+    if (!run || done.current) return;
+    done.current = true;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || to === 0) {
+      setValue(to);
+      return;
+    }
+
+    let raf = 0;
+    let start = 0;
+    const step = (now: number) => {
+      if (!start) start = now;
+      const p = Math.min(1, (now - start) / ms);
+      // Decelerating, so it lands rather than stopping.
+      setValue(Math.round(to * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [to, run, ms]);
+
+  return value;
+}
+
+function StatCard({ stat, index, run }: { stat: Stat; index: number; run: boolean }) {
+  const counted = useCountUp(stat.to ?? 0, run && stat.to !== undefined);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.5, delay: (index % 3) * 0.09, ease: [0.22, 1, 0.36, 1] }}
+      className="relative rounded-2xl border border-fx-border p-6 sm:p-7 flex flex-col"
+      style={{ background: 'rgba(20, 31, 64, 0.62)' }}
+    >
+      <span
+        className="block text-5xl sm:text-6xl lg:text-7xl leading-none tabular-nums"
+        style={{
+          fontFamily: 'var(--font-inter), sans-serif',
+          fontWeight: 700,
+          letterSpacing: '-0.045em',
+          color: '#f5c842',
+        }}
+      >
+        {stat.word ?? counted}
+        {stat.unit && <span className="text-3xl sm:text-4xl lg:text-5xl ml-0.5">{stat.unit}</span>}
+      </span>
+
+      <span className="mt-3 text-base sm:text-lg text-fx-text-primary" style={{ fontFamily: 'var(--font-outfit), sans-serif' }}>
+        {stat.label}
+      </span>
+
+      <span className="mt-4 pt-4 border-t border-fx-border text-sm text-fx-text-secondary leading-relaxed">
+        {stat.against}
+        {stat.measured && (
+          /* Not fine print for its own sake: this is the only figure here that
+             is a measurement rather than a property, and the site's comparison
+             page promises no unmeasured performance claims. */
+          <span className="block mt-1.5 font-mono text-[10px] uppercase tracking-widest text-fx-text-secondary/55">
+            measured on one machine
+          </span>
+        )}
+      </span>
+    </motion.div>
+  );
+}
 
 export function LoadTime() {
+  const [run, setRun] = useState(false);
+  const host = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const node = host.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      (records) => {
+        if (records.some((r) => r.isIntersecting)) {
+          setRun(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-fx-bg-base">
-      <div className="absolute inset-0 bg-gradient-to-br from-fx-accent-yellow/[0.05] via-transparent to-orange-500/[0.05] blur-3xl" />
-
-      {/*
-        These five are rendered loose rather than through
-        ElegantShapesBackground, so they need their own scope to receive a
-        grant — without one they read the context default and never move.
-      */}
-      <ElegantShapeScope>
-        <ElegantShape
-          delay={0.3}
-          width={600}
-          height={140}
-          rotate={12}
-          gradient="from-yellow-500/[0.15]"
-          className="left-[-10%] md:left-[-5%] top-[15%] md:top-[20%]"
-        />
-
-        <ElegantShape
-          delay={0.5}
-          width={500}
-          height={120}
-          rotate={-15}
-          gradient="from-amber-500/[0.15]"
-          className="right-[-5%] md:right-[0%] top-[70%] md:top-[75%]"
-        />
-
-        <ElegantShape
-          delay={0.4}
-          width={300}
-          height={80}
-          rotate={-8}
-          gradient="from-yellow-400/[0.15]"
-          className="left-[5%] md:left-[10%] bottom-[5%] md:bottom-[10%]"
-        />
-
-        <ElegantShape
-          delay={0.6}
-          width={200}
-          height={60}
-          rotate={20}
-          gradient="from-amber-600/[0.15]"
-          className="right-[15%] md:right-[20%] top-[10%] md:top-[15%]"
-        />
-
-        <ElegantShape
-          delay={0.7}
-          width={150}
-          height={40}
-          rotate={-25}
-          gradient="from-yellow-300/[0.15]"
-          className="left-[20%] md:left-[25%] top-[5%] md:top-[10%]"
-        />
-      </ElegantShapeScope>
-
-      <div className="relative z-10 container mx-auto px-6 text-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+    <section id="performance" className="relative w-full py-20 md:py-28 overflow-hidden">
+      <div className="relative z-10 max-w-6xl mx-auto px-6">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center text-4xl sm:text-5xl md:text-6xl leading-[1.06] text-white"
+          style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 700, letterSpacing: '-0.035em' }}
         >
-          <motion.h2
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-6xl md:text-7xl lg:text-8xl leading-tight bg-gradient-to-r from-fx-accent-yellow to-orange-500 bg-clip-text text-transparent mb-6"
-            style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 700, letterSpacing: '-0.02em' }}
-          >
-            Load Time
-          </motion.h2>
+          Tired of <span style={{ color: '#f5c842' }}>lag?</span>
+        </motion.h2>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-fx-text-secondary text-xl md:text-2xl max-w-3xl mx-auto mb-16"
-          >
-            Lightning fast performance that keeps you in the creative flow
-          </motion.p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 40, scale: 0.95 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-          className="max-w-5xl mx-auto"
+        <motion.p
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mt-6 text-center text-xl sm:text-2xl md:text-3xl leading-snug text-fx-text-primary/90 max-w-4xl mx-auto"
+          style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 500, letterSpacing: '-0.02em' }}
         >
-          <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-2xl border border-yellow-500/[0.15]">
-            <LazyYouTube
-              src="https://www.youtube.com/embed/N1VDnFOIeRg?autoplay=1&mute=1&loop=1&playlist=N1VDnFOIeRg&controls=0&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1"
-              title="FlashFX Load Time Demo"
-            />
-          </div>
-        </motion.div>
+          FlashFX is built with performance optimisation in mind. You could run this
+          on a school PC.
+        </motion.p>
+
+        <div ref={host} className="mt-14 md:mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          {STATS.map((stat, i) => (
+            <StatCard key={stat.label} stat={stat} index={i} run={run} />
+          ))}
+        </div>
       </div>
-
-      <div className="absolute inset-0 bg-gradient-to-t from-fx-bg-base via-transparent to-fx-bg-base/80 pointer-events-none" />
     </section>
   );
 }

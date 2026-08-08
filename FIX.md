@@ -95,6 +95,33 @@ and ask.
   particular authoring interface, because none of those has been confirmed. Ask
   before adding one.
 
+- **Performance, and how far each figure may be pushed.** Stated by the owner
+  2026-08-07, for the `LoadTime` section.
+
+  First-party, safe to state plainly: **0 MB to install** (it is a browser tab);
+  **about 2 seconds** to open the editor; runs without a discrete GPU;
+  **chunking** lets a project run to hours of timeline without the length
+  becoming a memory problem; **several projects open at once in separate tabs**,
+  which a single desktop application cannot do.
+
+  **The 50-second After Effects figure is one measurement on the owner's own
+  machine, not a benchmark.** It is used in the section labelled as exactly
+  that, and it must keep that label. `/flashfx-vs-capcut-vs-davinci` promises
+  "no unmeasured performance claims" in its own metadata, and an unqualified
+  "50s" would contradict the site's stated position on its own comparison page.
+
+  **No After Effects specification is quoted anywhere**, because Adobe's system
+  requirements pages could not be fetched to confirm one, and third-party
+  sources disagree (8 GB vs 15 GB for install size). Every After Effects line in
+  that section is a structural statement that needs no number — it installs to
+  disk, it wants a dedicated card, it opens one project at a time. **Do not add
+  a figure without checking helpx.adobe.com first.**
+
+  ⚠ **Open contradiction, unrelated to this section but found while checking:**
+  `app/lightweight-video-editor/page.tsx` claims "Works on 4 GB RAM" on lines 14
+  and 33 and "Requires only 2 GB RAM" on line 64. One of the two is wrong and
+  they are on the same page. Needs an answer before either is repeated.
+
 - **Personal site:** `https://gabrielebolognese.blog`
 - **Verified logo URL:** `https://flashfx.app/android-chrome-192x192.png`
   — confirmed live 2026-08-03, 200 OK, PNG, 192×192, 13.1 KB. Clears Google's
