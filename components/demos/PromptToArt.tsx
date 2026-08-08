@@ -758,7 +758,21 @@ export function PromptToArt() {
         Not `pointer-events-none`, unlike every other layer here — this is the
         one thing in the demo anybody is meant to click.
       */}
-      <div className="absolute bottom-[4%] inset-x-0 lg:right-auto lg:w-[50vw] flex justify-center px-4 z-20">
+      {/*
+        Lifted well clear of the bottom edge, and pulled left of centre.
+
+        `.fx-cta` throws a wide glow *below* itself — `0 26px 70px -12px` on
+        hover, which reaches roughly 84px past the border box. At `bottom-[4%]`
+        there were about 33px of room before the stage's `overflow-hidden`, so
+        the glow was sliced off in a hard horizontal line under the button.
+
+        The offset is in pixels, not a percentage, and that matters: the glow is
+        a fixed size, so a percentage that clears it on a tall viewport still
+        clips on a short one. 13% was 107px at full height but only 81px against
+        the 620px floor — under the glow again. 100px clears it at every height
+        this stage can take.
+      */}
+      <div className="absolute bottom-[100px] inset-x-0 lg:right-auto lg:w-[50vw] flex justify-center lg:justify-start lg:pl-[7vw] px-4 z-20">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={slid ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
