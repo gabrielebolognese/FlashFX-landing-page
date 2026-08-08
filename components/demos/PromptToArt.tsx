@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Paperclip, Image as ImageIcon, Mic, Sparkles, ArrowRight } from 'lucide-react';
+import { Paperclip, Image as ImageIcon, Mic, Sparkles, ArrowRight, Copy } from 'lucide-react';
 import { useDemo } from './demo-kit';
 
 /*
@@ -11,24 +11,25 @@ import { useDemo } from './demo-kit';
  * The claim of the section is that Claude *operates* the editor, so the demo
  * shows the operating rather than the result: a request is typed, sent, worked
  * on, and then edited further by a cursor that is visibly not yours — selecting
- * the vase, dragging out a copy, and switching on a particle effect.
+ * the vase mid-growth, duplicating it, and switching on a particle effect.
  *
  * ── The sequence ────────────────────────────────────────────────────────────
  *
- *   1s pause   nothing, deliberately
+ *   150ms      just enough that the box arrives rather than being there already
  *   box        the chat box arrives, glowing
  *   typing     five words are typed; the rest lands at once — see TYPED_WORDS
  *   ready      "Edit now" comes out of its disabled state
  *   click      the button is pressed, with a ring
- *   slide      the box leaves left, slowly, at full size
- *   loading    a 300 ms spinner where the artwork will be
+ *   slide      the box leaves left, slowly, at full size — and the artwork
+ *              starts *during* this rather than after it
  *   square     a plain square, which is where every animation starts
  *   morph      the square becomes a vase; flowers and leaves grow out of it
- *   cursors    two cursors arrive — somebody else is in the document
- *   select     the vase is boxed in a yellow selection
- *   duplicate  a copy is dragged out to the right and dropped smaller
+ *   half       halfway through the growth, Claude clicks and selects it
+ *   dupBtn     a Duplicate control appears beside the selection
+ *   dupPress   Claude presses it
+ *   duplicated a copy stands next to the original, close enough to overlap
  *   button     a "rain particles" control appears over the flowers
- *   press      a cursor presses it, the control disappears
+ *   press      Claude presses it, the control disappears
  *   raining    rain falls on both, and nothing stops moving again
  *
  * Every duration is in `STEP`, and the effect adds them up in order. One clock,
@@ -57,24 +58,33 @@ const HEAD = PROMPT.split(' ').slice(0, TYPED_WORDS).join(' ');
 
 /** Milliseconds, each measured from the end of the step before it. */
 const STEP = {
-  wait: 1000,
+  /* Just enough that the box arrives rather than being there already. A full
+     second of nothing was dead air on a sequence this long. */
+  wait: 150,
   box: 700,
   perChar: 42,
   head: 420,
   ready: 460,
   click: 300,
-  /* Slow, and eased at both ends. The box is leaving, not being flicked away —
-     a fast exit reads as a glitch on something this large. */
+  /* Slow, and eased at both ends: the box is leaving, not being flicked away.
+     The artwork starts while this is still running — see `loader` below. */
   slide: 1400,
-  loading: 300,
-  square: 520,
-  morph: 1600,
-  cursors: 520,
-  select: 560,
-  duplicate: 1050,
+  /* Measured from the moment the box *starts* leaving, not from when it has
+     gone. The two overlap, which is what removes the dead beat where the stage
+     was empty and something was about to happen. */
+  loader: 300,
+  square: 480,
+  morph: 1500,
+  /* Roughly the midpoint of the growth. The vase is recognisably a vase and the
+     flowers are still on their way up, which is the moment a selection reads as
+     an interruption rather than a formality. */
+  half: 780,
+  select: 620,
+  dupBtn: 800,
+  dupPress: 380,
   button: 820,
   press: 340,
-};
+} as const;
 
 const S = {
   idle: 0,
@@ -83,12 +93,12 @@ const S = {
   ready: 3,
   click: 4,
   slide: 5,
-  loading: 6,
-  square: 7,
-  morph: 8,
-  cursors: 9,
-  select: 10,
-  duplicate: 11,
+  square: 6,
+  morph: 7,
+  half: 8,
+  dupBtn: 9,
+  dupPress: 10,
+  duplicated: 11,
   button: 12,
   press: 13,
   raining: 14,
@@ -218,6 +228,23 @@ function Flower({
 function VaseContent({ grown, active, raining }: { grown: boolean; active: boolean; raining: boolean }) {
   return (
     <>
+      {/*
+       * The contact shadow, and the reason the copy stopped looking like it was
+       * hovering. A scaled-down object on a bare background has nothing to say
+       * how far away it is; a shadow pinned to its foot puts it on the ground.
+       * It lives inside the vase rather than in the scene so it scales with it —
+       * a smaller vase casts a smaller shadow, which is the whole cue.
+       */}
+      <motion.ellipse
+        cx={200}
+        cy={315}
+        rx={46}
+        ry={7.5}
+        fill="rgba(4, 8, 22, 0.45)"
+        animate={{ opacity: grown ? 1 : 0.5 }}
+        transition={{ duration: 0.5 }}
+      />
+
       {FLOWERS.map((flower, i) => (
         <Flower key={i} flower={flower} index={i} grown={grown} active={active} />
       ))}
@@ -323,6 +350,7 @@ function Cursor({
   visible,
   delay = 0,
   travel = 0.75,
+  clicking = false,
 }: {
   x: number;
   y: number;
@@ -331,6 +359,8 @@ function Cursor({
   visible: boolean;
   delay?: number;
   travel?: number;
+  /** Fires the ring and the dip. Set true only for the frame of the press. */
+  clicking?: boolean;
 }) {
   return (
     <motion.div
@@ -346,9 +376,30 @@ function Cursor({
         top: { duration: travel, ease: [0.22, 1, 0.36, 1] },
       }}
     >
-      <svg width="20" height="22" viewBox="0 0 20 22" fill="none">
+      {/*
+       * The click. A cursor that arrives somewhere and a thing that changes at
+       * the same moment is ambiguous — it could be the cursor causing it or the
+       * cursor happening to be there. A ring expanding out of the pointer is
+       * what makes it read as a press.
+       */}
+      <motion.span
+        className="absolute rounded-full border-2 pointer-events-none"
+        style={{ borderColor: colour, left: -13, top: -13, width: 28, height: 28 }}
+        initial={{ opacity: 0, scale: 0.35 }}
+        animate={clicking ? { opacity: [0.95, 0], scale: [0.35, 2.1] } : { opacity: 0, scale: 0.35 }}
+        transition={{ duration: 0.52, ease: 'easeOut' }}
+      />
+
+      <motion.svg
+        width="20"
+        height="22"
+        viewBox="0 0 20 22"
+        fill="none"
+        animate={{ scale: clicking ? 0.82 : 1 }}
+        transition={{ duration: 0.14, ease: 'easeOut' }}
+      >
         <path d="M2 1.5 L2 17 L6.2 13.2 L9 19.6 L12 18.2 L9.2 12 L15 12 Z" fill={colour} stroke="#0b1020" strokeWidth={1.3} strokeLinejoin="round" />
-      </svg>
+      </motion.svg>
       <span
         className="absolute left-4 top-4 px-1.5 py-0.5 rounded font-mono text-[9px] whitespace-nowrap"
         style={{ background: colour, color: '#0b1020' }}
@@ -361,19 +412,20 @@ function Cursor({
 
 function VaseScene({ step, active }: { step: number; active: boolean }) {
   const grown = step >= S.morph;
-  const selected = step >= S.select && step <= S.duplicate;
-  const duplicated = step >= S.duplicate;
+  const selected = step >= S.half && step <= S.dupPress;
+  const duplicated = step >= S.duplicated;
   const raining = step >= S.raining;
 
   /*
    * The arrangement is drawn around x=200 but only occupies about a third of the
    * frame at scale 1, which is what made it read as small. It sits at 1.22 while
-   * it is the only thing on screen, then steps back to 0.94 and slides left when
-   * the copy needs room. Scaled about the vase's foot, so it grows upward off
-   * the ground rather than out of its own middle.
+   * it is the only thing on screen, then steps back to 0.98 and shifts a little
+   * left when the copy needs room. Scaled about the vase's foot, so it grows
+   * upward off the ground rather than out of its own middle — and so both vases
+   * keep their feet on the same line however they are scaled.
    */
-  const mainScale = duplicated ? 0.94 : 1.22;
-  const mainX = duplicated ? -62 : 0;
+  const mainScale = duplicated ? 0.98 : 1.22;
+  const mainX = duplicated ? -34 : 0;
 
   return (
     <svg viewBox="0 0 400 330" className="w-full h-full" role="img" aria-label="A square morphing into a vase of flowers, copied and rained on">
@@ -391,6 +443,18 @@ function VaseScene({ step, active }: { step: number; active: boolean }) {
       </defs>
 
       <ellipse cx={200} cy={180} rx={190} ry={150} fill="url(#fx-vase-glow)" />
+
+      {/*
+       * A stylised ground, at exactly the y both vases stand on (314). Without
+       * it the scene had no floor, so a scaled-down copy read as hovering rather
+       * than as standing further away. Two bands and a horizon line — enough to
+       * say "surface", not enough to become scenery.
+       */}
+      <motion.g animate={{ opacity: step >= S.morph ? 1 : 0 }} transition={{ duration: 0.6 }}>
+        <path d="M0,314 Q200,304 400,314 L400,330 L0,330 Z" fill="#1B2A54" />
+        <path d="M0,314 Q200,304 400,314" fill="none" stroke="rgba(245,197,24,0.22)" strokeWidth={1.5} />
+        <path d="M0,322 Q200,314 400,322 L400,330 L0,330 Z" fill="#16224A" />
+      </motion.g>
 
       {/* Rain falls on the whole scene, so it is drawn once at scene level and
           not inside either vase. It exists only after the control is pressed —
@@ -416,18 +480,26 @@ function VaseScene({ step, active }: { step: number; active: boolean }) {
           />
         ))}
 
-      {/* The copy. It starts exactly on top of the original at the same size, so
-          what you see is one being pulled out of the other rather than a second
-          one fading in somewhere else. */}
+      {/*
+       * The copy. It starts exactly on top of the original at the same size, so
+       * what you see is one coming out of the other rather than a second one
+       * fading in somewhere else.
+       *
+       * It lands close — +64 against the original's -34, at 0.66 scale — so the
+       * two bunches of flowers overlap. Set far apart they read as two separate
+       * illustrations; overlapping, they read as two objects in one scene.
+       * Because both are scaled about y=314, the copy's foot lands on the same
+       * ground line as the original's.
+       */}
       <motion.g
         style={{ transformBox: 'view-box', transformOrigin: '200px 314px' }}
         initial={false}
         animate={
           duplicated
-            ? { opacity: 1, x: 112, scale: 0.6 }
+            ? { opacity: 1, x: 64, scale: 0.66 }
             : { opacity: 0, x: mainX, scale: mainScale }
         }
-        transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
       >
         <VaseContent grown={grown} active={active} raining={raining} />
       </motion.g>
@@ -436,7 +508,7 @@ function VaseScene({ step, active }: { step: number; active: boolean }) {
         style={{ transformBox: 'view-box', transformOrigin: '200px 314px' }}
         initial={false}
         animate={{ x: mainX, scale: mainScale }}
-        transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
       >
         <VaseContent grown={grown} active={active} raining={raining} />
         <SelectionBox shown={selected} />
@@ -512,14 +584,17 @@ export function PromptToArt() {
 
       then(STEP.ready, S.click);
       then(STEP.click, S.slide);
-      then(STEP.slide, S.loading);
-      then(STEP.loading, S.square);
+      /* From here the artwork runs against the box's exit rather than after it:
+         `loader` and `square` are measured from the moment the box starts
+         moving, and the 1.4s slide is still in flight while the square lands. */
+      then(STEP.loader, S.square);
       then(STEP.square, S.morph);
-      then(STEP.morph, S.cursors);
-      then(STEP.cursors, S.select);
-      then(STEP.select, S.duplicate);
-      then(STEP.duplicate, S.button);
-      then(STEP.button, S.press);
+      then(STEP.half, S.half);
+      then(STEP.select, S.dupBtn);
+      then(STEP.dupBtn, S.dupPress);
+      then(STEP.dupPress, S.duplicated);
+      then(STEP.button, S.button);
+      then(STEP.press, S.press);
       then(STEP.press, S.raining);
     };
 
@@ -548,22 +623,27 @@ export function PromptToArt() {
   const pressed = step === S.click;
   const slid = step >= S.slide;
   const artIn = step >= S.square;
-  const cursorsIn = step >= S.cursors;
+  const cursorsIn = step >= S.half;
+  const dupBtnIn = step >= S.dupBtn && step <= S.dupPress;
+  const dupPressed = step === S.dupPress;
   const buttonIn = step >= S.button && step <= S.press;
   const buttonPressed = step === S.press;
 
   /*
-   * Where Claude's cursor is at each stage: idle, then on the vase to select it,
-   * then carrying the copy out to the right, then up to the control.
+   * Where Claude's cursor is at each stage: onto the vase to select it, across
+   * to the Duplicate control, then up to the particle control. It never leaves
+   * once it has arrived — a cursor that vanishes between actions reads as two
+   * different pointers.
    */
   const claudeAt =
     step >= S.button
-      ? { x: 50, y: 14 }
-      : step >= S.duplicate
-        ? { x: 74, y: 62 }
-        : step >= S.select
-          ? { x: 44, y: 54 }
-          : { x: 80, y: 72 };
+      ? { x: 50, y: 12 }
+      : step >= S.dupBtn
+        ? { x: 70, y: 30 }
+        : { x: 42, y: 52 };
+
+  /* Two presses, one frame each: selecting the vase, and pressing Duplicate. */
+  const claudeClicking = step === S.half || dupPressed || buttonPressed;
 
   return (
     <div ref={ref} className="relative w-full h-[64vh] min-h-[440px] md:min-h-[560px] overflow-hidden">
@@ -614,8 +694,43 @@ export function PromptToArt() {
            * just exists, which is what makes the first read as one of several
            * rather than a scripted pointer.
            */}
-          <Cursor {...claudeAt} colour={YELLOW} name="Claude" visible={cursorsIn} travel={0.9} />
-          <Cursor x={18} y={30} colour="#6FA8FF" name="You" visible={cursorsIn} delay={0.18} />
+          {/*
+           * The Duplicate control, appearing next to the selection once the vase
+           * is selected. Replaces the drag it used to be: a cursor dragging a
+           * copy out of an object is a gesture you have to already understand,
+           * where a button that says Duplicate is legible on sight.
+           */}
+          <motion.div
+            className="absolute z-10 -translate-x-1/2"
+            style={{ left: '70%', top: '30%' }}
+            initial={{ opacity: 0, scale: 0.86 }}
+            animate={{ opacity: dupBtnIn ? 1 : 0, scale: dupBtnIn ? 1 : 0.86 }}
+            transition={{ duration: 0.26 }}
+          >
+            <motion.span
+              className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-mono text-[10px] sm:text-[11px] tracking-wide whitespace-nowrap"
+              style={{
+                background: 'rgba(22, 33, 68, 0.96)',
+                borderColor: 'rgba(245,197,24,0.6)',
+                color: YELLOW,
+              }}
+              animate={{ scale: dupPressed ? 0.9 : 1 }}
+              transition={{ duration: 0.16 }}
+            >
+              <Copy className="w-3 h-3" strokeWidth={2} />
+              Duplicate
+              <motion.span
+                className="absolute inset-0 rounded-lg border-2 pointer-events-none"
+                style={{ borderColor: YELLOW }}
+                initial={{ opacity: 0, scale: 1 }}
+                animate={dupPressed ? { opacity: [0.9, 0], scale: [1, 1.7] } : { opacity: 0, scale: 1 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+              />
+            </motion.span>
+          </motion.div>
+
+          <Cursor {...claudeAt} colour={YELLOW} name="Claude" visible={cursorsIn} travel={0.72} clicking={claudeClicking} />
+          <Cursor x={16} y={26} colour="#6FA8FF" name="You" visible={cursorsIn} delay={0.18} />
         </motion.div>
       </div>
 
@@ -624,7 +739,7 @@ export function PromptToArt() {
         <motion.span
           className="w-9 h-9 rounded-full border-2 border-fx-border"
           style={{ borderTopColor: YELLOW }}
-          animate={step === S.loading ? { opacity: 1, rotate: 360 } : { opacity: 0, rotate: 0 }}
+          animate={step === S.slide ? { opacity: 1, rotate: 360 } : { opacity: 0, rotate: 0 }}
           transition={{
             rotate: { duration: 0.55, repeat: Number.POSITIVE_INFINITY, ease: 'linear' },
             opacity: { duration: 0.14 },
