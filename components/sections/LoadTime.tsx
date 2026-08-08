@@ -2,6 +2,8 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
+import { CtaButton } from '@/components/ui/cta-button';
+import { EDITOR_URL } from '@/lib/editor';
 
 /*
  * "Tired of lag?" — the performance section.
@@ -191,6 +193,21 @@ export function LoadTime() {
             <StatCard key={stat.label} stat={stat} index={i} run={run} />
           ))}
         </div>
+
+        {/* Six figures and then the obvious next move. The one claim on this
+            page a visitor can check in about two seconds is the two-second
+            one. */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-14 flex justify-center"
+        >
+          <CtaButton href={EDITOR_URL} size="lg">
+            Try it for yourself
+          </CtaButton>
+        </motion.div>
       </div>
     </section>
   );

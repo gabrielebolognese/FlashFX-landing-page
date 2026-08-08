@@ -4,6 +4,8 @@
 import Image from 'next/image';
 import { useRef, useCallback, useEffect } from 'react';
 import type { LucideIcon } from 'lucide-react';
+import { CtaButton } from '@/components/ui/cta-button';
+import { EDITOR_URL } from '@/lib/editor';
 
 import { editorFeatures, FeatureItem } from './feature-highlights/editorFeatures';
 import { animationPresets, AnimationPresetItem } from './feature-highlights/animationPresets';
@@ -292,20 +294,24 @@ export function FeatureHighlights() {
           }}
         />
 
-        <div className="absolute inset-x-0 bottom-0 flex justify-center px-6 pb-[7%]">
-          <p
-            style={{
-              color: '#f5c842',
-              fontFamily: 'var(--font-inter), sans-serif',
-              fontSize: 'clamp(2.5rem, 5vw, 5rem)',
-              fontWeight: 700,
-              letterSpacing: '-0.025em',
-              lineHeight: 1,
-              textShadow: '0 8px 40px rgba(20,31,64,0.9)',
-            }}
+        {/*
+          The caption is the button. It was yellow text sitting on the picture;
+          it is now a filled call to action at exactly the same
+          `clamp(2.5rem, 5vw, 5rem)`, which is what `xl` exists for — every
+          measurement in that size is in `em`, so the padding, the gap and the
+          arrow all scale off this one font size rather than being guessed.
+
+          No `textShadow` any more: `.fx-cta` brings its own glow, and the two
+          layered on each other read as a smudge.
+        */}
+        <div className="absolute inset-x-0 bottom-0 flex justify-center px-6 pb-[6%]">
+          <CtaButton
+            href={EDITOR_URL}
+            size="xl"
+            style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)', letterSpacing: '-0.025em', lineHeight: 1 }}
           >
             And so much more
-          </p>
+          </CtaButton>
         </div>
       </div>
 

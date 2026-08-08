@@ -26,8 +26,13 @@ interface CtaButtonProps {
    * between. `sm` is the navigation bar — same gradient, sheen and lift, at a
    * size that belongs in a 56px-tall bar.
    */
-  size?: 'lg' | 'md' | 'sm';
+  size?: 'lg' | 'md' | 'sm' | 'xl';
   className?: string;
+  /**
+   * Merged after the font family, so a caller can set its own `fontSize`.
+   * Only useful with `xl`, which is the size built to be driven that way.
+   */
+  style?: React.CSSProperties;
 }
 
 const SIZES = {
@@ -43,9 +48,19 @@ const SIZES = {
     box: 'px-4 sm:px-5 py-2 text-sm gap-1.5',
     arrow: 'w-3.5 h-3.5',
   },
+  /*
+   * No font size of its own: every measurement is in `em`, so the caller sets
+   * `fontSize` and the padding, gap and arrow all follow. That is what lets the
+   * iceberg button keep a `clamp(2.5rem, 5vw, 5rem)` headline size and still be
+   * proportioned like every other call to action on the site.
+   */
+  xl: {
+    box: 'px-[0.72em] py-[0.34em] gap-[0.28em]',
+    arrow: 'w-[0.76em] h-[0.76em]',
+  },
 } as const;
 
-export function CtaButton({ href, children, size = 'lg', className }: CtaButtonProps) {
+export function CtaButton({ href, children, size = 'lg', className, style }: CtaButtonProps) {
   const s = SIZES[size];
 
   /*
@@ -66,7 +81,7 @@ export function CtaButton({ href, children, size = 'lg', className }: CtaButtonP
         s.box,
         className
       )}
-      style={{ fontFamily: 'var(--font-inter), sans-serif' }}
+      style={{ fontFamily: 'var(--font-inter), sans-serif', ...style }}
     >
       {children}
       <ArrowRight
