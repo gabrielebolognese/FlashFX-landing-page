@@ -85,6 +85,8 @@ const STEP = {
   dupPress: 380,
   button: 820,
   press: 340,
+  /* How long the rain runs before the whole thing starts over. */
+  rain: 1000,
 } as const;
 
 const S = {
@@ -522,8 +524,8 @@ export function PromptToArt() {
   const { ref, active } = useDemo();
   const [step, setStep] = useState<number>(S.idle);
   const [typed, setTyped] = useState('');
+  const [cycle, setCycle] = useState(0);
   const [wide, setWide] = useState(true);
-  const started = useRef(false);
 
   /*
    * How far the box leaves by depends on whether the artwork has a column of its
@@ -540,83 +542,80 @@ export function PromptToArt() {
     return () => query.removeEventListener('change', sync);
   }, []);
 
+  /*
+   * The sequence runs on the governor's grant and repeats.
+   *
+   * It used to fire once, from its own IntersectionObserver that disconnected
+   * afterwards — so anyone who arrived a moment late, or scrolled back, found a
+   * finished still. `active` from `useDemo` already means "on screen and holding
+   * a slot", which is the same condition and one the governor can withdraw, so
+   * the private observer is gone. Incrementing `cycle` at the end re-runs this
+   * effect and plays it again from the top.
+   */
   useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
+    if (!active) return;
 
     const timers: ReturnType<typeof setTimeout>[] = [];
     const at = (ms: number, fn: () => void) => timers.push(setTimeout(fn, ms));
 
-    const run = () => {
-      if (started.current) return;
-      started.current = true;
+    // Reduced motion gets the finished state and no loop at all: the outcome is
+    // the artwork, and repeating it would be motion for its own sake.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setTyped(PROMPT);
+      setStep(S.raining);
+      return;
+    }
 
-      // Reduced motion gets the finished state, not a faster sequence: the
-      // outcome is the artwork, so the artwork is what it gets.
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        setTyped(PROMPT);
-        setStep(S.raining);
-        return;
-      }
+    setStep(S.idle);
+    setTyped('');
 
-      let t = STEP.wait;
-      const then = (ms: number, s: number) => {
-        t += ms;
-        at(t, () => setStep(s));
-      };
-
-      at(t, () => setStep(S.box));
-
-      t += STEP.box;
-      at(t, () => setStep(S.typing));
-      // Only the first five words are typed out.
-      for (let i = 1; i <= HEAD.length; i++) {
-        at(t + i * STEP.perChar, () => setTyped(HEAD.slice(0, i)));
-      }
-      t += HEAD.length * STEP.perChar;
-      /* Then the rest lands in one go, and the send button ungreys on the same
-         frame — the button becoming live *is* the signal that the prompt is
-         complete, so it cannot lag behind the text. */
-      t += STEP.head;
-      at(t, () => {
-        setTyped(PROMPT);
-        setStep(S.ready);
-      });
-
-      then(STEP.ready, S.click);
-      then(STEP.click, S.slide);
-      /* From here the artwork runs against the box's exit rather than after it:
-         `loader` and `square` are measured from the moment the box starts
-         moving, and the 1.4s slide is still in flight while the square lands. */
-      then(STEP.loader, S.square);
-      then(STEP.square, S.morph);
-      then(STEP.half, S.half);
-      then(STEP.select, S.dupBtn);
-      then(STEP.dupBtn, S.dupPress);
-      then(STEP.dupPress, S.duplicated);
-      then(STEP.button, S.button);
-      then(STEP.press, S.press);
-      then(STEP.press, S.raining);
+    let t = STEP.wait;
+    const then = (ms: number, s: number) => {
+      t += ms;
+      at(t, () => setStep(s));
     };
 
-    /* Starts on arrival. A sequence that finished before you scrolled to it has
-       shown nobody anything. */
-    const observer = new IntersectionObserver(
-      (records) => {
-        if (records.some((r) => r.isIntersecting)) {
-          run();
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.3 }
-    );
-    observer.observe(node);
+    at(t, () => setStep(S.box));
 
-    return () => {
-      observer.disconnect();
-      timers.forEach(clearTimeout);
-    };
-  }, [ref]);
+    t += STEP.box;
+    at(t, () => setStep(S.typing));
+    // Only the first five words are typed out.
+    for (let i = 1; i <= HEAD.length; i++) {
+      at(t + i * STEP.perChar, () => setTyped(HEAD.slice(0, i)));
+    }
+    t += HEAD.length * STEP.perChar;
+    /* Then the rest lands in one go, and the send button ungreys on the same
+       frame — the button becoming live *is* the signal that the prompt is
+       complete, so it cannot lag behind the text. */
+    t += STEP.head;
+    at(t, () => {
+      setTyped(PROMPT);
+      setStep(S.ready);
+    });
+
+    then(STEP.ready, S.click);
+    then(STEP.click, S.slide);
+    /* From here the artwork runs against the box's exit rather than after it:
+       `loader` and `square` are measured from the moment the box starts
+       moving, and the 1.4s slide is still in flight while the square lands. */
+    then(STEP.loader, S.square);
+    then(STEP.square, S.morph);
+    then(STEP.half, S.half);
+    then(STEP.select, S.dupBtn);
+    then(STEP.dupBtn, S.dupPress);
+    then(STEP.dupPress, S.duplicated);
+    then(STEP.button, S.button);
+    then(STEP.press, S.press);
+    then(STEP.press, S.raining);
+
+    /* One second of rain, then round again. Long enough to register that the
+       particles were the point of the last press, short enough that a visitor
+       who looked away does not come back to a still frame. */
+    t += STEP.rain;
+    timers.push(setTimeout(() => setCycle((c) => c + 1), t));
+
+    return () => timers.forEach(clearTimeout);
+  }, [active, cycle]);
 
   const boxIn = step >= S.box;
   const typing = step === S.typing;

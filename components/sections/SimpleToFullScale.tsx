@@ -78,7 +78,7 @@ export function SimpleToFullScale() {
 
   return (
     <section id="simple-to-full-scale" className="relative w-full py-20 md:py-28 overflow-hidden">
-      <div className="relative z-10 mx-auto px-4 sm:px-6" style={{ maxWidth: 1680 }}>
+      <div className="relative z-10 mx-auto px-4 sm:px-6" style={{ maxWidth: 1344 }}>
         {SHOTS.map((shot, i) => (
           <div key={shot.src} className={i === 0 ? '' : 'mt-16 md:mt-24'}>
             <motion.h2
@@ -123,6 +123,24 @@ export function SimpleToFullScale() {
             </motion.button>
           </div>
         ))}
+
+        {/*
+          The hand-off into "Edit in plain English", which is the next section.
+          It belongs here rather than on that section's own heading because it
+          answers the picture directly above it: the expert shot is 334 tracks of
+          hand-placed keyframes, and this is the sentence that says you do not
+          have to place them.
+        */}
+        <motion.p
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mt-14 md:mt-20 text-center text-2xl sm:text-3xl md:text-4xl leading-snug text-white"
+          style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 600, letterSpacing: '-0.025em' }}
+        >
+          But don&rsquo;t worry, you don&rsquo;t have to do all this manually, because you can&hellip;
+        </motion.p>
       </div>
 
       <AnimatePresence>
