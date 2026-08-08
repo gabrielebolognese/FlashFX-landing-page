@@ -16,14 +16,16 @@ import dynamic from 'next/dynamic';
 
 const card = <div className="w-full aspect-[4/3] rounded-xl border border-fx-border" />;
 
+/* No border on this placeholder: the agent demo has no panel of its own, so a
+   card here would flash a frame that never arrives. */
 export const AgentLanes = dynamic(() => import('./ConvinceDemos').then((m) => m.AgentLanes), {
   ssr: false,
-  loading: () => card,
+  loading: () => <div className="w-full aspect-[16/10]" />,
 });
 
 export const EditNotGenerate = dynamic(() => import('./ConvinceDemos').then((m) => m.EditNotGenerate), {
   ssr: false,
-  loading: () => <div className="w-full aspect-[16/7] rounded-xl border border-fx-border" />,
+  loading: () => card,
 });
 
 export const AskAI = dynamic(() => import('./ConvinceDemos').then((m) => m.AskAI), {
@@ -31,12 +33,8 @@ export const AskAI = dynamic(() => import('./ConvinceDemos').then((m) => m.AskAI
   loading: () => card,
 });
 
-export const InspiredBy = dynamic(() => import('./ConvinceDemos').then((m) => m.InspiredBy), {
-  ssr: false,
-  loading: () => card,
-});
 
 export const Endless = dynamic(() => import('./ConvinceDemos').then((m) => m.Endless), {
   ssr: false,
-  loading: () => <div className="w-full rounded-xl border border-fx-border" style={{ minHeight: 300 }} />,
+  loading: () => <div className="w-full aspect-[4/5] rounded-xl border border-fx-border" />,
 });

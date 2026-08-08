@@ -12,7 +12,8 @@ import { FeaturesOpener } from '@/components/sections/FeaturesOpener';
 import { FeatureBlock } from '@/components/sections/FeatureBlock';
 import { ShapeTools, ClipPlayback, VectorPen } from '@/components/demos/feature-demos';
 import { ConvinceOpener } from '@/components/sections/ConvinceOpener';
-import { AgentLanes, EditNotGenerate, AskAI, InspiredBy, Endless } from '@/components/demos/convince-demos';import { ParticleGeneration } from '@/components/sections/ParticleGeneration';
+import { AgentLanes, EditNotGenerate, AskAI, Endless } from '@/components/demos/convince-demos';
+import { InspiredFrom } from '@/components/sections/InspiredFrom';import { ParticleGeneration } from '@/components/sections/ParticleGeneration';
 import { ProceduralAnimation } from '@/components/sections/ProceduralAnimation';
 import { TemplateStart } from '@/components/sections/TemplateStart';
 import { AllOnWeb } from '@/components/sections/AllOnWeb';
@@ -288,7 +289,6 @@ export default function Home() {
           id="non-destructive"
           title="Non-destructive AI editing"
           accent="editing"
-          layout="full"
           subtitle="Other tools generate a video and hand you a file. FlashFX does not generate video at all. The AI uses the editor: it works on your footage, cuts long videos, and builds real animation, and everything it touches stays editable at full scale afterwards. It can call other AI tools when it needs them, but what you get back is a project, not a render."
         >
           <EditNotGenerate />
@@ -308,21 +308,12 @@ export default function Home() {
           <AskAI />
         </FeatureBlock>
 
-        <FeatureBlock
-          id="inspired"
-          title="Inspired from the best"
-          accent="the best"
-          subtitle="The speed of CapCut, the depth of Premiere Pro, and above all the way Figma treats a canvas. Taken together into something quick to use and still deep enough to stay in."
-          list={['CapCut, for how fast it gets out of the way', 'Premiere Pro, for technical depth', 'Figma, above all, for the canvas']}
-        >
-          <InspiredBy />
-        </FeatureBlock>
+        <InspiredFrom />
 
         <FeatureBlock
           id="endless"
           title="The possibilities are endless"
           accent="endless"
-          layout="full"
           subtitle="Official FlashFX plugins, and plugins built by the people using it. The same goes for templates and presets: what ships is a starting point, not the ceiling."
         >
           <Endless />
