@@ -11,18 +11,13 @@ import { CtaButton } from '@/components/ui/cta-button';
  * showing what the editor can do and a visitor might reasonably wonder how they
  * would ever make any of it themselves.
  *
- * ── The four cards are placeholders, and are built to be replaced ───────────
+ * ── Real screenshots, not placeholders ──────────────────────────────────────
  *
- * Each one takes an optional `src`. With no image it draws its own field of
- * colour and reads as a designed card rather than a broken one; give it a path
- * and `next/image` takes over. Swapping in real artwork is one line per card,
- * with no other change to the file.
- *
- * No stock imagery was downloaded for them, for the same reasons as the media
- * pool: a licence cannot be verified for a file fetched at build time, and
- * `scripts/check-budgets.mjs` fails the build over 220 kB for any single asset.
- * Real template screenshots are the right content here and they have to come
- * from the product.
+ * The cards were drawn placeholders until the owner supplied four screenshots of
+ * the templates open in the editor. Everything on them now comes from those
+ * images: the names, the blurbs, and the "Scenes" category. Nothing here is
+ * invented, which is the point — the whole argument of the section is that these
+ * are things the product actually ships.
  *
  * ── Where the button goes ───────────────────────────────────────────────────
  *
@@ -35,19 +30,44 @@ import { CtaButton } from '@/components/ui/cta-button';
 
 type Template = {
   title: string;
-  level: string;
-  /** Drop a path in and the drawn placeholder gives way to the real thing. */
-  src?: string;
-  /** Two stops for the placeholder field. */
-  from: string;
-  to: string;
+  /** The description the editor itself shows for this template. */
+  blurb: string;
+  src: string;
 };
 
+/*
+ * The four are real templates, and everything here is read off the editor
+ * screenshots in `public/templates/` rather than invented: the names are the
+ * layer names, and the blurbs are the descriptions the editor's own animation
+ * browser prints under each one. All four are in its "Scenes" category.
+ *
+ * The screenshots arrived as PNGs between 203 and 223 kB, and two of them were
+ * over the 220 kB per-asset budget that `scripts/check-budgets.mjs` fails the
+ * build on. They are WebP at 1200px now: 860 kB down to 165 kB, 81% less, for
+ * cards that render around 500px wide. Re-export at that width if they are ever
+ * replaced.
+ */
 const TEMPLATES: Template[] = [
-  { title: 'Logo sting', level: 'Beginner', from: '#2D6BE4', to: '#7C5CBF' },
-  { title: 'Kinetic titles', level: 'Intermediate', from: '#F5C518', to: '#E86A9B' },
-  { title: 'Product reveal', level: 'Advanced', from: '#4ADE80', to: '#2D6BE4' },
-  { title: 'The whole toolbox', level: 'Monstrosity', from: '#7C5CBF', to: '#F5C518' },
+  {
+    title: 'City Skyline',
+    blurb: 'A night skyline with a glowing moon and twinkling windows.',
+    src: '/templates/cityskyline.webp',
+  },
+  {
+    title: 'Forest',
+    blurb: 'Layered trees swaying in the breeze with drifting leaves.',
+    src: '/templates/forest.webp',
+  },
+  {
+    title: 'Galaxy',
+    blurb: 'A glowing core with planets orbiting on tilted rings over a starfield.',
+    src: '/templates/galaxy.webp',
+  },
+  {
+    title: 'Rocket Launch',
+    blurb: 'A rocket lifts off with a flickering flame past twinkling stars.',
+    src: '/templates/rocketlaunch.webp',
+  },
 ];
 
 function TemplateCard({ template, index }: { template: Template; index: number }) {
@@ -68,38 +88,41 @@ function TemplateCard({ template, index }: { template: Template; index: number }
        */
       className="fx-template group relative block rounded-2xl overflow-hidden border border-fx-border"
     >
-      <div className="relative w-full aspect-video">
-        {template.src ? (
-          <Image src={template.src} alt={template.title} fill sizes="(min-width: 1024px) 40vw, 90vw" className="object-cover" />
-        ) : (
-          <>
-            <div
-              className="absolute inset-0"
-              style={{ background: `linear-gradient(135deg, ${template.from} 0%, ${template.to} 100%)`, opacity: 0.5 }}
-            />
-            {/* A little structure over the field, so an empty card still reads
-                as a composition rather than a swatch. */}
-            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 320 180" preserveAspectRatio="none" aria-hidden="true">
-              <path d="M0,150 Q80,120 160,142 T320,128 L320,180 L0,180 Z" fill="rgba(8,13,30,0.42)" />
-              <path d="M0,166 Q90,142 180,160 T320,150 L320,180 L0,180 Z" fill="rgba(8,13,30,0.6)" />
-            </svg>
-            <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(8,13,30,0) 0%, rgba(8,13,30,0.55) 100%)' }} />
-          </>
-        )}
+      {/*
+        The screenshots are 1200x615, which is 1.95:1 rather than a video's 1.78.
+        The card takes the image's own ratio instead of forcing 16:9 and cropping
+        with `object-cover` — 9% off the sides of an editor screenshot would eat
+        into the left tool rail and the properties panel on the right, which are
+        most of what makes it read as an editor at all.
+      */}
+      <div className="relative w-full aspect-[1200/615]">
+        <Image
+          src={template.src}
+          alt={`The ${template.title} template open in the FlashFX editor`}
+          fill
+          sizes="(min-width: 640px) 46vw, 90vw"
+          className="object-cover"
+        />
 
         <span
           className="absolute top-3 left-3 px-2 py-1 rounded-full font-mono text-[10px] uppercase tracking-widest"
-          style={{ background: 'rgba(8, 13, 30, 0.72)', color: '#F5C518' }}
+          style={{ background: 'rgba(8, 13, 30, 0.78)', color: '#F5C518' }}
         >
-          {template.level}
+          Scenes
         </span>
+      </div>
 
+      {/* Name and blurb sit under the picture rather than over it: laid on top
+          they covered the timeline, which is the part of the screenshot doing
+          the arguing. */}
+      <div className="px-5 py-4">
         <span
-          className="absolute bottom-3 left-4 text-lg sm:text-xl text-white"
+          className="block text-lg sm:text-xl text-white"
           style={{ fontFamily: 'var(--font-inter), sans-serif', fontWeight: 600, letterSpacing: '-0.02em' }}
         >
           {template.title}
         </span>
+        <span className="mt-1 block text-sm text-fx-text-secondary leading-relaxed">{template.blurb}</span>
       </div>
     </motion.a>
   );
