@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { CtaButton } from '@/components/ui/cta-button';
+import { editorTemplate } from '@/lib/editor';
 import {
   DEFAULTS,
   PRESETS,
@@ -166,7 +167,7 @@ export function ParticleGeneration() {
               matches it competes with it.
             */}
             <div className="pt-2">
-              <CtaButton href="https://editor.flashfx.app" size="md">
+              <CtaButton href={editorTemplate('particles')} size="md">
                 Make your own
               </CtaButton>
             </div>
