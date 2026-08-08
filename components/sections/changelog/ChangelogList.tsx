@@ -43,7 +43,7 @@ export function ChangelogList() {
                 >
                   roadmap.flashfx.app
                 </a>{' '}
-                — what is being built next
+: what is being built next
               </li>
               <li className="text-fx-text-secondary leading-relaxed pl-4 relative">
                 <span
@@ -58,7 +58,7 @@ export function ChangelogList() {
                 >
                   blog.flashfx.app
                 </a>{' '}
-                — longer write-ups of bigger changes
+: longer write-ups of bigger changes
               </li>
               <li className="text-fx-text-secondary leading-relaxed pl-4 relative">
                 <span
@@ -73,12 +73,12 @@ export function ChangelogList() {
                 >
                   X
                 </a>{' '}
-                — smaller changes as they land
+: smaller changes as they land
               </li>
             </ul>
             <p className="text-sm text-fx-text-secondary leading-relaxed mt-8 pt-6 border-t border-fx-border">
               Because everything runs in the browser, you are always on the current version.
-              There is nothing to update — see{' '}
+              There is nothing to update: see{' '}
               <Link href="/download" className="text-fx-accent-blue hover:underline">
                 how installing works
               </Link>

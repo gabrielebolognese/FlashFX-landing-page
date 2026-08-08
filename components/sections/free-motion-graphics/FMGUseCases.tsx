@@ -34,7 +34,7 @@ const useCases = [
   {
     icon: Presentation,
     title: 'Presentation Animations',
-    description: 'Add motion to pitch decks and explainer videos without PowerPoint limitations. Export animated sequences as MP4 for embedding in Keynote, Google Slides, or Notion — or present directly via the browser.',
+    description: 'Add motion to pitch decks and explainer videos without PowerPoint limitations. Export animated sequences as MP4 for embedding in Keynote, Google Slides, or Notion, or present directly via the browser.',
     details: [
       'Animated chart reveals',
       'Text entrance animations',

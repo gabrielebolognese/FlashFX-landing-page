@@ -396,7 +396,7 @@ export function LogoAssembly({
         for (let i = 0; i < cubes.length; i++) {
           const cube = cubes[i];
           const u = Math.min(1, Math.max(0, (p - cube.delay) / (1 - STAGGER)));
-          const e = u * u * (3 - 2 * u); // smoothstep — no seams, no stops
+          const e = u * u * (3 - 2 * u); // smoothstep, no seams, no stops
 
           // A straight, eased flight — no duplication arc, because nothing is
           // duplicating: each cube is already its own from the first frame.

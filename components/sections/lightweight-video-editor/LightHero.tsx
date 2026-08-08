@@ -31,7 +31,7 @@ export function LightHero() {
             <span style={{ color: '#f5c842' }}> Built for Low-End PCs</span>
           </h1>
           <p className="text-lg md:text-xl text-fx-text-secondary mb-10 max-w-3xl leading-relaxed">
-            FlashFX is a fast, browser-based motion graphics editor that runs on any machine — Chromebooks, old laptops, and budget PCs included. No installation, no 8 GB RAM requirement, no dedicated GPU. Just open a tab and start editing.
+            FlashFX is a fast, browser-based motion graphics editor that runs on any machine: Chromebooks, old laptops, and budget PCs included. No installation, no 8 GB RAM requirement, no dedicated GPU. Just open a tab and start editing.
           </p>
           <div className="flex flex-wrap gap-4">
             <a href="https://editor.flashfx.app" target="_blank" rel="noopener noreferrer">

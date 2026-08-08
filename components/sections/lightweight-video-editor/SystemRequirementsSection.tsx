@@ -4,11 +4,11 @@ import { motion } from 'framer-motion';
 import { Check, X } from 'lucide-react';
 
 const flashfxReqs = [
-  { spec: 'Operating System', value: 'Any — Chrome, Firefox, Safari, Edge' },
+  { spec: 'Operating System', value: 'Any: Chrome, Firefox, Safari, Edge' },
   { spec: 'RAM', value: '4 GB minimum' },
   { spec: 'CPU', value: 'Any dual-core processor (2010 or newer)' },
-  { spec: 'GPU', value: 'Not required — CPU rendering fallback included' },
-  { spec: 'Storage', value: '0 GB — no installation required' },
+  { spec: 'GPU', value: 'Not required: CPU rendering fallback included' },
+  { spec: 'Storage', value: '0 GB, no installation required' },
   { spec: 'Internet', value: 'Required for editor load (offline export available)' },
   { spec: 'Screen resolution', value: '1024 × 768 minimum' },
 ];
@@ -25,7 +25,7 @@ const competitorReqs = [
   {
     tool: 'DaVinci Resolve',
     ram: '8 GB (16 GB recommended)',
-    storage: '3–4 GB installation',
+    storage: '3-4 GB installation',
     gpu: 'Dedicated GPU strongly recommended',
     os: 'Windows 10+ / macOS 12+',
     passes: false,
@@ -49,7 +49,7 @@ const competitorReqs = [
   {
     tool: 'FlashFX',
     ram: '4 GB minimum',
-    storage: '0 GB — browser-based',
+    storage: '0 GB: browser-based',
     gpu: 'Not required',
     os: 'Any modern browser',
     passes: true,
@@ -71,7 +71,7 @@ export function SystemRequirementsSection() {
             System Requirements
           </h2>
           <p className="text-fx-text-secondary max-w-2xl leading-relaxed">
-            FlashFX is designed to run on hardware that most professional video editors cannot even install on. Here is what you need — and what you do not.
+            FlashFX is designed to run on hardware that most professional video editors cannot even install on. Here is what you need, and what you do not.
           </p>
         </motion.div>
 
@@ -111,7 +111,7 @@ export function SystemRequirementsSection() {
                 'A 64-bit operating system',
                 'Administrator/install permissions',
                 '8 or 16 GB of RAM',
-                'A desktop or laptop — tablets work too',
+                'A desktop or laptop: tablets work too',
               ].map((item) => (
                 <div key={item} className="flex items-center gap-3 px-4 py-3 border border-fx-border rounded-card bg-fx-bg-base">
                   <X className="w-4 h-4 flex-shrink-0 text-red-400" aria-hidden="true" />

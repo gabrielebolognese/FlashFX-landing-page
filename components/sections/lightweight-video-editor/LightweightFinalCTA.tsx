@@ -23,7 +23,7 @@ export function LightweightFinalCTA() {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <a href="https://editor.flashfx.app" target="_blank" rel="noopener noreferrer">
-              <ShimmerButton>Open FlashFX — No Install</ShimmerButton>
+              <ShimmerButton>Open FlashFX, No Install</ShimmerButton>
             </a>
           </div>
           <div className="flex flex-wrap justify-center gap-6 pt-4">

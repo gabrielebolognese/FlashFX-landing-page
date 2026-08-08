@@ -47,7 +47,7 @@ export const pipelines: Pipeline[] = [
       'WebCodecs encode and mux',
     ],
     consequences: [
-      'Compute runs at native speed once frames are on the GPU — WebGPU compute shaders are not emulated.',
+      'Compute runs at native speed once frames are on the GPU: WebGPU compute shaders are not emulated.',
       'Codec work goes through the browser media stack, which does reach hardware encoders and decoders.',
       'Format support is whatever the browser supports, not what we support. That is the hard ceiling.',
       'Memory is bounded by tab and GPU process limits rather than by installed RAM.',
@@ -65,7 +65,7 @@ export const pipelines: Pipeline[] = [
     consequences: [
       'No sandbox between the app and the hardware encoder.',
       'Effects are a fixed list rather than a general compositing graph.',
-      'Capability differs across desktop, mobile and web — they are not the same product.',
+      'Capability differs across desktop, mobile and web. They are not the same product.',
     ],
   },
   {
@@ -105,14 +105,14 @@ export const hardwareFloor: HardwareSpec[] = [
     product: 'CapCut',
     floor: '8 GB RAM',
     detail:
-      '8 GB is adequate for typical short-form editing; 16 GB is recommended for 4K source or effects-heavy multi-layer projects. Modest by design — it targets fast accessible editing rather than deep grading or compositing.',
+      '8 GB is adequate for typical short-form editing; 16 GB is recommended for 4K source or effects-heavy multi-layer projects. Modest by design. It targets fast accessible editing rather than deep grading or compositing.',
     source: 'Published system requirements',
   },
   {
     product: 'DaVinci Resolve 20',
     floor: '16 GB RAM, 4 GB VRAM',
     detail:
-      'Windows minimum is 16 GB system memory, rising to 32 GB when Fusion is in use, with a GPU of at least 4 GB VRAM and OpenCL 1.2 or CUDA 12.8. Practical 4K work sits far above the minimum — roughly 24 GB VRAM, 64 GB RAM and a dedicated NVMe cache.',
+      'Windows minimum is 16 GB system memory, rising to 32 GB when Fusion is in use, with a GPU of at least 4 GB VRAM and OpenCL 1.2 or CUDA 12.8. Practical 4K work sits far above the minimum: roughly 24 GB VRAM, 64 GB RAM and a dedicated NVMe cache.',
     source: 'Blackmagic Design published requirements',
   },
 ];
@@ -363,7 +363,7 @@ export const whenToUse: Verdict[] = [
   {
     product: 'FlashFX',
     useWhen: [
-      'Motion graphics — kinetic type, logo animation, social motion design',
+      'Motion graphics: kinetic type, logo animation, social motion design',
       'You need it to run on a machine that cannot install the alternatives',
       'You want to open a URL rather than manage media, relink files and warm a cache',
       'The work is synthetic: shapes, text, gradients and particles rather than hours of footage',
@@ -372,7 +372,7 @@ export const whenToUse: Verdict[] = [
   {
     product: 'CapCut',
     useWhen: [
-      'Cut, caption, publish — short-form social video on a deadline',
+      'Cut, caption, publish: short-form social video on a deadline',
       'You are editing on a phone',
       'You want templates, auto-captions and one-click publishing',
       'You need to work offline, or on a long 4K timeline',
@@ -381,7 +381,7 @@ export const whenToUse: Verdict[] = [
   {
     product: 'DaVinci Resolve',
     useWhen: [
-      'Colour grading is the point — ACES, HDR, scopes, control panels',
+      'Colour grading is the point: ACES, HDR, scopes, control panels',
       'You are cutting camera RAW, ProRes or DNxHR',
       'Long-form: features, documentaries, multicam, hours-long timelines',
       'You need a real DAW in the same application',

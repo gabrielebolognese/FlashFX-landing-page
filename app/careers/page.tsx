@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Careers | FlashFX',
     description:
-      'FlashFX is built by a team of three. No open roles right now — reach us at careers@flashfx.app.',
+      'FlashFX is built by a team of three. No open roles right now: reach us at careers@flashfx.app.',
     url: 'https://flashfx.app/careers',
     siteName: 'FlashFX',
     locale: 'en_US',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Careers | FlashFX',
     description:
-      'FlashFX is built by a team of three. No open roles right now — reach us at careers@flashfx.app.',
+      'FlashFX is built by a team of three. No open roles right now: reach us at careers@flashfx.app.',
     images: OG_IMAGES,
   },
   alternates: {

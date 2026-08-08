@@ -35,7 +35,7 @@ export function WhatMakesSoftwareFree() {
             What Makes Software Truly Free?
           </h2>
           <p className="text-fx-text-secondary max-w-2xl leading-relaxed">
-            &ldquo;Free&rdquo; is one of the most abused words in software marketing. Most tools described as free motion graphics software are free in name only — they restrict output quality, add persistent watermarks, or lock essential features behind a subscription. Here is what genuine free access looks like.
+            &ldquo;Free&rdquo; is one of the most abused words in software marketing. Most tools described as free motion graphics software are free in name only. They restrict output quality, add persistent watermarks, or lock essential features behind a subscription. Here is what genuine free access looks like.
           </p>
         </motion.div>
 
@@ -48,7 +48,7 @@ export function WhatMakesSoftwareFree() {
           >
             <h3 className="font-display text-xl font-bold text-fx-text-primary mb-4 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-green-400 inline-block" />
-              FlashFX Free Tier — What You Actually Get
+              FlashFX Free Tier: What You Actually Get
             </h3>
             <div className="space-y-3">
               {trulyFreeChecklist.map(({ item, free }) => (
@@ -91,7 +91,7 @@ export function WhatMakesSoftwareFree() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-10 text-fx-text-secondary leading-relaxed max-w-3xl"
         >
-          FlashFX was built from the ground up to be genuinely free for individual creators. The paid tier adds advanced templates, additional export formats, and priority rendering — but the core workflow, including full-quality export, is and will remain free.
+          FlashFX was built from the ground up to be genuinely free for individual creators. The paid tier adds advanced templates, additional export formats, and priority rendering, but the core workflow, including full-quality export, is and will remain free.
         </motion.p>
       </div>
     </section>

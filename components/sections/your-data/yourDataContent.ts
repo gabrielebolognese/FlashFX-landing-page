@@ -105,7 +105,7 @@ export const dataCategories: DataCategory[] = [
     examples: 'A profile or summary about an individual’s preferences and characteristics',
     collected: false,
   },
-  { letter: 'L', name: 'Sensitive personal information', examples: '—', collected: false },
+  { letter: 'L', name: 'Sensitive personal information', examples: ': ', collected: false },
 ];
 
 export interface PolicySection {
@@ -125,7 +125,7 @@ export const keyPoints: { question: string; answer: string }[] = [
   {
     question: 'Do we process sensitive personal information?',
     answer:
-      'No. Nothing in the categories treated as special or sensitive under data protection law — racial or ethnic origin, sexual orientation, religious belief and so on.',
+      'No. Nothing in the categories treated as special or sensitive under data protection law: racial or ethnic origin, sexual orientation, religious belief and so on.',
   },
   {
     question: 'Do we collect information from third parties?',
@@ -170,7 +170,7 @@ export const sections: PolicySection[] = [
       { kind: 'h3', text: 'Social media login data' },
       {
         kind: 'p',
-        text: 'You may register using an existing social media account. If you do, we receive certain profile information from that provider — often your name, email address, friends list and profile picture, plus anything else you have made public there.',
+        text: 'You may register using an existing social media account. If you do, we receive certain profile information from that provider: often your name, email address, friends list and profile picture, plus anything else you have made public there.',
       },
       {
         kind: 'p',
@@ -187,7 +187,7 @@ export const sections: PolicySection[] = [
       {
         kind: 'ul',
         items: [
-          'To facilitate account creation and authentication, and otherwise manage user accounts — so you can create an account, log in, and keep it in working order.',
+          'To facilitate account creation and authentication, and otherwise manage user accounts, so you can create an account, log in, and keep it in working order.',
           'To save or protect a person’s vital interest, such as to prevent harm.',
         ],
       },
@@ -211,15 +211,15 @@ export const sections: PolicySection[] = [
       {
         kind: 'ul',
         items: [
-          'Consent — where you have given us permission for a specific purpose. You can withdraw it at any time.',
-          'Legal obligations — where processing is necessary to comply with the law, cooperate with law enforcement or a regulator, or exercise or defend legal rights.',
-          'Vital interests — where processing is necessary to protect your vital interests or those of a third party, such as a potential threat to someone’s safety.',
+          'Consent: where you have given us permission for a specific purpose. You can withdraw it at any time.',
+          'Legal obligations: where processing is necessary to comply with the law, cooperate with law enforcement or a regulator, or exercise or defend legal rights.',
+          'Vital interests: where processing is necessary to protect your vital interests or those of a third party, such as a potential threat to someone’s safety.',
         ],
       },
       { kind: 'h3', text: 'If you are in Canada' },
       {
         kind: 'p',
-        text: 'We may process your information where you have given express consent, or where consent can reasonably be inferred. You can withdraw consent at any time. In limited cases the law permits processing without consent — for example where collection is clearly in your interests and consent cannot be obtained in time, for fraud detection and prevention, for certain business transactions, or where disclosure is required by a subpoena, warrant or court order.',
+        text: 'We may process your information where you have given express consent, or where consent can reasonably be inferred. You can withdraw consent at any time. In limited cases the law permits processing without consent, for example where collection is clearly in your interests and consent cannot be obtained in time, for fraud detection and prevention, for certain business transactions, or where disclosure is required by a subpoena, warrant or court order.',
       },
     ],
   },
@@ -231,7 +231,7 @@ export const sections: PolicySection[] = [
       {
         kind: 'ul',
         items: [
-          'Business transfers — we may share or transfer your information in connection with, or during negotiations of, a merger, sale of company assets, financing, or acquisition of all or part of our business.',
+          'Business transfers: we may share or transfer your information in connection with, or during negotiations of, a merger, sale of company assets, financing, or acquisition of all or part of our business.',
         ],
       },
       {
@@ -277,11 +277,11 @@ export const sections: PolicySection[] = [
     blocks: [
       {
         kind: 'p',
-        text: 'No purpose in this notice requires us to keep your personal information for longer than the period during which you have an account with us, unless a longer retention period is required or permitted by law — for tax, accounting or other legal requirements.',
+        text: 'No purpose in this notice requires us to keep your personal information for longer than the period during which you have an account with us, unless a longer retention period is required or permitted by law, for tax, accounting or other legal requirements.',
       },
       {
         kind: 'p',
-        text: 'When we have no ongoing legitimate business need to process your information, we will delete or anonymise it. Where that is not possible — for example because it sits in a backup archive — we will store it securely and isolate it from further processing until deletion is possible.',
+        text: 'When we have no ongoing legitimate business need to process your information, we will delete or anonymise it. Where that is not possible, for example because it sits in a backup archive, we will store it securely and isolate it from further processing until deletion is possible.',
       },
     ],
   },
@@ -289,7 +289,7 @@ export const sections: PolicySection[] = [
     id: 'security',
     title: 'How we keep your information safe',
     inShort:
-      'Through a system of organisational and technical security measures — with the honest caveat below.',
+      'Through a system of organisational and technical security measures, with the honest caveat below.',
     blocks: [
       {
         kind: 'p',
@@ -411,7 +411,7 @@ export const sections: PolicySection[] = [
       { kind: 'h3', text: 'Republic of South Africa' },
       {
         kind: 'p',
-        text: 'You may request access to or correction of your personal information at any time. If you are unsatisfied with how we handle a complaint, you can contact [The Information Regulator (South Africa)](https://inforegulator.org.za/) — general enquiries at enquiries@inforegulator.org.za, complaints at POPIAComplaints@inforegulator.org.za.',
+        text: 'You may request access to or correction of your personal information at any time. If you are unsatisfied with how we handle a complaint, you can contact [The Information Regulator (South Africa)](https://inforegulator.org.za/): general enquiries at enquiries@inforegulator.org.za, complaints at POPIAComplaints@inforegulator.org.za.',
       },
     ],
   },

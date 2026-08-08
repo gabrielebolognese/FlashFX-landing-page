@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
   title: 'Your Data in FlashFX: What We Collect and Why',
   description:
-    'Exactly what FlashFX collects, why, how long we keep it, who it is shared with, and how to get it deleted. Email and password only — no sensitive data, no third-party data, nothing sold.',
+    'Exactly what FlashFX collects, why, how long we keep it, who it is shared with, and how to get it deleted. Email and password only, no sensitive data, no third-party data, nothing sold.',
   keywords: [
     'FlashFX privacy',
     'FlashFX data',

@@ -16,14 +16,14 @@ export function BeginnerFinalCTA() {
           className="space-y-6"
         >
           <h2 className="section-heading font-display text-3xl md:text-5xl font-bold text-fx-text-primary">
-            Create Your First Animation Today — For Free
+            Create Your First Animation Today, for Free
           </h2>
           <p className="text-lg text-fx-text-secondary max-w-xl mx-auto leading-relaxed">
             No experience required. No software to download. Open FlashFX in your browser and export your first professional animation in under 15 minutes.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <a href="https://editor.flashfx.app" target="_blank" rel="noopener noreferrer">
-              <ShimmerButton>Start Creating — Free</ShimmerButton>
+              <ShimmerButton>Start Creating, Free</ShimmerButton>
             </a>
           </div>
           <div className="flex flex-wrap justify-center gap-6 pt-4">

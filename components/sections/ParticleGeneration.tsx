@@ -71,7 +71,7 @@ export function ParticleGeneration() {
         transition={{ duration: 0.6, delay: 0.1 }}
         className="mt-5 px-6 text-center text-base md:text-lg text-fx-text-secondary max-w-2xl mx-auto"
       >
-        Fire, smoke, magic, confetti &mdash; and any emitter you build yourself. Change
+        Fire, smoke, magic, confetti, and any emitter you build yourself. Change
         anything on the left and it updates as you drag.
       </motion.p>
 

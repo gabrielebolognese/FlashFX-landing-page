@@ -36,7 +36,7 @@ export function BeginnersHero() {
           </p>
           <div className="flex flex-wrap gap-4">
             <a href="https://editor.flashfx.app" target="_blank" rel="noopener noreferrer">
-              <ShimmerButton>Start Creating — It&apos;s Free</ShimmerButton>
+              <ShimmerButton>Start Creating, It&apos;s Free</ShimmerButton>
             </a>
             <ShimmerButton onClick={scrollToWalkthrough}>See Step-by-Step Guide</ShimmerButton>
           </div>

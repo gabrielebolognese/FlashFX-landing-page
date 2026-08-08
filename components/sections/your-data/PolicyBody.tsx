@@ -186,7 +186,7 @@ export function PolicyBody() {
               <Link href="/privacy" className="text-fx-accent-blue hover:underline">
                 privacy policy
               </Link>{' '}
-              is the authoritative version — if the two ever disagree, that one governs. See also
+              is the authoritative version. If the two ever disagree, that one governs. See also
               our{' '}
               <Link href="/terms" className="text-fx-accent-blue hover:underline">
                 terms of service

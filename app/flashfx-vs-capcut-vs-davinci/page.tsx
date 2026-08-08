@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
   title: 'FlashFX vs CapCut vs DaVinci Resolve: Architecture, Hardware & Features',
   description:
-    'How FlashFX, CapCut and DaVinci Resolve differ by pipeline architecture, hardware requirements, and what each can actually do. Published specs and capability comparison — no unmeasured performance claims.',
+    'How FlashFX, CapCut and DaVinci Resolve differ by pipeline architecture, hardware requirements, and what each can actually do. Published specs and capability comparison, no unmeasured performance claims.',
   keywords: [
     'FlashFX vs CapCut',
     'FlashFX vs DaVinci Resolve',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'FlashFX vs CapCut vs DaVinci Resolve: Architecture, Hardware & Features',
     description:
-      'Three tools built for different jobs. Compared by architecture, hardware floor, and capability — with no unmeasured performance claims.',
+      'Three tools built for different jobs. Compared by architecture, hardware floor, and capability, with no unmeasured performance claims.',
     url: 'https://flashfx.app/flashfx-vs-capcut-vs-davinci',
     siteName: 'FlashFX',
     locale: 'en_US',
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'FlashFX vs CapCut vs DaVinci Resolve',
     description:
-      'Three tools built for different jobs. Compared by architecture, hardware floor, and capability — with no unmeasured performance claims.',
+      'Three tools built for different jobs. Compared by architecture, hardware floor, and capability, with no unmeasured performance claims.',
     images: OG_IMAGES,
   },
   alternates: {

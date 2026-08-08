@@ -54,7 +54,7 @@ export function FoundingTeam() {
             <strong className="text-fx-text-primary font-medium">Aziz</strong> joined as
             co-founder in January 2026.{' '}
             <strong className="text-fx-text-primary font-medium">Camille Luciano</strong> is
-            marketing manager. That is the whole team — FlashFX is built and run by three
+            marketing manager. That is the whole team: FlashFX is built and run by three
             people.
           </p>
 

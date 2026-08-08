@@ -90,7 +90,7 @@ const faqSchema = {
       name: 'Can FlashFX replace After Effects for professional work?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'For most creator use cases — including YouTube intros, social media reels, presentation animations, and explainer videos — FlashFX provides all the necessary tools without the complexity of After Effects. For highly specialized studio-level VFX compositing, advanced 3D rendering, and complex plugin-dependent workflows, After Effects remains the industry standard. However, the vast majority of creators do not need that level of capability for their day-to-day content production.',
+        text: 'For most creator use cases, including YouTube intros, social media reels, presentation animations, and explainer videos, FlashFX provides all the necessary tools without the complexity of After Effects. For highly specialized studio-level VFX compositing, advanced 3D rendering, and complex plugin-dependent workflows, After Effects remains the industry standard. However, the vast majority of creators do not need that level of capability for their day-to-day content production.',
       },
     },
     {

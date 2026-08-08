@@ -23,7 +23,7 @@ export function YourDataHero() {
           in plain language, on one page.
         </p>
         <p className="font-mono text-xs text-fx-text-secondary uppercase tracking-wider mb-12">
-          {legalEntity} — last updated {lastUpdated}
+          {legalEntity}: last updated {lastUpdated}
         </p>
 
         <h2 className="font-display text-2xl md:text-3xl font-bold text-fx-text-primary mb-6">

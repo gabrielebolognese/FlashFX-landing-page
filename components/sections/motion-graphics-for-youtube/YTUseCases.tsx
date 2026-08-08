@@ -32,7 +32,7 @@ const useCases = [
   {
     title: 'Shorts',
     description:
-      'Vertical 1080x1920 without a separate tool. Text animators reveal by character, word, or line — the pacing short-form needs.',
+      'Vertical 1080x1920 without a separate tool. Text animators reveal by character, word, or line: the pacing short-form needs.',
     Icon: Smartphone,
   },
   {
@@ -44,7 +44,7 @@ const useCases = [
   {
     title: 'Channel trailers',
     description:
-      'Longer sequences with imported footage, multi-track audio, and filters — cut against the beat using waveform display on the timeline.',
+      'Longer sequences with imported footage, multi-track audio, and filters: cut against the beat using waveform display on the timeline.',
     Icon: Radio,
   },
 ];

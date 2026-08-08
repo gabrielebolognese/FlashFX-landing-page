@@ -14,7 +14,7 @@ const reasons = [
     description: 'Adobe After Effects officially recommends 16GB of RAM and a dedicated GPU for optimal performance. On mid-range laptops and budget desktop systems, this creates serious workflow problems. Renders stall during playback, previews lag behind real-time editing, and the application frequently crashes when handling complex compositions with multiple layers and effects. For creators working on Chromebooks, older MacBooks, or Windows laptops with integrated graphics, After Effects is simply not a viable option.',
   },
   {
-    stat: '40–80 hrs',
+    stat: '40-80 hrs',
     title: 'Learning Curve',
     description: 'The average creator spends between 40 and 80 hours reaching basic proficiency in Adobe After Effects. This includes understanding the interface, learning keyframe animation principles, mastering expression syntax, and navigating the render queue. For someone who needs to create a ten-second YouTube intro or a simple animated logo reveal, this time investment makes no practical sense. FlashFX reduces that timeline to minutes by providing an intuitive interface and pre-built motion templates.',
   },

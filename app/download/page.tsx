@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Download: FlashFX Is All Web | Install It From Your Browser',
     description:
-      'No installer. FlashFX runs in the browser — here is how to install it as a windowed app in a few clicks.',
+      'No installer. FlashFX runs in the browser. Here is how to install it as a windowed app in a few clicks.',
     url: 'https://flashfx.app/download',
     siteName: 'FlashFX',
     locale: 'en_US',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Download: FlashFX Is All Web | Install It From Your Browser',
     description:
-      'No installer. FlashFX runs in the browser — here is how to install it as a windowed app in a few clicks.',
+      'No installer. FlashFX runs in the browser. Here is how to install it as a windowed app in a few clicks.',
     images: OG_IMAGES,
   },
   alternates: {

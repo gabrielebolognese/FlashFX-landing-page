@@ -37,7 +37,7 @@ const formats = [
 
 const controls = [
   'Quality presets, or set the bitrate yourself',
-  'Custom resolution — not locked to preset canvas sizes',
+  'Custom resolution: not locked to preset canvas sizes',
   'Frame rate control with common presets',
   'Real-time progress while the export encodes',
 ];

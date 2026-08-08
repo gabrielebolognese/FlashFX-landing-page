@@ -1,7 +1,7 @@
 export const fmgFaqData = [
   {
     question: 'Is FlashFX actually free, or is it a free trial?',
-    answer: 'FlashFX is genuinely free — not a time-limited trial. There is no countdown, no credit card required to start, and no expiry date on the free tier. Core features including the full timeline editor, motion presets, and 1080p MP4 export are permanently free. A paid tier adds advanced templates, additional export formats, and priority rendering for creators who want more.',
+    answer: 'FlashFX is genuinely free: not a time-limited trial. There is no countdown, no credit card required to start, and no expiry date on the free tier. Core features including the full timeline editor, motion presets, and 1080p MP4 export are permanently free. A paid tier adds advanced templates, additional export formats, and priority rendering for creators who want more.',
   },
   {
     question: 'Does the free version add a watermark to exported videos?',
@@ -17,11 +17,11 @@ export const fmgFaqData = [
   },
   {
     question: 'Does free motion graphics software work on low-end hardware?',
-    answer: 'FlashFX is optimized for low-end hardware by design. Because it runs in the browser using optimized WebGL rendering, it does not require a dedicated GPU, high clock-speed CPU, or large amounts of RAM. It works on Chromebooks, older Windows laptops, and budget MacBooks where After Effects or DaVinci Resolve would fail to install or run acceptably. You need approximately 4 GB of available RAM and a modern browser — that is all.',
+    answer: 'FlashFX is optimized for low-end hardware by design. Because it runs in the browser using optimized WebGL rendering, it does not require a dedicated GPU, high clock-speed CPU, or large amounts of RAM. It works on Chromebooks, older Windows laptops, and budget MacBooks where After Effects or DaVinci Resolve would fail to install or run acceptably. You need approximately 4 GB of available RAM and a modern browser. That is all.',
   },
   {
     question: 'How does FlashFX compare to CapCut for free motion graphics?',
-    answer: 'CapCut is a social video editor optimized for quick cuts, filters, and music sync — it is not designed for motion graphics. It offers limited keyframe control, preset-only animation options, and its primary strength is video editing rather than creating animated graphics from scratch. FlashFX provides a full keyframe timeline, custom easing, shape and text animation tools, and is purpose-built for motion graphics work. For YouTube intros, animated titles, and custom branded elements, FlashFX is the more capable free tool.',
+    answer: 'CapCut is a social video editor optimized for quick cuts, filters, and music sync. It is not designed for motion graphics. It offers limited keyframe control, preset-only animation options, and its primary strength is video editing rather than creating animated graphics from scratch. FlashFX provides a full keyframe timeline, custom easing, shape and text animation tools, and is purpose-built for motion graphics work. For YouTube intros, animated titles, and custom branded elements, FlashFX is the more capable free tool.',
   },
   {
     question: 'Is there free motion graphics software without a subscription in 2026?',

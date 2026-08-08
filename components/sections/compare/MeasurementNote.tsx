@@ -37,19 +37,19 @@ export function MeasurementNote() {
             <p className="text-fx-text-secondary leading-relaxed mb-5">
               Those are predictions derived from architecture. They have not been measured. So
               they are not on this page, and they will not be until they have been run properly
-              — three passes on one machine, median reported, cold GPU, thermals settled, with
+: three passes on one machine, median reported, cold GPU, thermals settled, with
               the method published next to the result.
             </p>
             <p className="text-fx-text-secondary leading-relaxed mb-5">
               Benchmarks written by the vendor of one of the products are worth exactly as much
               as their method, and FlashFX being ours makes that standard higher rather than
               lower. Everything above is either how the software is built or a specification
-              its publisher has stated — both of which you can check without taking our word
+              its publisher has stated, both of which you can check without taking our word
               for it.
             </p>
             <p className="text-fx-text-secondary leading-relaxed">
               When the numbers exist, they will appear here, including the ones we lose. On raw
-              codec throughput — long timelines of straight cuts, especially at 4K — a native
+              codec throughput: long timelines of straight cuts, especially at 4K: a native
               application with direct hardware encoder access should beat a browser tab, and we
               expect it to.
             </p>

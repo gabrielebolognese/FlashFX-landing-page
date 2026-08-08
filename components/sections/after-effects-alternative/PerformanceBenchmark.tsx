@@ -23,8 +23,8 @@ const benchmarks: BenchmarkEntry[] = [
     unit: 'seconds',
     lowerIsBetter: true,
     flashfx: { value: 2, label: '~2s' },
-    afterEffects: { value: 42, label: '~42s', range: '35–50s' },
-    daVinci: { value: 23, label: '~23s', range: '18–28s' },
+    afterEffects: { value: 42, label: '~42s', range: '35-50s' },
+    daVinci: { value: 23, label: '~23s', range: '18-28s' },
     max: 50,
   },
   {
@@ -32,8 +32,8 @@ const benchmarks: BenchmarkEntry[] = [
     unit: 'min · 30s clip, 1080p',
     lowerIsBetter: true,
     flashfx: { value: 0.4, label: '~25s' },
-    afterEffects: { value: 10, label: '~10 min', range: '6–14 min' },
-    daVinci: { value: 21, label: '~21 min', range: '14–28 min' },
+    afterEffects: { value: 10, label: '~10 min', range: '6-14 min' },
+    daVinci: { value: 21, label: '~21 min', range: '14-28 min' },
     max: 24,
   },
   {
@@ -41,8 +41,8 @@ const benchmarks: BenchmarkEntry[] = [
     unit: 'fps before cache',
     lowerIsBetter: false,
     flashfx: { value: 60, label: '60 fps' },
-    afterEffects: { value: 3, label: '~3 fps', range: '1–5 fps' },
-    daVinci: { value: 1.5, label: '~1.5 fps', range: '0–3 fps' },
+    afterEffects: { value: 3, label: '~3 fps', range: '1-5 fps' },
+    daVinci: { value: 1.5, label: '~1.5 fps', range: '0-3 fps' },
     max: 60,
   },
   {
@@ -59,8 +59,8 @@ const benchmarks: BenchmarkEntry[] = [
     unit: 'GB',
     lowerIsBetter: true,
     flashfx: { value: 0.6, label: '~600 MB' },
-    afterEffects: { value: 7.5, label: '~7.5 GB', range: '6–9 GB' },
-    daVinci: { value: 5.5, label: '~5.5 GB', range: '4–7 GB' },
+    afterEffects: { value: 7.5, label: '~7.5 GB', range: '6-9 GB' },
+    daVinci: { value: 5.5, label: '~5.5 GB', range: '4-7 GB' },
     max: 10,
   },
 ];
@@ -156,7 +156,7 @@ export function PerformanceBenchmark() {
             Performance Benchmarks
           </h2>
           <p className="text-fx-text-secondary max-w-2xl leading-relaxed">
-            Measured on a mid-range Windows laptop with 8GB RAM, Intel Core i5 (2019), and integrated graphics — the hardware millions of creators actually own.
+            Measured on a mid-range Windows laptop with 8GB RAM, Intel Core i5 (2019), and integrated graphics: the hardware millions of creators actually own.
           </p>
         </motion.div>
 
@@ -191,7 +191,7 @@ export function PerformanceBenchmark() {
           className="mt-6 p-5 border border-fx-border rounded-card bg-fx-bg-raised"
         >
           <p className="text-sm text-fx-text-secondary leading-relaxed">
-            <strong className="text-fx-text-primary">Note on DaVinci Resolve:</strong> Resolve is GPU-first by design. On systems with a discrete GPU it can outperform After Effects significantly. However, on integrated-GPU setups it loses its main advantage — render times can exceed even After Effects, making it the weakest choice for budget hardware.
+            <strong className="text-fx-text-primary">Note on DaVinci Resolve:</strong> Resolve is GPU-first by design. On systems with a discrete GPU it can outperform After Effects significantly. However, on integrated-GPU setups it loses its main advantage: render times can exceed even After Effects, making it the weakest choice for budget hardware.
           </p>
         </motion.div>
       </div>

@@ -47,7 +47,7 @@ export function PricingComparison() {
                   <span className="text-fx-text-primary font-medium">MP4 and WebM</span> export formats
                 </li>
                 <li className="text-fx-text-secondary">
-                  <span className="text-fx-text-primary font-medium">Browser-based</span> — no installation
+                  <span className="text-fx-text-primary font-medium">Browser-based</span>, no installation
                 </li>
               </ul>
               <p className="text-sm text-fx-text-secondary">

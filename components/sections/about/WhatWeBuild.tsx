@@ -27,7 +27,7 @@ export function WhatWeBuild() {
           <p>
             Professional motion graphics has historically meant a multi-gigabyte desktop
             install, a monthly subscription, and hardware to match. FlashFX takes the opposite
-            approach. You open a browser tab and start animating — nothing to download, no
+            approach. You open a browser tab and start animating. Nothing to download, no
             licence to activate, no render queue to sit through.
           </p>
           <p>
@@ -39,10 +39,10 @@ export function WhatWeBuild() {
           <p>
             FlashFX is positioned as an alternative to After Effects and Premiere Pro, not a
             clone of every feature they have. Studio-grade compositing and plugin-dependent
-            pipelines still belong in those tools. Everything else — channel intros, lower
-            thirds, social clips, explainer animation, presentation graphics — is the work
-            FlashFX is built for, and it does that work on hardware those tools would refuse
-            to run on.
+            pipelines still belong in those tools. Everything else is the work FlashFX is
+            built for: channel intros, lower thirds, social clips, explainer animation,
+            presentation graphics. And it does that work on hardware those tools would
+            refuse to run on.
           </p>
         </motion.div>
 

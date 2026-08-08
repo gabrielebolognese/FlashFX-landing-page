@@ -28,7 +28,7 @@ export function InstallGuide() {
             >
               editor.flashfx.app
             </a>{' '}
-            rather than this page — the editor is the part worth having in its own window.
+            rather than this page: the editor is the part worth having in its own window.
             The steps below work on any URL.
           </p>
         </motion.div>
@@ -87,7 +87,7 @@ export function InstallGuide() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="text-sm text-fx-text-secondary leading-relaxed mt-10 max-w-3xl"
         >
-          An installed page is still the same web app — it updates when we ship, with nothing
+          An installed page is still the same web app. It updates when we ship, with nothing
           to patch on your side. Removing it is the same as removing any other app, and
           nothing is left behind on disk.
         </motion.p>

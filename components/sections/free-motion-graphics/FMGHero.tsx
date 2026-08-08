@@ -21,18 +21,18 @@ export function FMGHero() {
         >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 border border-fx-border rounded-card bg-fx-bg-surface text-xs font-mono text-fx-text-secondary uppercase tracking-wider">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
-            Free — No Watermark — No Credit Card
+            Free, No Watermark, No Credit Card
           </div>
           <h1
             className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
             style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.03em' }}
           >
             <span className="text-white">Free Motion Graphics Software </span>
-            <span style={{ color: '#f5c842' }}>— Professional Results,</span>
+            <span style={{ color: '#f5c842' }}>: Professional Results,</span>
             <span className="text-white"> Zero Cost</span>
           </h1>
           <p className="text-lg md:text-xl text-fx-text-secondary mb-10 max-w-3xl leading-relaxed">
-            FlashFX is free motion graphics software that runs entirely in your browser. No download, no watermark, no feature-locked trial. Create YouTube intros, social media animations, and presentation graphics at full quality — completely free.
+            FlashFX is free motion graphics software that runs entirely in your browser. No download, no watermark, no feature-locked trial. Create YouTube intros, social media animations, and presentation graphics at full quality: completely free.
           </p>
           <div className="flex flex-wrap gap-4">
             <a href="https://editor.flashfx.app" target="_blank" rel="noopener noreferrer">

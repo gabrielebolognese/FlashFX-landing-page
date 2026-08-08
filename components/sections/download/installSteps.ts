@@ -27,7 +27,7 @@ export const installGuides: InstallGuide[] = [
       'Open the page you want as an app.',
       'Click the three-dot menu at the top right.',
       'Choose Cast, save and share, then Install page as app.',
-      'On older Chrome versions this lives under More tools, then Create shortcut — tick Open as window.',
+      'On older Chrome versions this lives under More tools, then Create shortcut: tick Open as window.',
       'Confirm. It opens in its own window and lands in your app launcher.',
     ],
   },
@@ -71,7 +71,7 @@ export const installGuides: InstallGuide[] = [
       'Scroll and tap Add to Home Screen.',
       'Confirm. It behaves like an installed app from the home screen.',
     ],
-    note: 'On iOS this must be Safari — other browsers cannot add to the home screen.',
+    note: 'On iOS this must be Safari: other browsers cannot add to the home screen.',
   },
   {
     browser: 'Android',
@@ -87,7 +87,7 @@ export const installGuides: InstallGuide[] = [
     browser: 'Firefox, desktop',
     Icon: Info,
     steps: [
-      'Firefox on desktop cannot install a site as an app — the feature was removed and has not returned.',
+      'Firefox on desktop cannot install a site as an app: the feature was removed and has not returned.',
       'Bookmark the editor, or use a Chromium browser if you want a dedicated window.',
     ],
     note: 'Firefox on Android does support Install.',

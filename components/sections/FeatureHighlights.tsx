@@ -349,7 +349,7 @@ export function FeatureHighlights() {
                 justifyContent: 'center',
               }}
             >
-              <span style={{ color: '#f5c842', fontSize: '0.6em', opacity: 0.7 }}>—</span>
+              <span style={{ color: '#f5c842', fontSize: '0.6em', opacity: 0.7 }}>: </span>
               {item}
             </li>
           ))}

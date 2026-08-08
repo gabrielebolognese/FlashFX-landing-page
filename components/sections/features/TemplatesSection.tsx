@@ -53,7 +53,7 @@ export function TemplatesSection() {
           className="text-lg text-fx-text-secondary max-w-3xl leading-relaxed mb-12"
         >
           Most motion you need already exists as a preset. Drop one onto an element, then
-          adjust the keyframes it generates — nothing is locked, and every preset is a
+          adjust the keyframes it generates. Nothing is locked, and every preset is a
           starting point rather than a black box.
         </motion.p>
 

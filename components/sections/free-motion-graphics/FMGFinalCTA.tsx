@@ -23,7 +23,7 @@ export function FMGFinalCTA() {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <a href="https://editor.flashfx.app" target="_blank" rel="noopener noreferrer">
-              <ShimmerButton>Try FlashFX — It&rsquo;s Free</ShimmerButton>
+              <ShimmerButton>Try FlashFX, It&rsquo;s Free</ShimmerButton>
             </a>
           </div>
           <div className="flex flex-wrap justify-center gap-6 pt-4">

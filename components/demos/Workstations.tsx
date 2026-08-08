@@ -43,11 +43,11 @@ function Figure({ colour, wide }: { colour: string; wide?: boolean }) {
     >
       <div
         className="rounded-full"
-        style={{ width: 34, height: 34, background: colour, boxShadow: `0 0 24px ${colour}66` }}
+        style={{ width: 58, height: 58, background: colour, boxShadow: `0 0 34px ${colour}77` }}
       />
       <div
-        className="rounded-t-[26px] -mt-1"
-        style={{ width: wide ? 92 : 76, height: 46, background: colour, opacity: 0.92 }}
+        className="rounded-t-[40px] -mt-2"
+        style={{ width: wide ? 152 : 126, height: 82, background: colour, opacity: 0.92 }}
       />
     </div>
   );
@@ -89,8 +89,8 @@ export function LaptopScene({ active }: { active: boolean }) {
         <motion.div
           className="relative rounded-t-md rounded-b-sm"
           style={{
-            width: 260,
-            height: 168,
+            width: 196,
+            height: 126,
             transformOrigin: 'bottom center',
             transformStyle: 'preserve-3d',
             background: 'linear-gradient(160deg, #2b3a70 0%, #1b2650 100%)',
@@ -116,8 +116,8 @@ export function LaptopScene({ active }: { active: boolean }) {
         <div
           className="rounded-b-lg"
           style={{
-            width: 260,
-            height: 150,
+            width: 196,
+            height: 112,
             transformOrigin: 'top center',
             transform: 'rotateX(76deg)',
             background: 'linear-gradient(180deg, #35447e 0%, #222d5c 100%)',
@@ -127,12 +127,12 @@ export function LaptopScene({ active }: { active: boolean }) {
         >
           <div className="absolute inset-x-[12%] top-[14%] grid grid-cols-8 gap-[3px]">
             {Array.from({ length: 32 }, (_, i) => (
-              <span key={i} className="rounded-[2px]" style={{ height: 7, background: 'rgba(230,237,243,0.16)' }} />
+              <span key={i} className="rounded-[2px]" style={{ height: 5, background: 'rgba(230,237,243,0.16)' }} />
             ))}
           </div>
           <div
             className="absolute left-1/2 -translate-x-1/2 bottom-[10%] rounded-md"
-            style={{ width: 74, height: 34, background: 'rgba(230,237,243,0.1)' }}
+            style={{ width: 56, height: 25, background: 'rgba(230,237,243,0.1)' }}
           />
         </div>
 
@@ -146,16 +146,16 @@ export function TowerScene({ active }: { active: boolean }) {
   /* Centre flat, wings turned in. The turn is a real rotateY, so the outer
      edges foreshorten and the rig reads as curved around the desk. */
   const monitors = [
-    { rotate: 34, x: -196, z: -56, seed: 1 },
+    { rotate: 34, x: -148, z: -42, seed: 1 },
     { rotate: 0, x: 0, z: 0, seed: 5 },
-    { rotate: -34, x: 196, z: -56, seed: 9 },
+    { rotate: -34, x: 148, z: -42, seed: 9 },
   ];
 
   return (
     <div className="relative w-full h-full flex items-end justify-center pb-[8%]" style={{ perspective: 1000 }}>
       <motion.div
         className="relative"
-        style={{ transformStyle: 'preserve-3d', width: 340, height: 210 }}
+        style={{ transformStyle: 'preserve-3d', width: 260, height: 160 }}
         animate={active ? { rotateY: [-7, 7, -7], rotateX: [-11, -8, -11] } : { rotateY: -3, rotateX: -10 }}
         transition={active ? loop(11) : { duration: 0.6 }}
       >
@@ -164,9 +164,9 @@ export function TowerScene({ active }: { active: boolean }) {
             key={i}
             className="absolute top-0 left-1/2 rounded-md"
             style={{
-              width: 176,
-              height: 112,
-              marginLeft: -88,
+              width: 132,
+              height: 84,
+              marginLeft: -66,
               transform: `translateX(${m.x}px) translateZ(${m.z}px) rotateY(${m.rotate}deg)`,
               transformStyle: 'preserve-3d',
               background: 'linear-gradient(160deg, #2b3a70 0%, #17204a 100%)',
@@ -189,8 +189,8 @@ export function TowerScene({ active }: { active: boolean }) {
 
             {/* Stand, angled with its screen because it is on the same panel. */}
             <span
-              className="absolute left-1/2 -translate-x-1/2 -bottom-[26px] rounded-b-sm"
-              style={{ width: 16, height: 26, background: '#3A4880' }}
+              className="absolute left-1/2 -translate-x-1/2 -bottom-[20px] rounded-b-sm"
+              style={{ width: 12, height: 20, background: '#3A4880' }}
             />
           </div>
         ))}
@@ -199,11 +199,11 @@ export function TowerScene({ active }: { active: boolean }) {
         <div
           className="absolute rounded-md"
           style={{
-            width: 46,
-            height: 116,
+            width: 34,
+            height: 88,
             left: '50%',
-            marginLeft: 156,
-            top: 104,
+            marginLeft: 120,
+            top: 80,
             transform: 'translateZ(52px) rotateY(-16deg)',
             background: 'linear-gradient(165deg, #26315f 0%, #151d42 100%)',
             border: '2px solid #4A5C9F',
@@ -211,7 +211,7 @@ export function TowerScene({ active }: { active: boolean }) {
         >
           <motion.span
             className="absolute left-1/2 -translate-x-1/2 top-3 rounded-full"
-            style={{ width: 22, height: 3, background: '#4ADE80' }}
+            style={{ width: 16, height: 3, background: '#4ADE80' }}
             animate={active ? { opacity: [0.35, 1, 0.35] } : { opacity: 0.7 }}
             transition={active ? loop(2.2) : { duration: 0 }}
           />

@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Features: Vector Design, Keyframe Animation, 3D & Export | FlashFX',
     description:
-      'Vector design, keyframe animation, 3D, audio, and export — the whole motion graphics pipeline, running in a browser tab with nothing to install.',
+      'Vector design, keyframe animation, 3D, audio, and export: the whole motion graphics pipeline, running in a browser tab with nothing to install.',
     url: 'https://flashfx.app/features',
     siteName: 'FlashFX',
     locale: 'en_US',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Features: Vector Design, Keyframe Animation, 3D & Export | FlashFX',
     description:
-      'Vector design, keyframe animation, 3D, audio, and export — the whole motion graphics pipeline, running in a browser tab with nothing to install.',
+      'Vector design, keyframe animation, 3D, audio, and export: the whole motion graphics pipeline, running in a browser tab with nothing to install.',
     images: OG_IMAGES,
   },
   alternates: {

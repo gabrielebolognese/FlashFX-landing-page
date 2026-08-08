@@ -29,7 +29,7 @@ const tools = [
   },
   {
     name: 'DaVinci Resolve',
-    timeToExport: '2–4 hours',
+    timeToExport: '2-4 hours',
     complexityScore: 9,
     onboarding: 'No guided onboarding, professional-grade',
     verdict: 'Not suitable for beginners',
@@ -37,7 +37,7 @@ const tools = [
   },
   {
     name: 'Adobe After Effects',
-    timeToExport: '4–8 hours',
+    timeToExport: '4-8 hours',
     complexityScore: 10,
     onboarding: 'Assumes prior industry knowledge',
     verdict: 'Professional tool, steep learning curve',
@@ -45,7 +45,7 @@ const tools = [
   },
   {
     name: 'Adobe Premiere Pro',
-    timeToExport: '1–3 hours',
+    timeToExport: '1-3 hours',
     complexityScore: 7,
     onboarding: 'Complex multi-panel UI, many unused features',
     verdict: 'Overkill for beginners creating short content',
@@ -88,7 +88,7 @@ export function LearningCurveComparison() {
             Learning Curve Comparison
           </h2>
           <p className="text-fx-text-secondary max-w-2xl leading-relaxed">
-            &ldquo;Time to first export&rdquo; measures how long a complete beginner — with no prior video editing experience — takes to open the tool and successfully export their first animation. UI complexity is scored 1–10 based on panel count, menu depth, and onboarding quality.
+            &ldquo;Time to first export&rdquo; measures how long a complete beginner, with no prior video editing experience: takes to open the tool and successfully export their first animation. UI complexity is scored 1-10 based on panel count, menu depth, and onboarding quality.
           </p>
         </motion.div>
 

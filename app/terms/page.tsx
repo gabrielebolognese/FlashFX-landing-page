@@ -79,7 +79,7 @@ export default function TermsPage() {
       <PolicyLayout
         eyebrow="Legal"
         title="Terms of Service"
-        standfirst="The agreement between you and FlashFX. Your projects stay yours — this covers everything else."
+        standfirst="The agreement between you and FlashFX. Your projects stay yours. This covers everything else."
         dataId="6f1659f4-6685-4aab-a869-79fc9c08d1b6"
       />
     </>

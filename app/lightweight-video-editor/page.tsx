@@ -65,7 +65,7 @@ const softwareSchema = {
   url: 'https://flashfx.app',
   memoryRequirements: '4 GB RAM',
   processorRequirements: 'Any dual-core processor',
-  storageRequirements: '0 GB — browser-based',
+  storageRequirements: '0 GB: browser-based',
 };
 
 const faqSchema = {

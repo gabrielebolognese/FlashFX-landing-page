@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useAmbient } from '@/lib/motion';
+import { CtaButton } from '@/components/ui/cta-button';
+import { EDITOR_URL } from '@/lib/editor';
 
 /*
  * "Both for beginners and experts" — the two-audience card.
@@ -103,6 +105,21 @@ export function ForEveryone() {
             </motion.div>
           ))}
         </div>
+
+        {/* One button under both cards rather than one each: the two are the same
+            product from two directions, and a button on each would ask the
+            visitor to pick a side before they have tried anything. */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-12 flex justify-center"
+        >
+          <CtaButton href={EDITOR_URL} size="lg">
+            Let&rsquo;s try
+          </CtaButton>
+        </motion.div>
       </div>
     </section>
   );

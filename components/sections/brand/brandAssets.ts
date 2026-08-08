@@ -94,7 +94,7 @@ export const brandFonts: BrandFont[] = [
   {
     name: 'Inter',
     role: 'Display. Every heading and section title.',
-    weights: 'variable, 100–900',
+    weights: 'variable, 100-900',
     variable: '--font-inter',
   },
   {

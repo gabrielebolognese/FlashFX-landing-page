@@ -21,7 +21,7 @@ export function FeaturesPageHero() {
             <span style={{ color: '#f5c842' }}>one browser tab</span>
           </h1>
           <p className="text-lg md:text-xl text-fx-text-secondary mb-10 max-w-3xl leading-relaxed">
-            Vector design, keyframe animation, 3D, audio, and export — the whole motion
+            Vector design, keyframe animation, 3D, audio, and export: the whole motion
             graphics pipeline, running in a tab with nothing to install. Here is what is
             in the editor.
           </p>

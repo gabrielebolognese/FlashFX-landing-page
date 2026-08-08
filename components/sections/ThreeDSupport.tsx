@@ -84,7 +84,7 @@ export function ThreeDSupport() {
             </h2>
 
             <p className="text-lg md:text-xl text-fx-text-secondary leading-relaxed max-w-xl">
-              Import 3D models, animate them in real time, and export with lighting and effects —
+              Import 3D models, animate them in real time, and export with lighting and effects: 
               all in a browser tab, with nothing to install.
             </p>
 

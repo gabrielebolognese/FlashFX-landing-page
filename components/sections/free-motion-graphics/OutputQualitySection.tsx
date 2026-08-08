@@ -6,17 +6,17 @@ import Image from 'next/image';
 const screenshots = [
   {
     src: '/shot-180920.webp',
-    caption: 'Timeline editor with keyframe controls — available free',
+    caption: 'Timeline editor with keyframe controls: available free',
     tag: 'Timeline',
   },
   {
     src: '/carousel-logo-animation.webp',
-    caption: 'Motion preset library — included in the free tier',
+    caption: 'Motion preset library: included in the free tier',
     tag: 'Presets',
   },
   {
     src: '/dual-timeline.webp',
-    caption: 'Export panel — 1080p MP4, no watermark, no paywall',
+    caption: 'Export panel: 1080p MP4, no watermark, no paywall',
     tag: 'Export',
   },
 ];
@@ -42,7 +42,7 @@ export function OutputQualitySection() {
           className="mb-12"
         >
           <h2 className="section-heading font-display text-3xl md:text-5xl font-bold text-fx-text-primary mb-4">
-            Output Quality — What Free Actually Looks Like
+            Output Quality: What Free Actually Looks Like
           </h2>
           <p className="text-fx-text-secondary max-w-2xl leading-relaxed">
             The screenshots below show the FlashFX interface and export settings as they appear for free-tier users. No features have been hidden or blurred for demonstration purposes.

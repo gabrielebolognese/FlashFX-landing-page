@@ -21,7 +21,7 @@ export function ChangelogHero() {
           </h1>
           <p className="text-lg md:text-xl text-fx-text-secondary leading-relaxed">
             Every release, newest first. FlashFX runs in the browser, so you are always on the
-            current version — nothing here needs downloading.
+            current version. Nothing here needs downloading.
           </p>
         </motion.div>
       </div>

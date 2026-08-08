@@ -113,7 +113,7 @@ export function AllLinks() {
             color: 'rgba(230, 237, 243, 0.5)',
           }}
         >
-          Click any node to explore — stay connected across platforms
+          Click any node to explore: stay connected across platforms
         </p>
       </div>
 

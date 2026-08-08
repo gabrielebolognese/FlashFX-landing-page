@@ -12,7 +12,7 @@ const steps = [
   {
     number: '02',
     title: 'Choose a Template or Start Blank',
-    description: 'Select from the template library to begin with a pre-built animation — YouTube intro, lower third, social media reel, or presentation graphic — or start with a blank canvas at your preferred resolution.',
+    description: 'Select from the template library to begin with a pre-built animation, YouTube intro, lower third, social media reel, or presentation graphic, or start with a blank canvas at your preferred resolution.',
     tip: 'For your first project, pick a template. Blank canvas comes later once you know the timeline.',
   },
   {
@@ -25,13 +25,13 @@ const steps = [
     number: '04',
     title: 'Preview Your Animation',
     description: 'Press the spacebar or click the play button in the timeline to preview your animation in real time. What you see in the preview is exactly what will be exported.',
-    tip: 'Preview renders at full quality — no separate render step required before export.',
+    tip: 'Preview renders at full quality, no separate render step required before export.',
   },
   {
     number: '05',
     title: 'Adjust with Motion Presets',
     description: 'To change how elements enter or exit the screen, click an element and open the Animation tab. Select from presets like Fade In, Slide Up, Scale Pop, or Bounce. The preset applies to that element immediately.',
-    tip: 'Each preset can be adjusted — change the duration, delay, and easing curve without writing a single expression.',
+    tip: 'Each preset can be adjusted: change the duration, delay, and easing curve without writing a single expression.',
   },
   {
     number: '06',

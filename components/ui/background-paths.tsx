@@ -74,7 +74,7 @@ function FloatingPaths({ position }: { position: number }) {
                                       opacity: [0.3, 0.6, 0.3],
                                       pathOffset: [0, 1, 0],
                                   }
-                                : // Not "nothing" — a composed still frame. A
+                                : // Not "nothing": a composed still frame. A
                                   // backdrop that vanishes when a slot is
                                   // denied reads as a rendering fault.
                                   { pathLength: 1, opacity: 0.5 }

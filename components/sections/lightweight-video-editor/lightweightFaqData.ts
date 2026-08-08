@@ -5,11 +5,11 @@ export const lightweightFaqData = [
   },
   {
     question: 'Does FlashFX work on a Chromebook?',
-    answer: 'Yes. FlashFX is fully functional on Chromebooks because it runs in the Chrome browser — no Linux environment, no Android app, no additional setup required. It has been tested on Chromebooks with 4 GB RAM including the Lenovo Chromebook Duet, HP Chromebook 14, and Acer Chromebook 315. Export to MP4, WebM, and GIF all function normally.',
+    answer: 'Yes. FlashFX is fully functional on Chromebooks because it runs in the Chrome browser, no Linux environment, no Android app, no additional setup required. It has been tested on Chromebooks with 4 GB RAM including the Lenovo Chromebook Duet, HP Chromebook 14, and Acer Chromebook 315. Export to MP4, WebM, and GIF all function normally.',
   },
   {
-    question: 'Can I use FlashFX on an old Windows laptop from 2012–2016?',
-    answer: 'Yes, provided the machine can run a modern browser (Chrome, Firefox, or Edge). FlashFX has been used successfully on Windows 7, Windows 8, and Windows 10 machines with Celeron and first-generation Core i3 processors and 4 GB RAM. The only hard requirement is a browser that supports WebGL — which covers virtually any browser released after 2013.',
+    question: 'Can I use FlashFX on an old Windows laptop from 2012-2016?',
+    answer: 'Yes, provided the machine can run a modern browser (Chrome, Firefox, or Edge). FlashFX has been used successfully on Windows 7, Windows 8, and Windows 10 machines with Celeron and first-generation Core i3 processors and 4 GB RAM. The only hard requirement is a browser that supports WebGL: which covers virtually any browser released after 2013.',
   },
   {
     question: 'Why is FlashFX lighter than DaVinci Resolve and Premiere Pro?',
@@ -21,6 +21,6 @@ export const lightweightFaqData = [
   },
   {
     question: 'Is FlashFX a good lightweight video editor for beginners?',
-    answer: 'Yes. FlashFX combines low hardware requirements with a low learning curve — a combination that is rare among video editing tools. Most lightweight editors either sacrifice features or are difficult to learn. FlashFX provides a full motion graphics timeline with animation presets that allow beginners to produce professional-looking results quickly. Most first-time users complete and export their first project within 15 minutes.',
+    answer: 'Yes. FlashFX combines low hardware requirements with a low learning curve: a combination that is rare among video editing tools. Most lightweight editors either sacrifice features or are difficult to learn. FlashFX provides a full motion graphics timeline with animation presets that allow beginners to produce professional-looking results quickly. Most first-time users complete and export their first project within 15 minutes.',
   },
 ];

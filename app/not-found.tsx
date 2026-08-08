@@ -48,7 +48,7 @@ export default function NotFound() {
 
         <p className="text-lg md:text-xl text-fx-text-secondary max-w-2xl leading-relaxed mb-14">
           The link may be out of date, or the address may have a typo in it. Nothing is
-          broken on your end — here is where you might have been heading.
+          broken on your end. Here is where you might have been heading.
         </p>
 
         <nav aria-label="Suggested pages">

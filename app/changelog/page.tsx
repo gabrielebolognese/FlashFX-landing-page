@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
   title: 'Changelog: What Has Changed in FlashFX',
   description:
-    'Every FlashFX release, newest first. Because FlashFX runs in the browser, you are always on the current version — there is nothing to download or update.',
+    'Every FlashFX release, newest first. Because FlashFX runs in the browser, you are always on the current version. There is nothing to download or update.',
   keywords: ['FlashFX changelog', 'FlashFX releases', 'FlashFX updates', 'FlashFX new features'],
   authors: [{ name: 'FlashFX' }],
   robots: {

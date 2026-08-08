@@ -64,7 +64,7 @@ export function BrandLogo() {
               </h3>
               <ul className="space-y-3">
                 {[
-                  'Leave clear space around the mark on all sides — roughly a quarter of its width.',
+                  'Leave clear space around the mark on all sides: roughly a quarter of its width.',
                   'Place it on the base navy, on white, or on a plain background with enough contrast.',
                   'Do not recolour it, stretch it, rotate it, or add effects.',
                   'Do not place it on a busy image where the mark stops reading.',

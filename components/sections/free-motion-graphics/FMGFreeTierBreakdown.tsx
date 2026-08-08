@@ -7,12 +7,12 @@ const features = [
   {
     icon: Layers,
     title: 'Full Timeline Editor',
-    description: 'Multi-layer timeline with keyframe support, motion paths, and easing controls. Identical to the paid tier — no features removed.',
+    description: 'Multi-layer timeline with keyframe support, motion paths, and easing controls. Identical to the paid tier, no features removed.',
   },
   {
     icon: Wand2,
     title: 'Built-in Motion Presets',
-    description: 'Access a curated library of animation presets for text, shapes, and transitions. Apply, adjust timing, and export — no subscription required.',
+    description: 'Access a curated library of animation presets for text, shapes, and transitions. Apply, adjust timing, and export, no subscription required.',
   },
   {
     icon: Film,
@@ -32,7 +32,7 @@ const features = [
   {
     icon: Download,
     title: 'WebM & GIF Export',
-    description: 'Export as WebM for web embedding or animated GIF for social posts and email campaigns — both available on the free tier.',
+    description: 'Export as WebM for web embedding or animated GIF for social posts and email campaigns, both available on the free tier.',
   },
 ];
 
@@ -48,7 +48,7 @@ export function FMGFreeTierBreakdown() {
           className="mb-12"
         >
           <h2 className="section-heading font-display text-3xl md:text-5xl font-bold text-fx-text-primary mb-4">
-            FlashFX Free Tier — Full Feature Breakdown
+            FlashFX Free Tier: Full Feature Breakdown
           </h2>
           <p className="text-fx-text-secondary max-w-2xl leading-relaxed">
             Every feature below is available at no cost. No trial timer, no export limit, no upgrade prompt blocking your workflow.

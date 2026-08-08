@@ -51,7 +51,7 @@ export function EditInPlainEnglish() {
         className="mt-5 px-6 text-center text-base md:text-lg text-fx-text-secondary max-w-2xl mx-auto"
       >
         FlashFX is built for an AI to drive. Describe what you want and Claude works the
-        editor itself &mdash; the same canvas, keyframes and properties you would touch,
+        editor itself: the same canvas, keyframes and properties you would touch,
         left behind for you to take over.
       </motion.p>
 

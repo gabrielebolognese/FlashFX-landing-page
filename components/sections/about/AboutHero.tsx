@@ -20,7 +20,7 @@ export function AboutHero() {
             <span style={{ color: '#f5c842' }}>FlashFX</span>
           </h1>
           <p className="text-lg md:text-xl text-fx-text-secondary max-w-3xl leading-relaxed">
-            FlashFX is a browser-based motion graphics and video editor — an alternative to
+            FlashFX is a browser-based motion graphics and video editor: an alternative to
             After Effects and Premiere Pro that runs in a tab, has a free tier, and needs no
             install. It has been in development since 1 January 2024, built by a small team
             led by founder and CEO Gabriele Bolognese.

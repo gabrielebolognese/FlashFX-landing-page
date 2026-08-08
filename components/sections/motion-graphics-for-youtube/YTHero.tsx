@@ -21,7 +21,7 @@ export function YTHero() {
         >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 border border-fx-border rounded-card bg-fx-bg-surface text-xs font-mono text-fx-text-secondary uppercase tracking-wider">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
-            Free tier — No watermark — Runs in a tab
+            Free tier, No watermark: Runs in a tab
           </div>
           <h1
             className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
@@ -31,7 +31,7 @@ export function YTHero() {
             <span style={{ color: '#f5c842' }}>for YouTube creators</span>
           </h1>
           <p className="text-lg md:text-xl text-fx-text-secondary mb-10 max-w-3xl leading-relaxed">
-            Intros, end screens, lower thirds, and Shorts — built in a browser tab and
+            Intros, end screens, lower thirds, and Shorts: built in a browser tab and
             exported as clean MP4 with no watermark. No install, no render farm, and no
             subscription before you have made anything.
           </p>

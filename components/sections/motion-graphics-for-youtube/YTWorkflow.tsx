@@ -11,7 +11,7 @@ const steps = [
   {
     title: 'Set the canvas',
     detail:
-      'Pick your resolution and frame rate. 1920x1080 for a standard upload, 1080x1920 for Shorts — both are just numbers you type, not locked presets.',
+      'Pick your resolution and frame rate. 1920x1080 for a standard upload, 1080x1920 for Shorts, both are just numbers you type, not locked presets.',
   },
   {
     title: 'Build the elements',
@@ -21,7 +21,7 @@ const steps = [
   {
     title: 'Apply a preset, then edit it',
     detail:
-      'Drop one of 90 presets onto an element. It generates real keyframes with bezier handles — reshape the motion instead of accepting the default.',
+      'Drop one of 90 presets onto an element. It generates real keyframes with bezier handles: reshape the motion instead of accepting the default.',
   },
   {
     title: 'Cut to the audio',

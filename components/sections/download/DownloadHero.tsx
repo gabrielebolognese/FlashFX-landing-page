@@ -28,7 +28,7 @@ export function DownloadHero() {
 
           <p className="text-base md:text-lg text-fx-text-secondary mt-8 max-w-2xl mx-auto leading-relaxed">
             There is no installer to download and no setup to run. Every browser worth using
-            can turn a page into a windowed app in about four clicks — here is how.
+            can turn a page into a windowed app in about four clicks. Here is how.
           </p>
         </motion.div>
       </div>

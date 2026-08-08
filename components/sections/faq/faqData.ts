@@ -37,7 +37,7 @@ export const faqData: FaqEntry[] = [
     category: 'Getting started',
     question: 'Do I need to install anything?',
     answer:
-      'No. FlashFX runs entirely in a browser tab. There is no installer, no plugin, and nothing to keep updated — when we ship a change, you have it the next time you load the editor. If you want it in its own window rather than a tab, any Chromium browser can install the page as an app.',
+      'No. FlashFX runs entirely in a browser tab. There is no installer, no plugin, and nothing to keep updated. When we ship a change, you have it the next time you load the editor. If you want it in its own window rather than a tab, any Chromium browser can install the page as an app.',
   },
   {
     category: 'Getting started',
@@ -55,13 +55,13 @@ export const faqData: FaqEntry[] = [
     category: 'Getting started',
     question: 'How long does it take to make something usable?',
     answer:
-      'Minutes, if you start from a preset. FlashFX ships 90 animation presets across 17 families — apply one to an element and it generates real keyframes you can then reshape, so you are editing motion rather than building it from nothing.',
+      'Minutes, if you start from a preset. FlashFX ships 90 animation presets across 17 families: apply one to an element and it generates real keyframes you can then reshape, so you are editing motion rather than building it from nothing.',
   },
   {
     category: 'Features',
     question: 'What can I actually animate?',
     answer:
-      'Position, scale, rotation, opacity, colour, effects, filters, materials, and more — 39 editable properties, over 50 of them animatable, each with per-keyframe bezier handles and 16 easing functions. Text can animate by character, word, line, or whole object.',
+      'Position, scale, rotation, opacity, colour, effects, filters, materials, and more: 39 editable properties, over 50 of them animatable, each with per-keyframe bezier handles and 16 easing functions. Text can animate by character, word, line, or whole object.',
   },
   {
     category: 'Features',
@@ -73,7 +73,7 @@ export const faqData: FaqEntry[] = [
     category: 'Features',
     question: 'Does FlashFX do 3D?',
     answer:
-      'Yes. The free tier includes 3D primitives that animate on the same timeline as everything else. Full 3D — all primitives, PBR and toon materials, HDRI lighting, and model import for GLB, OBJ, FBX, and STL — is part of the Ultra plan.',
+      'Yes. The free tier includes 3D primitives that animate on the same timeline as everything else. Full 3D, all primitives, PBR and toon materials, HDRI lighting, and model import for GLB, OBJ, FBX, and STL, is part of the Ultra plan.',
   },
   {
     category: 'Features',
@@ -91,7 +91,7 @@ export const faqData: FaqEntry[] = [
     category: 'Export',
     question: 'Is there a watermark on the free tier?',
     answer:
-      'No. Free tier exports are clean — no watermark, no branded intro or outro, no overlay. What you build is what renders.',
+      'No. Free tier exports are clean, no watermark, no branded intro or outro, no overlay. What you build is what renders.',
   },
   {
     category: 'Export',

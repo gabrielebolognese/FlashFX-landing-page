@@ -16,7 +16,7 @@ export const faqData = [
   },
   {
     question: 'How long does it take to create my first motion graphic?',
-    answer: 'Most users export their first project within minutes of opening FlashFX. The built-in template library lets you start from a working animation rather than a blank timeline, so the learning curve is measured in minutes, not the 40–80 hours typically associated with professional desktop tools.',
+    answer: 'Most users export their first project within minutes of opening FlashFX. The built-in template library lets you start from a working animation rather than a blank timeline, so the learning curve is measured in minutes, not the 40-80 hours typically associated with professional desktop tools.',
   },
   {
     question: 'What file formats can I export to?',

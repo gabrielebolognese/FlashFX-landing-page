@@ -39,7 +39,7 @@ export const featureCategories: FeatureCategory[] = [
     highlights: [
       'Pen tool with bezier curves, smoothing, and path closing',
       'Per-segment text styling with curves, gradients, stroke and glow',
-      '7 materials — matte, glossy, metallic, glass, neon, holographic, plastic',
+      '7 materials: matte, glossy, metallic, glass, neon, holographic, plastic',
       '16 blend modes and stackable masks with feather and invert',
     ],
     Icon: PenTool,
@@ -79,7 +79,7 @@ export const featureCategories: FeatureCategory[] = [
     highlights: [
       '3D primitives with animatable transforms',
       'PBR, toon, and wireframe materials',
-      'Model import — GLB, OBJ, FBX, STL',
+      'Model import: GLB, OBJ, FBX, STL',
       'HDRI lighting and environment maps',
     ],
     Icon: Box,

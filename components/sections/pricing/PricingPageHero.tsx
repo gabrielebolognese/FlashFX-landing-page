@@ -21,7 +21,7 @@ export function PricingPageHero() {
         >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 border border-fx-border rounded-card bg-fx-bg-surface text-xs font-mono text-fx-text-secondary uppercase tracking-wider">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
-            Free tier — No watermark — No credit card
+            Free tier, No watermark, No credit card
           </div>
           <h1
             className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"

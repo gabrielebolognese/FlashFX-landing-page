@@ -117,7 +117,7 @@ export function CreatorStories() {
     <section className="relative w-full">
       <BackgroundPaths
         title="Earn with FlashFX"
-        description="Two ways to make money with it — one you can start today."
+        description="Two ways to make money with it. One you can start today."
       >
         <div className="w-full mt-10 grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
           <EarnCard
@@ -135,7 +135,7 @@ export function CreatorStories() {
             </p>
             <p>
               Sponsorships follow those views. Brands pay for reach, and short-form is the
-              cheapest reach on the internet right now — you do not need a huge following to
+              cheapest reach on the internet right now. You do not need a huge following to
               get the first deal, you need volume and a look worth stopping for.
             </p>
             <p>
@@ -153,7 +153,7 @@ export function CreatorStories() {
           >
             <p>
               Promote FlashFX with a link of your own and take a percentage of what it brings
-              in — a share of every person who signs up through you.
+              in: a share of every person who signs up through you.
             </p>
             <p>
               It scales with you. The bigger your account gets and the more it sends our way,
@@ -161,7 +161,7 @@ export function CreatorStories() {
             </p>
             <p className="text-fx-text-secondary/70">
               This one is not live yet. Rates and terms have not been announced, and there is
-              no waitlist — this section will be updated when the programme opens.
+              no waitlist. This section will be updated when the programme opens.
             </p>
           </EarnCard>
         </div>

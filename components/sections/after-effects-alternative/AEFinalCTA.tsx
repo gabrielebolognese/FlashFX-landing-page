@@ -15,7 +15,7 @@ export function AEFinalCTA() {
           className="space-y-6"
         >
           <h2 className="section-heading font-display text-3xl md:text-5xl font-bold text-fx-text-primary">
-            Start Creating Motion Graphics Today — For Free
+            Start Creating Motion Graphics Today, for Free
           </h2>
           <p className="text-lg text-fx-text-secondary">
             No installation. No subscription. No After Effects required.

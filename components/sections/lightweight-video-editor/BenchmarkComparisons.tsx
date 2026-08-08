@@ -59,9 +59,9 @@ const benchmarks: BenchmarkRow[] = [
   {
     task: 'Works without install',
     flashfx: 'Yes',
-    capcut: 'No — app required',
-    davinci: 'No — 4 GB download',
-    premiere: 'No — subscription + install',
+    capcut: 'No: app required',
+    davinci: 'No: 4 GB download',
+    premiere: 'No: subscription + install',
   },
 ];
 
@@ -77,10 +77,10 @@ export function BenchmarkComparisons() {
           className="mb-10"
         >
           <h2 className="section-heading font-display text-3xl md:text-5xl font-bold text-fx-text-primary mb-4">
-            Performance Benchmarks — Low-End Hardware
+            Performance Benchmarks: Low-End Hardware
           </h2>
           <p className="text-fx-text-secondary max-w-2xl leading-relaxed">
-            These benchmarks were measured on machines with 4 GB RAM and a dual-core processor — the typical spec of a budget laptop or Chromebook bought between 2015 and 2022. Results represent real-world workflow performance, not controlled lab conditions.
+            These benchmarks were measured on machines with 4 GB RAM and a dual-core processor: the typical spec of a budget laptop or Chromebook bought between 2015 and 2022. Results represent real-world workflow performance, not controlled lab conditions.
           </p>
         </motion.div>
 
