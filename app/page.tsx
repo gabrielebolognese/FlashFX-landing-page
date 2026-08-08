@@ -7,6 +7,7 @@ import { EditInPlainEnglish } from '@/components/sections/EditInPlainEnglish';
 import { OrganizeWorkflow } from '@/components/sections/OrganizeWorkflow';
 import { InteractiveCanvas } from '@/components/sections/InteractiveCanvas';
 import { ParticleGeneration } from '@/components/sections/ParticleGeneration';
+import { ProceduralAnimation } from '@/components/sections/ProceduralAnimation';
 import { AllOnWeb } from '@/components/sections/AllOnWeb';
 import { ThreeDSupport } from '@/components/sections/ThreeDSupport';
 import { KeyframeInterpolation } from '@/components/sections/KeyframeInterpolation';
@@ -170,6 +171,9 @@ export default function Home() {
         <InteractiveCanvas />
         <ThreeDSupport />
         <ParticleGeneration />
+        {/* Directly under the particles: both are animation you describe rather
+            than draw, from opposite ends. */}
+        <ProceduralAnimation />
         <AllOnWeb />
         <ImageCarousel />
         <WhatIsFlashFX />

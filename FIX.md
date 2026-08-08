@@ -87,6 +87,14 @@ and ask.
   Image Generation* (DALL·E), *AI Chat Assistant*, *AI Motion Pipeline* with its
   four stages — are the published detail; do not invent capabilities past them.
 
+- **Procedural animation.** Confirmed 2026-08-07. FlashFX does procedural
+  animation — animation driven by rules and parameters rather than by
+  hand-placed keyframes. The `ProceduralAnimation` section rests on this entry
+  and says only that: shapes are rules, and the animation is the transition
+  between them. It does not claim a node graph, a scripting language, or any
+  particular authoring interface, because none of those has been confirmed. Ask
+  before adding one.
+
 - **Personal site:** `https://gabrielebolognese.blog`
 - **Verified logo URL:** `https://flashfx.app/android-chrome-192x192.png`
   — confirmed live 2026-08-03, 200 OK, PNG, 192×192, 13.1 KB. Clears Google's
