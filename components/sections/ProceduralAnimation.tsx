@@ -45,7 +45,7 @@ export function ProceduralAnimation() {
         transition={{ duration: 0.6, delay: 0.1 }}
         className="mt-5 px-6 text-center text-base md:text-lg text-fx-text-secondary max-w-2xl mx-auto"
       >
-        Six hundred squares, ten formations, no keyframes anywhere. Every arrangement
+        Six hundred squares, five formations, no keyframes anywhere. Every arrangement
         is a rule evaluated against the clock &mdash; which is why none of them stop
         moving, not even while they are becoming each other.
       </motion.p>

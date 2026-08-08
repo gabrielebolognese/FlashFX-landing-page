@@ -6,7 +6,7 @@ import { scaleForTier } from '@/lib/motion';
 import { useDemo } from './demo-kit';
 
 /*
- * Six hundred squares, arranging themselves into ten different animations.
+ * Six hundred squares, arranging themselves into five different animations.
  *
  * ── The one idea this is built on ───────────────────────────────────────────
  *
@@ -41,16 +41,13 @@ const MORPH = 1200;
 const COUNT = 620;
 
 /*
- * Six colours, and every arm count below is a multiple of six on purpose: with
- * `arm = i % arms` and `colour = i % 6`, a 6-fold kaleidoscope gives each arm a
- * single colour and a 12-fold alternates two per arm. The symmetry comes out of
- * the arithmetic rather than being painted on.
+ * Six colours, fixed per square for life, so a square keeps its identity through
+ * every crossing — what you follow is one field changing, not a new field each
+ * time.
  */
 const BUCKETS = ['#F5C518', '#FFD866', '#7C5CBF', '#5B8DEF', '#4ADE80', '#E6EDF3'];
 
 const TAU = Math.PI * 2;
-/** Golden angle, for the phyllotaxis spiral. */
-const GOLDEN = Math.PI * (3 - Math.sqrt(5));
 
 type Sq = { x: number; y: number; s: number; r: number; a: number };
 
@@ -106,93 +103,6 @@ const FORMATIONS: { name: string; fn: Formation }[] = [
       o.s = inside ? 0.03 : 0.014;
       o.r = 0;
       o.a = inside ? 0.95 : 0.12;
-    },
-  },
-  {
-    name: 'kaleidoscope · 6',
-    fn: (o, i, n, k, t, ar) => {
-      const arms = 6;
-      const arm = i % arms;
-      const idx = Math.floor(i / arms);
-      const total = Math.ceil(n / arms);
-      const rad = 0.1 + (idx / total) * 0.86;
-      // The twist is what makes it a kaleidoscope rather than a wheel: the arm
-      // bends by an amount that depends on how far out you are.
-      const a = arm * (TAU / arms) + t * 0.55 + Math.sin(rad * 5.5 - t * 1.3) * 0.55;
-      o.x = Math.cos(a) * rad * ar * 0.92;
-      o.y = Math.sin(a) * rad;
-      o.s = 0.03 - rad * 0.012 + Math.sin(rad * 9 - t * 2.4) * 0.008;
-      o.r = a + t;
-      o.a = 0.55 + Math.sin(rad * 7 - t * 2) * 0.35;
-    },
-  },
-  {
-    name: 'kaleidoscope · 12',
-    fn: (o, i, n, k, t, ar) => {
-      const arms = 12;
-      const arm = i % arms;
-      const idx = Math.floor(i / arms);
-      const total = Math.ceil(n / arms);
-      const rad = 0.08 + Math.pow(idx / total, 0.78) * 0.9;
-      // Counter-rotating against the 6-fold, so consecutive formations do not
-      // read as the same thing twice.
-      const a = arm * (TAU / arms) - t * 0.42 + Math.cos(rad * 7 + t) * 0.42;
-      o.x = Math.cos(a) * rad * ar * 0.9;
-      o.y = Math.sin(a) * rad;
-      o.s = 0.024 - rad * 0.008;
-      o.r = -a * 2 + t * 1.4;
-      o.a = 0.4 + Math.cos(rad * 10 + t * 1.6) * 0.4;
-    },
-  },
-  {
-    name: 'mandala',
-    fn: (o, i, n, k, t, ar) => {
-      /* A kaleidoscope whose arms are themselves petals: the radius is a
-         function of the angle, so the silhouette is a flower that turns. */
-      const arms = 18;
-      const arm = i % arms;
-      const idx = Math.floor(i / arms);
-      const total = Math.ceil(n / arms);
-      const base = arm * (TAU / arms) + t * 0.3;
-      /* 0.54 + 0.30 peaks at 0.84, and 0.12 + 0.84 = 0.96 — just inside the
-         frame. At 0.62 + 0.34 it reached 1.08 and the outer petals were being
-         clipped off the top and bottom of the canvas. */
-      const petal = 0.54 + 0.3 * Math.sin(base * 3 + t * 0.9);
-      const rad = 0.12 + (idx / total) * petal;
-      o.x = Math.cos(base) * rad * ar * 0.94;
-      o.y = Math.sin(base) * rad;
-      o.s = 0.026 * (1 - rad * 0.4);
-      o.r = base * 3 - t;
-      o.a = 0.35 + (rad / petal) * 0.6;
-    },
-  },
-  {
-    name: 'spiral',
-    fn: (o, i, n, k, t, ar) => {
-      const a = i * GOLDEN + t * 0.5;
-      const rad = Math.sqrt(k) * 0.95;
-      o.x = Math.cos(a) * rad * ar * 0.9;
-      o.y = Math.sin(a) * rad;
-      o.s = 0.008 + (1 - rad) * 0.026;
-      o.r = a;
-      o.a = 0.3 + (1 - rad) * 0.65;
-    },
-  },
-  {
-    name: 'rings',
-    fn: (o, i, n, k, t, ar) => {
-      const rings = 8;
-      const ring = i % rings;
-      const idx = Math.floor(i / rings);
-      const total = Math.ceil(n / rings);
-      const dir = ring % 2 === 0 ? 1 : -1;
-      const a = (idx / total) * TAU + t * 0.45 * dir;
-      const rad = 0.14 + ring * 0.105;
-      o.x = Math.cos(a) * rad * ar * 0.9;
-      o.y = Math.sin(a) * rad;
-      o.s = 0.022 + Math.sin(t * 2 + ring) * 0.006;
-      o.r = a * dir + t;
-      o.a = 0.4 + (ring / rings) * 0.5;
     },
   },
   {
