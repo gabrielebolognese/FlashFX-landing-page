@@ -74,6 +74,19 @@ and ask.
   fire, smoke, magic and confetti among the presets, and supports custom
   emitters built by the user. Stated by the owner; the `ParticleGeneration`
   section's copy rests on this entry.
+- **AI, and what "AI" means here.** Confirmed 2026-08-07. FlashFX is built to be
+  **operated by an AI**: Claude drives the editor itself — the same canvas,
+  keyframes and properties a person would use — rather than generating a video
+  elsewhere and returning a file. The distinction is the claim, and it is the
+  one the `EditInPlainEnglish` section rests on. What comes out is a project you
+  can then edit by hand.
+
+  **AI is not on the free tier.** `faqData.ts` states that "the free tier is a
+  complete manual editor with no AI features" and puts them on Ultra and Teams.
+  Any new AI copy must not imply otherwise. The existing feature entries — *AI
+  Image Generation* (DALL·E), *AI Chat Assistant*, *AI Motion Pipeline* with its
+  four stages — are the published detail; do not invent capabilities past them.
+
 - **Personal site:** `https://gabrielebolognese.blog`
 - **Verified logo URL:** `https://flashfx.app/android-chrome-192x192.png`
   — confirmed live 2026-08-03, 200 OK, PNG, 192×192, 13.1 KB. Clears Google's

@@ -3,6 +3,7 @@ import { WhatIsFlashFX } from '@/components/sections/WhatIsFlashFX';
 import { VideoPlaceholder } from '@/components/sections/VideoPlaceholder';
 import { ImageCarousel } from '@/components/sections/ImageCarousel';
 import { SolutionSection } from '@/components/sections/SolutionSection';
+import { EditInPlainEnglish } from '@/components/sections/EditInPlainEnglish';
 import { OrganizeWorkflow } from '@/components/sections/OrganizeWorkflow';
 import { InteractiveCanvas } from '@/components/sections/InteractiveCanvas';
 import { ParticleGeneration } from '@/components/sections/ParticleGeneration';
@@ -148,6 +149,12 @@ export default function Home() {
       <main>
         <Hero />
         <SolutionSection />
+        {/*
+          Directly after the opening video and before the timelines, because the
+          order is an argument: here is the editor, here is what it can be told
+          to do, and here is the timeline it does it on.
+        */}
+        <EditInPlainEnglish />
         {/*
           Every one of these was a YouTube embed of someone else's screen. They
           are now live demos of the product (immersionmilestones.md I3) — the
