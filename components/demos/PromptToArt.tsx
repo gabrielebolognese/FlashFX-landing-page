@@ -646,7 +646,21 @@ export function PromptToArt() {
   const claudeClicking = step === S.half || dupPressed || buttonPressed;
 
   return (
-    <div ref={ref} className="relative w-full h-[76vh] min-h-[460px] md:min-h-[620px] overflow-hidden">
+    /*
+      Everything inside is scaled to 85%, and the stage is 15% shorter to match.
+
+      One transform rather than fifteen edited numbers: the sequence was tuned as
+      a whole -- the box against the artwork, the cursor travel against the
+      control it presses, the glow clearance under the button -- and rescaling
+      each part by hand would have meant re-tuning all of those against each
+      other. Scaling the composition keeps every proportion exactly as it was.
+
+      Scaling about the centre also *increases* the clearance under the call to
+      action rather than eating into it: a point 100px above the bottom edge ends
+      up further from that edge, not closer.
+    */
+    <div ref={ref} className="relative w-full h-[65vh] min-h-[390px] md:min-h-[527px] overflow-hidden">
+      <div className="absolute inset-0" style={{ transform: 'scale(0.85)', transformOrigin: 'center center' }}>
       {/* Artwork. Positioning on the wrapper, animation on the child — an inline
           transform from framer would otherwise overwrite Tailwind's translate. */}
       <div className="absolute inset-y-0 right-0 w-full lg:w-[50vw] flex items-center justify-center px-4 pointer-events-none">
@@ -890,6 +904,7 @@ export function PromptToArt() {
             </motion.span>
           </div>
         </motion.div>
+      </div>
       </div>
     </div>
   );

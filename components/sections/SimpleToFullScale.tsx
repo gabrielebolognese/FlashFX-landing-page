@@ -77,8 +77,8 @@ export function SimpleToFullScale() {
   }, [open, close]);
 
   return (
-    <section id="simple-to-full-scale" className="relative w-full py-20 md:py-28 overflow-hidden">
-      <div className="relative z-10 mx-auto px-4 sm:px-6" style={{ maxWidth: 1344 }}>
+    <section id="simple-to-full-scale" className="relative w-full pt-20 md:pt-28 pb-6 md:pb-9 overflow-hidden">
+      <div className="relative z-10 mx-auto px-4 sm:px-6" style={{ maxWidth: 1680 }}>
         {SHOTS.map((shot, i) => (
           <div key={shot.src} className={i === 0 ? '' : 'mt-16 md:mt-24'}>
             <motion.h2
