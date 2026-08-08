@@ -45,14 +45,15 @@ export function ProceduralAnimation() {
         transition={{ duration: 0.6, delay: 0.1 }}
         className="mt-5 px-6 text-center text-base md:text-lg text-fx-text-secondary max-w-2xl mx-auto"
       >
-        One cube, then four, then a hundred &mdash; and then whatever you point them at.
-        Nothing here is keyframed: every shape is a rule, and the animation is what
-        happens between them.
+        Six hundred squares, ten formations, no keyframes anywhere. Every arrangement
+        is a rule evaluated against the clock &mdash; which is why none of them stop
+        moving, not even while they are becoming each other.
       </motion.p>
 
-      {/* Tall and wide: the cloud needs room to turn, and a shape that fills the
-          frame at one moment has to survive becoming a wider one at the next. */}
-      <div className="relative mt-10 md:mt-14 w-full h-[62vh] min-h-[420px] md:min-h-[560px]">
+      {/* Full-bleed, because two of the formations — the waveform and the ribbon
+          — are written to reach the frame edge, and a centred column would cut
+          exactly the part that makes them read. */}
+      <div className="relative mt-10 md:mt-14 w-screen left-1/2 -translate-x-1/2 h-[62vh] min-h-[420px] md:min-h-[560px]">
         <ProceduralMorph />
       </div>
 
