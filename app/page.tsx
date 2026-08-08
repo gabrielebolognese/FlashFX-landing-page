@@ -164,7 +164,12 @@ export default function Home() {
         <ImageCarousel />
         <WhatIsFlashFX />
         <EverythingToAnimate />
-        <VideoPlaceholder heading="Animation presets" title="Animation Presets" description="Bring your ideas to life effortlessly" gridBackground demo="presets" youtubeId="Rk9hf3QI5Is" />
+        {/*
+          No `gridBackground`. It paints an opaque `bg-fx-bg-base` plus a 40px
+          rule grid, which both dates the section and punches a hole in the site
+          backdrop the whole page otherwise sits on (immersionmilestones.md I4).
+        */}
+        <VideoPlaceholder heading="Animation presets" title="Animation Presets" description="Bring your ideas to life effortlessly" demo="presets" youtubeId="Rk9hf3QI5Is" />
         <KeyframeInterpolation />
         <CreatorStories />
         {/*

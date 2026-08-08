@@ -56,7 +56,16 @@ export const demoFrame: Record<
    */
   timeline: { width: '', aspect: 'aspect-[21/8] md:aspect-[21/6]', bare: true, fullBleed: true },
   clips: { width: '', aspect: 'aspect-[21/8] md:aspect-[21/6]', bare: true, fullBleed: true },
-  presets: { width: 'max-w-5xl', aspect: 'aspect-video' },
+  /*
+   * `bare`, and wider than it was. The wall is sixteen tiles on a 4×4 grid, and
+   * a bordered card around a grid of bordered tiles is a box inside a box —
+   * `DemoShell bare` must be set to match, or the card gets painted underneath.
+   *
+   * Squarer than a video on purpose: the tiles need height to stay close to
+   * square, and 16:9 across four rows gives short wide slots that leave the
+   * shapes nowhere to move vertically.
+   */
+  presets: { width: 'max-w-6xl', aspect: 'aspect-square sm:aspect-[4/3] lg:aspect-[16/11]', bare: true },
 };
 
 export function Demo({ kind }: { kind: DemoKind }) {
