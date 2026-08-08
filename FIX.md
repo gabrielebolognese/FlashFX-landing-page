@@ -142,10 +142,17 @@ and ask.
   the owner confirms it. Ask before adding it.
 
 - **Templates: ten tutorial templates.** Stated by the owner 2026-08-07, for the
-  `TemplateStart` section. The count is the only figure claimed; the four cards
-  on the homepage are placeholders with invented names (Logo sting, Kinetic
-  titles, Product reveal, The whole toolbox) and **no real template has been
-  named**. Replace the names along with the artwork.
+  `TemplateStart` section. The count is the only figure claimed.
+
+  **The four cards are real as of 2026-08-07.** The owner supplied screenshots of
+  each template open in the editor, stored in `public/templates/`. The names, the
+  blurbs and the "Scenes" category are all read off the editor UI in those
+  images rather than invented: City Skyline, Forest, Galaxy, Rocket Launch.
+
+  They arrived as PNGs of 203-223 kB, two of them over the 220 kB per-asset
+  budget, so they ship as WebP at 1200px instead: 165 kB for all four against
+  860 kB. **Re-export at 1200px wide** if they are ever replaced, or the build
+  will fail on the asset check.
 
   **There is no templates gallery to link to.** No `/templates` route exists and
   there is no templates subdomain — blog, documentation, editor and roadmap are
