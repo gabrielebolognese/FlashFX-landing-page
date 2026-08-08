@@ -240,6 +240,42 @@
   opacity: 1;
 }
 
+/*
+ * The 176-card feature grid.
+ *
+ * `content-visibility: auto` is the whole optimisation: the browser skips
+ * style, layout and paint for any card outside the viewport, and picks it back
+ * up on approach. On a grid this long that is the difference between rendering
+ * 176 cards and rendering the dozen you can actually see.
+ *
+ * `contain-intrinsic-size: auto 190px` is what stops that being a scrollbar
+ * disaster. Without a placeholder size a skipped card measures zero, the page
+ * collapses, and the scrollbar jumps as cards enter and leave. 190px is the
+ * first guess; `auto` tells the browser to remember each card's real height
+ * once it has been rendered a first time and use that from then on.
+ *
+ * The hover lift is CSS because it used to be a framer-motion `whileHover` on
+ * all 176 — one transition property costs nothing and does the same job.
+ */
+.fx-feature-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 190px;
+  transition: transform 200ms ease-out;
+}
+
+.fx-feature-card:hover {
+  transform: translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-feature-card {
+    transition: none;
+  }
+  .fx-feature-card:hover {
+    transform: none;
+  }
+}
+
 .fx-cta {
   position: relative;
   overflow: hidden;

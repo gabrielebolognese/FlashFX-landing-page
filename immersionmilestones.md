@@ -269,7 +269,7 @@ in JavaScript.
 
 **`animation-play-state: paused` is the idle state everywhere.** A paused
 animation costs nothing, which is what makes it safe to put a beam on every card
-in a 179-card grid.
+in a 176-card grid.
 
 **Three variants, and the split is the whole design:**
 
@@ -283,7 +283,7 @@ in a 179-card grid.
 183 of them contend for nothing. Making them all `ambient` would have spent the
 entire I1 budget on decoration in a single section.
 
-**Applied to:** `FeatureHighlights` (179 cards — the section that is long by
+**Applied to:** `FeatureHighlights` (176 cards — the section that is long by
 design, where hover motion is what makes volume feel alive rather than
 tiring), `FAQSection` rows, `ComparisonTeaser`, and `CreatorStories` — where the
 live earn card gets the sitewide-only `ambient` beam and the unlaunched one gets
@@ -635,7 +635,7 @@ nobody will ever see, for every one they will.
 
    Removing it took the last client-side behaviour out of `cta-button.tsx`, so
    that file dropped `'use client'` and renders on the server again.
-3. **The 179-card spotlight, fixed.** `FeatureHighlights` was building a fresh
+3. **The 176-card spotlight, fixed.** `FeatureHighlights` was building a fresh
    `radial-gradient(...)` string and assigning it to `style.background` straight
    out of the mousemove handler — re-parsing a gradient and invalidating the
    paint of a card behind a `backdrop-filter: blur(16px)`, sixteen times a

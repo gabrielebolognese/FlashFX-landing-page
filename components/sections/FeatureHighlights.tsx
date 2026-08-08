@@ -1,17 +1,17 @@
 'use client';
 
-import { motion } from 'framer-motion';
+
 import Image from 'next/image';
 import { useRef, useCallback, useEffect } from 'react';
 import type { LucideIcon } from 'lucide-react';
-import { BeamBorder } from '@/components/ui/beam-border';
+
 import { editorFeatures, FeatureItem } from './feature-highlights/editorFeatures';
 import { animationPresets, AnimationPresetItem } from './feature-highlights/animationPresets';
 import { editableProperties, PropertyItem } from './feature-highlights/editableProperties';
 
 type CardItem = FeatureItem | AnimationPresetItem | PropertyItem;
 
-function FeatureCard({ item, index, showCategory }: { item: CardItem; index: number; showCategory?: boolean }) {
+function FeatureCard({ item, showCategory }: { item: CardItem; showCategory?: boolean }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
   const iconRef = useRef<HTMLDivElement>(null);
@@ -30,10 +30,11 @@ function FeatureCard({ item, index, showCategory }: { item: CardItem; index: num
    *   mouse delivers roughly sixteen events per frame — so fifteen out of every
    *   sixteen writes were painted over before anyone saw them.
    *
-   *   Each one re-parsed a gradient and invalidated the paint of a card sitting
-   *   in a 179-card grid, behind a `backdrop-filter: blur(16px)`. Repainting a
-   *   backdrop-filtered layer is one of the more expensive things a compositor
-   *   can be asked to do.
+   *   Each one re-parsed a gradient and invalidated the paint of a card in a
+   *   176-card grid — at the time, one sitting behind a `backdrop-filter:
+   *   blur(16px)`, which made repainting it about as expensive as a repaint
+   *   gets. That blur is gone now, but the coalescing is still what keeps this
+   *   handler honest.
    *
    * Now the handler only records the position; a single `requestAnimationFrame`
    * writes two custom properties, and the gradient itself is declared once in
@@ -90,36 +91,34 @@ function FeatureCard({ item, index, showCategory }: { item: CardItem; index: num
   useEffect(() => () => cancelAnimationFrame(frame.current), []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 32 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.1 }}
-      transition={{ duration: 0.45, delay: (index % 10) * 0.04, ease: 'easeOut' }}
-      whileHover={{ y: -4, transition: { duration: 0.2, ease: 'easeOut' } }}
-      className="h-full"
-    >
+    <div className="fx-feature-card h-full">
       <div
         ref={cardRef}
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         className="group relative h-full rounded-2xl overflow-hidden cursor-default"
+        /*
+          No `backdrop-filter` (2026-08-07). It was `blur(16px)` on all 176.
+          Behind an opaque section that was merely wasteful — the backdrop never
+          changed, so the blur was computed once and cached. Now that the shader
+          field shows through this section, the backdrop changes every frame,
+          which would force every visible card to re-blur every frame. A
+          backdrop-filtered layer over moving content is about the most
+          expensive thing a compositor can be asked to maintain.
+
+          The fill went 0.72 → 0.88 to compensate: enough that the card reads as
+          a solid surface, translucent enough that the field still tints it.
+        */
         style={{
-          background: 'rgba(20, 31, 64, 0.72)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
+          background: 'rgba(20, 31, 64, 0.88)',
           border: '1px solid rgba(230, 237, 243, 0.1)',
           borderTopColor: 'rgba(230, 237, 243, 0.18)',
           boxShadow: '0 4px 24px rgba(0,0,0,0.35), 0 1px 0 rgba(230,237,243,0.06) inset',
         }}
       >
-        {/*
-          `trace`, not `ambient`. This grid is the longest on the site by
-          design, and a permanent beam on every card would be noise as well as
-          blowing the I1 loop budget on decoration. Hover bounds it to one at a
-          time at no idle cost (immersionmilestones.md I2).
-        */}
-        <BeamBorder />
+        {/* No BeamBorder. 176 of them was 176 extra elements and a hover
+            listener each, for a border sweep nobody goes looking for. */}
 
         <div
           ref={spotlightRef}
@@ -160,7 +159,7 @@ function FeatureCard({ item, index, showCategory }: { item: CardItem; index: num
           </p>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -169,23 +168,15 @@ function CategorySection({
   subtitle,
   items,
   showCategory,
-  indexOffset,
 }: {
   title: string;
   subtitle: string;
   items: CardItem[];
   showCategory?: boolean;
-  indexOffset: number;
 }) {
   return (
     <div className="mb-20">
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.45 }}
-        className="mb-8"
-      >
+      <div className="mb-8">
         <h3
           className="text-2xl font-semibold text-white mb-2"
           style={{ fontFamily: 'var(--font-outfit)', fontWeight: 600 }}
@@ -193,16 +184,11 @@ function CategorySection({
           {title}
         </h3>
         <p className="text-fx-text-secondary text-sm">{subtitle}</p>
-      </motion.div>
+      </div>
 
       <div className="grid grid-cols-5 gap-4">
-        {items.map((item, index) => (
-          <FeatureCard
-            key={item.title}
-            item={item}
-            index={indexOffset + index}
-            showCategory={showCategory}
-          />
+        {items.map((item) => (
+          <FeatureCard key={item.title} item={item} showCategory={showCategory} />
         ))}
       </div>
     </div>
@@ -211,44 +197,39 @@ function CategorySection({
 
 export function FeatureHighlights() {
   return (
-    <section className="relative w-full pt-24 bg-fx-bg-base">
-      <div
-        className="absolute inset-0 pointer-events-none z-[1]"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px',
-        }}
-      />
-      <div className="absolute inset-0 pointer-events-none z-[2] bg-gradient-to-b from-fx-bg-base via-transparent to-transparent" />
+    /*
+      No background of its own (2026-08-07). It used to paint an opaque
+      `bg-fx-bg-base`, a 40px rule grid over that, and a gradient over both —
+      the old look, and three full-section layers the compositor had to carry.
+      The grid is gone and the section is transparent, so the field of light
+      from `SiteBackdrop` runs through it like the rest of the page
+      (immersionmilestones.md I4).
 
+      The iceberg below still needs solid ground: its top and bottom fades are
+      hand-matched to #141f40 and would show a hard seam against a shader. It
+      keeps that ground, with a lead-in gradient above it that takes the page
+      from the field into the solid colour.
+    */
+    <section className="relative w-full pt-24">
       <div className="relative z-[10] max-w-screen-2xl mx-auto px-6">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+        <h2
           className="section-heading font-display text-5xl md:text-7xl lg:text-8xl font-bold text-center mb-20"
           style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.03em' }}
         >
           <span style={{ color: '#f5c842' }}>Everything</span>
           <span className="text-white"> FlashFX can do</span>
-        </motion.h2>
+        </h2>
 
         <CategorySection
           title="Editor Features"
           subtitle="The full suite of tools built into the FlashFX editor"
           items={editorFeatures}
-          indexOffset={0}
         />
 
         <CategorySection
           title="Editable Properties"
           subtitle="Every visual property you can control and animate on any element"
           items={editableProperties}
-          indexOffset={editorFeatures.length}
         />
 
         <CategorySection
@@ -256,9 +237,15 @@ export function FeatureHighlights() {
           subtitle="Ready-to-use preset animations for elements and text"
           items={animationPresets}
           showCategory
-          indexOffset={editorFeatures.length + editableProperties.length}
         />
       </div>
+
+      {/* Field of light into solid ground, so the iceberg's fades have the
+          colour they were matched against. */}
+      <div
+        className="w-full h-24 md:h-32"
+        style={{ background: 'linear-gradient(to bottom, transparent 0%, #141f40 100%)' }}
+      />
 
       {/*
         Was a raw <img>, which meant no lazy loading and no intrinsic sizing.
@@ -282,7 +269,7 @@ export function FeatureHighlights() {
         it as a seam. The bottom fade is the deep one, and the line sits inside
         it.
       */}
-      <div className="relative w-full" style={{ lineHeight: 0 }}>
+      <div className="relative w-full" style={{ lineHeight: 0, background: '#141f40' }}>
         <Image
           src="/fix-copy.webp"
           alt="An iceberg, most of it below the surface"
@@ -306,11 +293,7 @@ export function FeatureHighlights() {
         />
 
         <div className="absolute inset-x-0 bottom-0 flex justify-center px-6 pb-[7%]">
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+          <p
             style={{
               color: '#f5c842',
               fontFamily: 'var(--font-inter), sans-serif',
@@ -322,7 +305,7 @@ export function FeatureHighlights() {
             }}
           >
             And so much more
-          </motion.p>
+          </p>
         </div>
       </div>
 
@@ -334,11 +317,7 @@ export function FeatureHighlights() {
         }}
       >
 
-        <motion.ul
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+        <ul
           style={{
             listStyle: 'none',
             padding: 0,
@@ -355,13 +334,9 @@ export function FeatureHighlights() {
             'Team collaboration features',
             'Not to mention all marketplace templates',
             'And all AI features',
-          ].map((item, i) => (
-            <motion.li
+          ].map((item) => (
+            <li
               key={item}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.45, delay: 0.3 + i * 0.08 }}
               style={{
                 color: 'rgba(230, 237, 243, 0.55)',
                 fontFamily: 'var(--font-inter), sans-serif',
@@ -376,9 +351,9 @@ export function FeatureHighlights() {
             >
               <span style={{ color: '#f5c842', fontSize: '0.6em', opacity: 0.7 }}>—</span>
               {item}
-            </motion.li>
+            </li>
           ))}
-        </motion.ul>
+        </ul>
       </div>
     </section>
   );
