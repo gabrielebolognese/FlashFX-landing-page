@@ -8,6 +8,8 @@ import { SimpleToFullScale } from '@/components/sections/SimpleToFullScale';
 import { EditInPlainEnglish } from '@/components/sections/EditInPlainEnglish';
 import { OrganizeWorkflow } from '@/components/sections/OrganizeWorkflow';
 import { InteractiveCanvas } from '@/components/sections/InteractiveCanvas';
+import { FeaturesOpener } from '@/components/sections/FeaturesOpener';
+import { FeatureBlock } from '@/components/sections/FeatureBlock';
 import { ParticleGeneration } from '@/components/sections/ParticleGeneration';
 import { ProceduralAnimation } from '@/components/sections/ProceduralAnimation';
 import { TemplateStart } from '@/components/sections/TemplateStart';
@@ -178,6 +180,21 @@ export default function Home() {
         <VideoPlaceholder id="clip-timeline" heading="Clip timeline" title="Clip Timeline" description="Arrange footage, overlays and audio in one sequence" demo="clips" youtubeId="-zyusYiQNEc" />
         <VideoPlaceholder id="animation-timeline" heading="Animation timeline" title="Animation Timeline" description="Keyframe animation made simple for everyone" demo="timeline" youtubeId="bHdIvt_lUrE" sectionHeading="Animation Timeline" />
         <InteractiveCanvas />
+
+        {/*
+          Everything from here to the procedural section is one run under the
+          "Features" heading: three new blocks, then the three that already
+          existed, unchanged and in the order they were already in.
+
+          The first three carry only their titles. Their details are still to
+          come from the owner, and inventing copy for them would breach the rule
+          in CLAUDE.md against making up product facts.
+        */}
+        <FeaturesOpener />
+        <FeatureBlock id="fast-shapes" title="Fast shape creation" accent="creation" />
+        <FeatureBlock id="audio-video" title="Audio and video support" accent="support" />
+        <FeatureBlock id="vector-tools" title="Vector tool support" accent="support" />
+
         <ThreeDSupport />
         <ParticleGeneration />
         {/* Directly under the particles: both are animation you describe rather
