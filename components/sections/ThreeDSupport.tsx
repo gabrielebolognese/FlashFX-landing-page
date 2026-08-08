@@ -142,7 +142,7 @@ export function ThreeDSupport() {
               className="absolute left-1/2 top-1/2 w-[78%] h-[62%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
               style={{
                 background:
-                  'radial-gradient(ellipse at center, rgba(245,197,24,0.11) 0%, rgba(124,92,191,0.07) 42%, transparent 72%)',
+                  'radial-gradient(ellipse at center, rgba(245,197,24,0.11) 0%, rgba(45,107,228,0.09) 42%, transparent 72%)',
               }}
             />
             <PlaneViewer className="absolute inset-0" />

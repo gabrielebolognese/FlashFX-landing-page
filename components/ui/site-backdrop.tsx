@@ -22,10 +22,14 @@ import { isReducedTier, subscribePointer } from '@/lib/motion';
  *
  * ── What it is driven by ────────────────────────────────────────────────────
  *
- * Scroll position, so the field warms as you descend: cool and blue behind the
- * hero, warmer and violet by the closing call to action. That is what makes the
- * top of the page feel like a different place from the bottom rather than the
- * same wallpaper repeated.
+ * Scroll position, so the field opens up as you descend: deep navy behind the
+ * hero, a lighter and clearer blue by the closing call to action. That is what
+ * makes the top of the page feel like a different place from the bottom rather
+ * than the same wallpaper repeated.
+ *
+ * It used to ramp toward a warm violet instead, which turned the lower half of
+ * the site purple. Every stop is blue-dominant now and must stay that way — see
+ * the note beside them in the shader.
  *
  * It carries no rays. The hero has its own `ShaderAnimation` and keeps it —
  * this sits behind everything as the ambient field, and the hero's own light
@@ -64,14 +68,26 @@ void main() {
 
   float t = uTime * 0.05;
 
-  /* Cool and blue at the top of the page, warm and violet by the bottom. */
-  vec3 coolA = vec3(0.043, 0.075, 0.153);
-  vec3 coolB = vec3(0.078, 0.145, 0.290);
-  vec3 warmA = vec3(0.078, 0.055, 0.129);
-  vec3 warmB = vec3(0.243, 0.129, 0.204);
+  /*
+   * Blue the whole way down.
+   *
+   * This used to ramp from cool blue at the top to a warm violet by the bottom,
+   * which is why the lower half of the page drifted purple. The scroll still
+   * moves the colour -- deep navy near the hero, a lighter and clearer blue by
+   * the footer -- but it stays in one family, so nothing below the fold reads as
+   * a different site.
+   *
+   * Keep every one of these four in the blue range. The gradient is the only
+   * thing setting the page's colour temperature, and a red or green component
+   * creeping above the blue one here tints every section at once.
+   */
+  vec3 deepA = vec3(0.043, 0.075, 0.153);
+  vec3 deepB = vec3(0.078, 0.145, 0.290);
+  vec3 lightA = vec3(0.047, 0.098, 0.196);
+  vec3 lightB = vec3(0.110, 0.243, 0.435);
 
-  vec3 base = mix(coolA, warmA, uScroll);
-  vec3 lift = mix(coolB, warmB, uScroll);
+  vec3 base = mix(deepA, lightA, uScroll);
+  vec3 lift = mix(deepB, lightB, uScroll);
 
   /*
    * The pointer slides the pools, each by a different amount, so the field has
@@ -296,7 +312,7 @@ export function SiteBackdrop() {
           position: 'absolute',
           inset: 0,
           background:
-            'radial-gradient(ellipse 90% 60% at 30% 15%, rgba(20,37,74,0.9) 0%, transparent 60%), radial-gradient(ellipse 70% 50% at 78% 70%, rgba(40,25,58,0.75) 0%, transparent 65%), #0b1020',
+            'radial-gradient(ellipse 90% 60% at 30% 15%, rgba(20,37,74,0.9) 0%, transparent 60%), radial-gradient(ellipse 70% 50% at 78% 70%, rgba(24,52,102,0.75) 0%, transparent 65%), #0b1020',
         }}
       />
       <canvas ref={canvas} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />

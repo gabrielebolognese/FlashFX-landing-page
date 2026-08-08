@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useAmbient } from '@/lib/motion';
@@ -65,6 +66,9 @@ function cablePath(from: { x: number; y: number }) {
 
 export function InspiredFrom() {
   const { ref, active } = useAmbient<HTMLDivElement>({ priority: 1 });
+  /* Hovering a source lights its cable and dims the rest, so four feeds into one
+     socket can be read one at a time instead of only as a bundle. */
+  const [focus, setFocus] = useState<number | null>(null);
 
   return (
     <section id="inspired" className="relative w-full py-20 md:py-28 overflow-hidden">
@@ -107,15 +111,39 @@ export function InspiredFrom() {
               const d = cablePath(seat);
               return (
                 <g key={s.name}>
-                  <path d={d} fill="none" stroke="url(#fx-cable)" strokeWidth={3} strokeLinecap="round" />
+                  {/* Casing under the lit core: two strokes make a cable read as
+                      a cable rather than a drawn line. */}
+                  <path
+                    d={d}
+                    fill="none"
+                    stroke="#0b1230"
+                    strokeWidth={9}
+                    strokeLinecap="round"
+                    opacity={focus === null || focus === i ? 0.9 : 0.25}
+                  />
+                  <path
+                    d={d}
+                    fill="none"
+                    stroke={focus === i ? '#F5C518' : 'url(#fx-cable)'}
+                    strokeWidth={focus === i ? 5 : 3.5}
+                    strokeLinecap="round"
+                    opacity={focus === null || focus === i ? 1 : 0.2}
+                    style={{ transition: 'stroke-width 200ms, opacity 200ms' }}
+                  />
                   {/* The pulse. Travelling the path itself means it follows every
                       bend exactly, with no second copy of the curve to keep in
                       step. */}
-                  {active && (
-                    <circle r={5} fill="#F5C518">
-                      <animateMotion dur="2.6s" begin={`${i * 0.55}s`} repeatCount="indefinite" path={d} />
-                    </circle>
-                  )}
+                  {active &&
+                    (focus === i ? [0, 1, 2] : [0]).map((k) => (
+                      <circle key={k} r={focus === i ? 6 : 4.5} fill="#F5C518" opacity={focus === null || focus === i ? 1 : 0.15}>
+                        <animateMotion
+                          dur={focus === i ? '1.5s' : '2.6s'}
+                          begin={`${i * 0.55 + k * 0.5}s`}
+                          repeatCount="indefinite"
+                          path={d}
+                        />
+                      </circle>
+                    ))}
                 </g>
               );
             })}
@@ -137,6 +165,8 @@ export function InspiredFrom() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.09 }}
+                onMouseEnter={() => setFocus(i)}
+                onMouseLeave={() => setFocus(null)}
               >
                 <motion.div
                   className="relative rounded-2xl flex items-center justify-center"
@@ -144,10 +174,14 @@ export function InspiredFrom() {
                     width: 'clamp(64px, 11vw, 124px)',
                     height: 'clamp(64px, 11vw, 124px)',
                     background: 'rgba(20, 31, 64, 0.9)',
-                    border: '1px solid rgba(245,197,24,0.28)',
-                    boxShadow: '0 12px 40px -14px rgba(245,197,24,0.4)',
+                    border: `1px solid ${focus === i ? '#F5C518' : 'rgba(245,197,24,0.28)'}`,
+                    boxShadow: focus === i
+                      ? '0 16px 50px -12px rgba(245,197,24,0.7)'
+                      : '0 12px 40px -14px rgba(245,197,24,0.4)',
+                    cursor: 'pointer',
+                    transition: 'border-color 200ms, box-shadow 200ms',
                   }}
-                  animate={active ? { y: [0, -7, 0] } : { y: 0 }}
+                  animate={active ? { y: [0, -7, 0], scale: focus === i ? 1.07 : 1 } : { y: 0, scale: focus === i ? 1.07 : 1 }}
                   transition={
                     active
                       ? { duration: 4 + i * 0.5, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut', delay: i * 0.3 }

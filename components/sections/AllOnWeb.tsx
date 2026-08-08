@@ -81,7 +81,7 @@ export function AllOnWeb() {
         className="absolute left-1/2 top-1/2 w-[70%] h-[60%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         style={{
           background:
-            'radial-gradient(ellipse at center, rgba(245,197,24,0.13) 0%, rgba(124,92,191,0.07) 45%, transparent 72%)',
+            'radial-gradient(ellipse at center, rgba(245,197,24,0.13) 0%, rgba(45,107,228,0.09) 45%, transparent 72%)',
         }}
         animate={active ? { opacity: [0.65, 1, 0.65], scale: [0.97, 1.04, 0.97] } : { opacity: 0.85, scale: 1 }}
         transition={active ? { duration: 7, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' } : { duration: 0 }}
