@@ -6,42 +6,76 @@ import { useState, useEffect } from 'react';
 import { useAmbient, loop } from '@/lib/motion';
 
 
+/*
+ * Thirteen screenshots of the editor with an animation part-built, supplied by
+ * the owner 2026-08-08 and replacing the nine that were here.
+ *
+ * ── The filenames are the point ─────────────────────────────────────────────
+ *
+ * They arrived as "Screenshot 2026-08-08 190030.png", which tells a crawler
+ * nothing and tells an image search less. Each is now named for what it
+ * actually shows, read off the editor UI in the picture itself, and the alt
+ * text says what is being made rather than repeating the product name nine
+ * times the way the old set did ("Stunning Visuals", "Easy to Use Interface").
+ *
+ * ── And the weight ─────────────────────────────────────────────────────────
+ *
+ * 3.4 MB of PNG became 493 kB of WebP at 1200px, 86% less. Four of the
+ * originals were over the 220 kB per-asset budget and would have failed the
+ * build. Re-export at 1200px if any is ever replaced.
+ */
 const images = [
   {
-    src: '/shot-180920.webp',
-    alt: 'FlashFX 3D Airplane Animation',
+    src: '/lookslike/flashfx-departure-board-animation.webp',
+    alt: 'An airport departure board animation being built in FlashFX, its split-flap letters keyframed across 234 timeline tracks',
   },
   {
-    src: '/shot-200913.webp',
-    alt: 'FlashFX Brand Strategy Design',
+    src: '/lookslike/flashfx-bar-chart-race-animation.webp',
+    alt: 'A bar chart race of programming languages animating in FlashFX, with per-digit counters rolling on 220 tracks',
   },
   {
-    src: '/shot-202425.webp',
-    alt: 'FlashFX Eye Effect with Color Adjustments',
+    src: '/lookslike/flashfx-forest-scene-animation.webp',
+    alt: 'A layered forest scene in FlashFX, trees swaying on their own keyframed tracks',
   },
   {
-    src: '/shot-204557.webp',
-    alt: 'FlashFX Pattern Design',
+    src: '/lookslike/flashfx-sunset-scene-animation.webp',
+    alt: 'A sunset scene in FlashFX, the sun sinking into the sea under banded gradient skies',
   },
   {
-    src: '/carousel-logo-animation.webp',
-    alt: 'FlashFX Logo Animation',
+    src: '/lookslike/flashfx-hypno-spiral-pattern.webp',
+    alt: 'A hypnotic spiral pattern generated in FlashFX, with the pattern presets and parameters open',
   },
   {
-    src: '/carousel-timeline.webp',
-    alt: 'FlashFX Project Timeline',
+    src: '/lookslike/flashfx-ripple-rings-pattern.webp',
+    alt: 'Concentric ripple rings generated in FlashFX, with scale, warp, contrast and speed controls',
   },
   {
-    src: '/back-on-track.webp',
-    alt: 'Back on Track Design',
+    src: '/lookslike/flashfx-galaxy-scene-animation.webp',
+    alt: 'A galaxy scene in FlashFX, planets orbiting a glowing core over a starfield',
   },
   {
-    src: '/easy.webp',
-    alt: 'Easy to Use Interface',
+    src: '/lookslike/flashfx-cell-field-pattern.webp',
+    alt: 'A cell field pattern in FlashFX, warm Voronoi shapes animating over a loading title',
   },
   {
-    src: '/visuals.webp',
-    alt: 'Stunning Visuals',
+    src: '/lookslike/flashfx-fireworks-animation.webp',
+    alt: 'A fireworks animation in FlashFX, sparks bursting across a night sky on 75 tracks',
+  },
+  {
+    src: '/lookslike/flashfx-neon-plasma-pattern.webp',
+    alt: 'A neon plasma pattern in FlashFX, glowing cells drifting across the canvas',
+  },
+  {
+    src: '/lookslike/flashfx-bar-chart-expressions.webp',
+    alt: 'A quarterly bar chart in FlashFX with the expressions panel open, driving position with a wiggle expression',
+  },
+  {
+    src: '/lookslike/flashfx-chain-reaction-animation.webp',
+    alt: 'A chain reaction animation in FlashFX: dominoes into a marble, a lever, a bucket and 200 balls through a funnel',
+  },
+  {
+    src: '/lookslike/flashfx-galaxy-334-track-timeline.webp',
+    alt: 'A long galaxy animation in FlashFX zoomed out to show all 334 timeline tracks at once',
   },
 ];
 
