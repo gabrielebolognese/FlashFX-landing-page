@@ -276,6 +276,44 @@
   }
 }
 
+/*
+ * Template cards: a small zoom and a glow on hover.
+ *
+ * The scale is on the card and the overflow is hidden on it too, so the artwork
+ * grows inside a frame that stays put — scaling the whole card would push its
+ * neighbours around in the grid.
+ */
+.fx-template {
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 260ms ease-out,
+    border-color 260ms ease-out;
+}
+
+.fx-template:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245, 197, 24, 0.5);
+  box-shadow: 0 18px 50px -16px rgba(245, 197, 24, 0.45), 0 0 0 1px rgba(245, 197, 24, 0.25);
+}
+
+/* The zoom is on the contents, not the card, so the corners stay crisp. */
+.fx-template > div {
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fx-template:hover > div {
+  transform: scale(1.045);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-template,
+  .fx-template > div {
+    transition: none;
+  }
+  .fx-template:hover,
+  .fx-template:hover > div {
+    transform: none;
+  }
+}
+
 .fx-cta {
   position: relative;
   overflow: hidden;

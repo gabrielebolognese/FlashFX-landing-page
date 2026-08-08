@@ -8,6 +8,7 @@ import { OrganizeWorkflow } from '@/components/sections/OrganizeWorkflow';
 import { InteractiveCanvas } from '@/components/sections/InteractiveCanvas';
 import { ParticleGeneration } from '@/components/sections/ParticleGeneration';
 import { ProceduralAnimation } from '@/components/sections/ProceduralAnimation';
+import { TemplateStart } from '@/components/sections/TemplateStart';
 import { AllOnWeb } from '@/components/sections/AllOnWeb';
 import { ThreeDSupport } from '@/components/sections/ThreeDSupport';
 import { KeyframeInterpolation } from '@/components/sections/KeyframeInterpolation';
@@ -174,6 +175,10 @@ export default function Home() {
         {/* Directly under the particles: both are animation you describe rather
             than draw, from opposite ends. */}
         <ProceduralAnimation />
+        {/* Straight after the capability tour: the page has just shown what the
+            editor can do, which is exactly when "how would I ever make that"
+            needs an answer. */}
+        <TemplateStart />
         <AllOnWeb />
         <ImageCarousel />
         <WhatIsFlashFX />

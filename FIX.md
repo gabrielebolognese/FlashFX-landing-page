@@ -122,6 +122,18 @@ and ask.
   and 33 and "Requires only 2 GB RAM" on line 64. One of the two is wrong and
   they are on the same page. Needs an answer before either is repeated.
 
+- **Templates: ten tutorial templates.** Stated by the owner 2026-08-07, for the
+  `TemplateStart` section. The count is the only figure claimed; the four cards
+  on the homepage are placeholders with invented names (Logo sting, Kinetic
+  titles, Product reveal, The whole toolbox) and **no real template has been
+  named**. Replace the names along with the artwork.
+
+  **There is no templates gallery to link to.** No `/templates` route exists and
+  there is no templates subdomain — blog, documentation, editor and roadmap are
+  the only ones the site references. "Explore all templates" points at the
+  editor until there is somewhere better; a button of that name pointing at a
+  URL that does not exist is the M6 failure again.
+
 - **Personal site:** `https://gabrielebolognese.blog`
 - **Verified logo URL:** `https://flashfx.app/android-chrome-192x192.png`
   — confirmed live 2026-08-03, 200 OK, PNG, 192×192, 13.1 KB. Clears Google's
