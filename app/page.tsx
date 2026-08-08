@@ -4,6 +4,7 @@ import { VideoPlaceholder } from '@/components/sections/VideoPlaceholder';
 import { ImageCarousel } from '@/components/sections/ImageCarousel';
 import { SolutionSection } from '@/components/sections/SolutionSection';
 import { ForEveryone } from '@/components/sections/ForEveryone';
+import { SimpleToFullScale } from '@/components/sections/SimpleToFullScale';
 import { EditInPlainEnglish } from '@/components/sections/EditInPlainEnglish';
 import { OrganizeWorkflow } from '@/components/sections/OrganizeWorkflow';
 import { InteractiveCanvas } from '@/components/sections/InteractiveCanvas';
@@ -155,6 +156,9 @@ export default function Home() {
         {/* Before the plain-English section on purpose: the beginner card
             promises "describe and go", and the next section is that. */}
         <ForEveryone />
+        {/* The evidence for the claim the two cards above make, in two
+            screenshots of the same editor doing the least and the most. */}
+        <SimpleToFullScale />
         {/*
           Directly after the opening video and before the timelines, because the
           order is an argument: here is the editor, here is what it can be told
