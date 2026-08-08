@@ -34,13 +34,21 @@ const loop = (duration: number, delay = 0) => ({
   ease: 'easeInOut' as const,
 });
 
-/** A person at the desk, from behind. Enough to read as somebody, no more. */
+/**
+ * A person at the desk, from behind.
+ *
+ * Deliberately *outside* the rig's `preserve-3d` stack rather than inside it.
+ * In the stack it shared the laptop's transform space, so at `translateZ(90px)`
+ * its head occupied the same depth as the lid and rendered through it — the
+ * person appeared to be inside the screen. It also meant the figure rotated with
+ * the machine, which a person sitting at one does not do.
+ *
+ * Out here it is a plain layer in front, below the desk and above it in paint
+ * order, so no amount of rig rotation can intersect it.
+ */
 function Figure({ colour, wide }: { colour: string; wide?: boolean }) {
   return (
-    <div
-      className="absolute left-1/2 -translate-x-1/2 bottom-0 flex flex-col items-center"
-      style={{ transform: 'translateX(-50%) translateZ(90px)' }}
-    >
+    <div className="absolute left-1/2 -translate-x-1/2 -bottom-7 z-10 flex flex-col items-center pointer-events-none">
       <div
         className="rounded-full"
         style={{ width: 58, height: 58, background: colour, boxShadow: `0 0 34px ${colour}77` }}
@@ -77,7 +85,7 @@ function ScreenContent({ active, seed, rows = 5 }: { active: boolean; seed: numb
 
 export function LaptopScene({ active }: { active: boolean }) {
   return (
-    <div className="relative w-full h-full flex items-end justify-center pb-[8%]" style={{ perspective: 900 }}>
+    <div className="relative w-full h-full flex items-end justify-center pb-[32%]" style={{ perspective: 900 }}>
       <motion.div
         className="relative"
         style={{ transformStyle: 'preserve-3d' }}
@@ -136,8 +144,9 @@ export function LaptopScene({ active }: { active: boolean }) {
           />
         </div>
 
-        <Figure colour="#F5C518" />
       </motion.div>
+
+      <Figure colour="#F5C518" />
     </div>
   );
 }
@@ -152,7 +161,7 @@ export function TowerScene({ active }: { active: boolean }) {
   ];
 
   return (
-    <div className="relative w-full h-full flex items-end justify-center pb-[8%]" style={{ perspective: 1000 }}>
+    <div className="relative w-full h-full flex items-end justify-center pb-[32%]" style={{ perspective: 1000 }}>
       <motion.div
         className="relative"
         style={{ transformStyle: 'preserve-3d', width: 260, height: 160 }}
@@ -222,8 +231,9 @@ export function TowerScene({ active }: { active: boolean }) {
           </div>
         </div>
 
-        <Figure colour="#7C5CBF" wide />
       </motion.div>
+
+      <Figure colour="#7C5CBF" wide />
     </div>
   );
 }
