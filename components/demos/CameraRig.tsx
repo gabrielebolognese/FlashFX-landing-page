@@ -15,9 +15,14 @@ import { DEMO_PRIORITY } from './demo-kit';
  * still of the rig looks like a stack of cards. Neither picture on its own says
  * what happened. So this renders both, from one scene, every frame:
  *
- *   • the big view is the rig — five perfectly flat layers standing in space,
+ *   • the left 65% is the rig — five perfectly flat layers standing in space,
  *     the camera as an object, and its frustum drawn in front of it;
- *   • the inset is what that camera sees, live.
+ *   • the right is what that camera sees, live.
+ *
+ * They sit side by side rather than one inside the other. The shot began as an
+ * overlay in the bottom corner, which read as a picture-in-picture bug on the
+ * rig rather than as the other half of an argument; giving it its own column,
+ * centred against the rig, makes the pair comparable at a glance.
  *
  * The claim is only legible in the gap between them. On the left the layers are
  * obviously flat cutouts with nothing behind them; on the right they resolve
@@ -62,8 +67,11 @@ const LAYERS = [
   { z: -26, w: 58, h: 38, y: 8, kind: 'sky' as const, colour: 0x152a55 },
   { z: -19, w: 50, h: 17, y: 0, kind: 'ridge' as const, colour: 0x14274f },
   { z: -12, w: 40, h: 13, y: 0, kind: 'ridge' as const, colour: 0x0e1b3a },
-  { z: -5, w: 32, h: 10, y: 0, kind: 'trees' as const, colour: 0x080f22 },
-  { z: 1, w: 26, h: 8, y: 0, kind: 'trees' as const, colour: 0x04070f },
+  /* The two treelines are warm rather than the near-black they started as, to
+     sit in the site's palette: amber behind, a deeper burnt orange in front, so
+     the pair still reads back-to-front against the blue ridges. */
+  { z: -5, w: 32, h: 10, y: 0, kind: 'trees' as const, colour: 0xe9a227 },
+  { z: 1, w: 26, h: 8, y: 0, kind: 'trees' as const, colour: 0xa8541a },
 ];
 
 /*
@@ -82,6 +90,9 @@ const SHOT_PAN = 4.5;
 const RIG_LAYER = 1;
 
 const ACCENT = 0xf5c518;
+
+/** The plane's six face colours, reused so the camera reads as the same kit. */
+const FACES = [0xf5c518, 0x7c5cbf, 0xe6edf3, 0x2d6be4, 0x4ade80, 0xf97362];
 
 /*
  * Observer orbit.
@@ -102,10 +113,16 @@ const DRAG_X = 0.0055;
 const DRAG_Y = 0.0038;
 const FRICTION = 0.93;
 
-/** The inset, as a fraction of the canvas width. */
-const INSET_W = 0.32;
-const INSET_W_SM = 0.46;
-const INSET_MARGIN = 0.025;
+/**
+ * The rig's share of the width. The rest is the shot's column.
+ *
+ * Below `STACK_BELOW` the split turns vertical instead: a 35% column on a phone
+ * is 130px, at which point the shot is too small to read as a shot and the
+ * whole comparison is lost.
+ */
+const RIG_W = 0.65;
+const STACK_BELOW = 700;
+const RIG_H_STACKED = 0.6;
 
 type Rect = { x: number; y: number; w: number; h: number };
 
@@ -173,6 +190,43 @@ function treeShapes(w: number, h: number, count: number, rnd: () => number) {
   return shapes;
 }
 
+/** Half-diagonal of the camera body, so the orbit fit leaves room for it. */
+const BODY_RADIUS = Math.hypot(1.5, 1.1, 2.2);
+
+/**
+ * Six flat colours across a mesh, chosen by each face's dominant normal axis.
+ *
+ * The same treatment `PlaneViewer` gives the A380, and the reason is the same:
+ * a single-colour translucent solid loses all its edges when it turns, while
+ * per-face colour keeps the form readable from any angle. Non-indexed first, so
+ * every triangle owns its vertices and can take a colour of its own.
+ */
+function faceted(source: THREE.BufferGeometry) {
+  const geometry = source.index ? source.toNonIndexed() : source;
+  if (geometry !== source) source.dispose();
+
+  const pos = (geometry.getAttribute('position') as THREE.BufferAttribute).array as Float32Array;
+  const colours = new Float32Array(pos.length);
+  const c = new THREE.Color();
+
+  for (let t = 0; t < pos.length / 3; t += 3) {
+    const i = t * 3;
+    const ax = pos[i + 3] - pos[i], ay = pos[i + 4] - pos[i + 1], az = pos[i + 5] - pos[i + 2];
+    const bx = pos[i + 6] - pos[i], by = pos[i + 7] - pos[i + 1], bz = pos[i + 8] - pos[i + 2];
+    const nx = ay * bz - az * by, ny = az * bx - ax * bz, nz = ax * by - ay * bx;
+    const ex = Math.abs(nx), ey = Math.abs(ny), ez = Math.abs(nz);
+    const face = ex >= ey && ex >= ez ? (nx >= 0 ? 0 : 1) : ey >= ez ? (ny >= 0 ? 2 : 3) : nz >= 0 ? 4 : 5;
+    c.set(FACES[face]);
+    for (let v = 0; v < 3; v++) {
+      colours[i + v * 3] = c.r;
+      colours[i + v * 3 + 1] = c.g;
+      colours[i + v * 3 + 2] = c.b;
+    }
+  }
+  geometry.setAttribute('color', new THREE.BufferAttribute(colours, 3));
+  return geometry;
+}
+
 /** The shot camera's position at a given time. Also sampled to fit the orbit. */
 function shotPosition(t: number) {
   return new THREE.Vector3(
@@ -191,6 +245,9 @@ export function CameraRig({ className }: { className?: string }) {
   /* The inset is drawn by WebGL, but its frame and label are DOM. Both read
      this, so the border cannot drift away from the viewport it outlines. */
   const [inset, setInset] = useState<Rect | null>(null);
+  /* Same conversion, for the hints that belong over the rig rather than the
+     shot: on a narrow screen the rig is the top half, not the left column. */
+  const [rigBox, setRigBox] = useState<Rect | null>(null);
 
   activeRef.current = active;
 
@@ -303,18 +360,42 @@ export function CameraRig({ className }: { className?: string }) {
     scene.add(helper);
     disposables.push(helper.geometry, helper.material as THREE.Material);
 
-    /* A body, so the frustum has something to come out of. */
+    /*
+     * A body, so the frustum has something to come out of, built the way the
+     * A380 in `PlaneViewer` is: every face takes one of six flat colours picked
+     * by its dominant normal, drawn translucent with a wireframe over the top.
+     * It reads as the same object family as the plane rather than as a solid
+     * yellow block, and the facets are what make its orientation legible when
+     * the rig is orbited.
+     */
     const body = new THREE.Group();
-    const bodyMat = new THREE.MeshBasicMaterial({ color: ACCENT });
-    const bodyWire = new THREE.MeshBasicMaterial({ color: 0x0b1020, wireframe: true });
-    const boxGeo = new THREE.BoxGeometry(1.5, 1.1, 2.2);
-    const lensGeo = new THREE.CylinderGeometry(0.42, 0.55, 1.1, 12);
-    const box = new THREE.Mesh(boxGeo, bodyMat);
-    body.add(box, new THREE.Mesh(boxGeo, bodyWire));
+    const bodyMat = new THREE.MeshBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.55,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const bodyWire = new THREE.MeshBasicMaterial({
+      color: ACCENT,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.35,
+      depthWrite: false,
+    });
+
+    const boxGeo = faceted(new THREE.BoxGeometry(3, 2.2, 4.4));
+    const lensGeo = faceted(new THREE.CylinderGeometry(0.84, 1.1, 2.2, 12));
+    body.add(new THREE.Mesh(boxGeo, bodyMat), new THREE.Mesh(boxGeo, bodyWire));
+
     const lens = new THREE.Mesh(lensGeo, bodyMat);
+    const lensWire = new THREE.Mesh(lensGeo, bodyWire);
     lens.rotation.x = Math.PI / 2;
-    lens.position.z = -1.4;
-    body.add(lens);
+    lensWire.rotation.copy(lens.rotation);
+    lens.position.z = -2.8;
+    lensWire.position.copy(lens.position);
+    body.add(lens, lensWire);
+
     body.traverse((o) => o.layers.set(RIG_LAYER));
     scene.add(body);
     disposables.push(boxGeo, lensGeo, bodyMat, bodyWire);
@@ -337,6 +418,8 @@ export function CameraRig({ className }: { className?: string }) {
     for (let i = 0; i < 200; i++) fitBox.expandByPoint(shotPosition((i / 200) * 37));
     const fitSphere = new THREE.Sphere();
     fitBox.getBoundingSphere(fitSphere);
+    // The path samples are points; the body around them is not.
+    fitSphere.radius += BODY_RADIUS;
     let orbitRadius = fitSphere.radius * 4;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -367,25 +450,53 @@ export function CameraRig({ className }: { className?: string }) {
 
     let w = 0;
     let h = 0;
-    let rect: Rect = { x: 0, y: 0, w: 0, h: 0 };
+    /* Both in WebGL coordinates: origin bottom-left, CSS pixels. */
+    let rigRect: Rect = { x: 0, y: 0, w: 0, h: 0 };
+    let shotRect: Rect = { x: 0, y: 0, w: 0, h: 0 };
 
-    const layoutInset = () => {
-      const iw = w * (w < 640 ? INSET_W_SM : INSET_W);
-      const ih = iw * (9 / 16);
-      const m = w * INSET_MARGIN;
-      rect = { x: w - iw - m, y: m, w: iw, h: ih };
+    const layout = () => {
+      if (w >= STACK_BELOW) {
+        rigRect = { x: 0, y: 0, w: Math.round(w * RIG_W), h };
+        const band = w - rigRect.w;
+        // Bounded by the column's width and by the rig's height, so the shot
+        // stays clearly the smaller of the two on any viewport shape.
+        const sw = Math.min(band * 0.84, h * 0.46 * (16 / 9));
+        const sh = sw * (9 / 16);
+        shotRect = { x: rigRect.w + (band - sw) / 2, y: (h - sh) / 2, w: sw, h: sh };
+      } else {
+        const rigH = Math.round(h * RIG_H_STACKED);
+        rigRect = { x: 0, y: h - rigH, w, h: rigH };
+        const sw = Math.min(w * 0.8, (h - rigH) * 0.8 * (16 / 9));
+        const sh = sw * (9 / 16);
+        shotRect = { x: (w - sw) / 2, y: (h - rigH - sh) / 2, w: sw, h: sh };
+      }
+
       shot.aspect = 16 / 9;
       shot.updateProjectionMatrix();
+
+      /*
+       * The observer frames the *rig viewport*, not the canvas. Feeding it the
+       * canvas aspect would fit the scene to a box a third wider than the one
+       * it is drawn into, and the layers would run off both sides.
+       */
+      observer.aspect = rigRect.w / rigRect.h;
+      observer.updateProjectionMatrix();
+
+      const vHalf = THREE.MathUtils.degToRad(observer.fov) / 2;
+      const hHalf = Math.atan(Math.tan(vHalf) * observer.aspect);
+      orbitRadius = (fitSphere.radius / Math.sin(Math.min(vHalf, hHalf))) * FIT_MARGIN;
+
       // The DOM frame is measured from the top; WebGL viewports from the
       // bottom. Converting here keeps the flip in one place.
-      setInset({ x: rect.x, y: h - rect.h - m, w: rect.w, h: rect.h });
+      setInset({ x: shotRect.x, y: h - shotRect.y - shotRect.h, w: shotRect.w, h: shotRect.h });
+      setRigBox({ x: rigRect.x, y: h - rigRect.y - rigRect.h, w: rigRect.w, h: rigRect.h });
     };
 
     const place = () => {
       const t = clock;
 
       /*
-       * The dolly is the animation. Sliding the camera from 22 down to 8 on z
+       * The dolly is the animation. Sliding the camera from 19 down to 9 on z
        * is what separates the layers: the foreground card sweeps across the
        * frame while the sky barely moves, which is parallax, which is the only
        * thing that ever makes flat art read as deep.
@@ -412,14 +523,23 @@ export function CameraRig({ className }: { className?: string }) {
 
       renderer.setScissorTest(true);
 
+      /*
+       * Clear the whole canvas first. The two viewports no longer cover it
+       * between them — there is bare page either side of the shot — and a
+       * scissored clear only touches its own rect, so anything outside both
+       * would hold last frame's pixels forever.
+       */
       renderer.setViewport(0, 0, w, h);
       renderer.setScissor(0, 0, w, h);
       renderer.setClearColor(0x000000, 0);
       renderer.clear();
+
+      renderer.setViewport(rigRect.x, rigRect.y, rigRect.w, rigRect.h);
+      renderer.setScissor(rigRect.x, rigRect.y, rigRect.w, rigRect.h);
       renderer.render(scene, observer);
 
-      renderer.setViewport(rect.x, rect.y, rect.w, rect.h);
-      renderer.setScissor(rect.x, rect.y, rect.w, rect.h);
+      renderer.setViewport(shotRect.x, shotRect.y, shotRect.w, shotRect.h);
+      renderer.setScissor(shotRect.x, shotRect.y, shotRect.w, shotRect.h);
       // Opaque, so the shot is a frame rather than a hole through to the page.
       renderer.setClearColor(0x05070f, 1);
       renderer.clear();
@@ -434,13 +554,7 @@ export function CameraRig({ className }: { className?: string }) {
       w = clientWidth;
       h = clientHeight;
       renderer.setSize(w, h, false);
-      observer.aspect = w / h;
-      observer.updateProjectionMatrix();
-
-      const vHalf = THREE.MathUtils.degToRad(observer.fov) / 2;
-      const hHalf = Math.atan(Math.tan(vHalf) * observer.aspect);
-      orbitRadius = (fitSphere.radius / Math.sin(Math.min(vHalf, hHalf))) * FIT_MARGIN;
-      layoutInset();
+      layout();
       draw();
     };
     const observerRO = new ResizeObserver(resize);
@@ -486,7 +600,16 @@ export function CameraRig({ className }: { className?: string }) {
     };
     wake.current = start;
 
+    /** Pointer position in WebGL coordinates, to test against a viewport. */
+    const inRig = (e: PointerEvent) => {
+      const b = canvas.getBoundingClientRect();
+      const x = e.clientX - b.left;
+      const y = h - (e.clientY - b.top);
+      return x >= rigRect.x && x <= rigRect.x + rigRect.w && y >= rigRect.y && y <= rigRect.y + rigRect.h;
+    };
+
     const onDown = (e: PointerEvent) => {
+      if (!inRig(e)) return;
       dragging = true;
       lastX = e.clientX;
       lastY = e.clientY;
@@ -499,7 +622,11 @@ export function CameraRig({ className }: { className?: string }) {
     };
 
     const onMove = (e: PointerEvent) => {
-      if (!dragging) return;
+      if (!dragging) {
+        // Only the rig offers a grab, so only the rig shows the hand.
+        canvas.style.cursor = inRig(e) ? 'grab' : 'default';
+        return;
+      }
       const dx = (e.clientX - lastX) * DRAG_X;
       const dy = (e.clientY - lastY) * DRAG_Y;
       lastX = e.clientX;
@@ -575,17 +702,25 @@ export function CameraRig({ className }: { className?: string }) {
         </div>
       )}
 
-      <span className="absolute top-4 left-5 font-mono text-[10px] uppercase tracking-widest text-fx-text-secondary/60 pointer-events-none">
-        five flat layers, one camera
-      </span>
+      {rigBox && (
+        <>
+          <span
+            className="absolute font-mono text-[10px] uppercase tracking-widest text-fx-text-secondary/60 pointer-events-none"
+            style={{ left: rigBox.x + 20, top: rigBox.y + 16 }}
+          >
+            five flat layers, one camera
+          </span>
 
-      <span
-        className={`absolute bottom-4 left-5 font-mono text-[10px] uppercase tracking-widest text-fx-text-secondary/60 pointer-events-none transition-opacity duration-500 ${
-          touched ? 'opacity-0' : 'opacity-100'
-        }`}
-      >
-        Drag to orbit the rig
-      </span>
+          <span
+            className={`absolute font-mono text-[10px] uppercase tracking-widest text-fx-text-secondary/60 pointer-events-none transition-opacity duration-500 ${
+              touched ? 'opacity-0' : 'opacity-100'
+            }`}
+            style={{ left: rigBox.x + 20, top: rigBox.y + rigBox.h - 26 }}
+          >
+            Drag to orbit the rig
+          </span>
+        </>
+      )}
     </div>
   );
 }
