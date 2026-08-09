@@ -50,7 +50,8 @@ const rows: CompRow[] = [
     feature: 'Installation required',
     flashfx: 'None: browser-based',
     capcut: 'Mobile app or desktop install',
-    davinci: '3-4 GB desktop install',
+    // See FeatureComparisonTable: Blackmagic publishes no install size.
+    davinci: 'Multi-gigabyte desktop install',
     canva: 'None: browser-based',
     flashfxWins: true,
   },

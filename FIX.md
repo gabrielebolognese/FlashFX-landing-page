@@ -131,10 +131,26 @@ and ask.
   contradiction on this point. If Adobe's page ever loads and disagrees, all
   three change together.
 
-  ❓ **Open: the DaVinci Resolve cell in that same row still says "3-4 GB desktop
-  install".** It is now the only install figure on the site not on the 15 GB
-  scale, which makes Resolve look four times lighter than After Effects. It has
-  no source either. Needs a figure or a decision to drop the cell.
+  **DaVinci Resolve: no install size is claimed. Resolved 2026-08-09 by looking
+  for the source and not finding one.**
+
+  Blackmagic publishes no disk-space requirement for Resolve anywhere. Their
+  stated minimums cover CPU, GPU and RAM only; `blackmagicdesign.com/products/
+  davinciresolve/techspecs` is about control panels and audio hardware, not the
+  software; the configuration-guide PDF 404s. Third-party figures run from
+  2 GB to over 7 GB with nothing primary behind any of them.
+
+  So the site's "3-4 GB desktop install" was invented somewhere upstream. It
+  appeared in **three** places — `FeatureComparisonTable`, `FMGComparisonTable`
+  and `BenchmarkComparisons` (as "4 GB download") — and all three now say
+  *multi-gigabyte*, which is the one thing every source agrees on.
+
+  Do not put a number back without a Blackmagic page that states one.
+
+  ℹ Resolve figures that **do** have a source and must stay: `compareFaqData.ts`
+  quotes its Windows minimum of 16 GB system memory, 32 GB with Fusion, and a
+  GPU with at least 4 GB of VRAM. Those are RAM and GPU specs, not install size,
+  and Blackmagic does publish them.
 
 - **RAM floor: 4 GB. Settled 2026-08-07 — this is now the only figure.**
 

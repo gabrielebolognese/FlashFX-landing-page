@@ -60,7 +60,8 @@ const benchmarks: BenchmarkRow[] = [
     task: 'Works without install',
     flashfx: 'Yes',
     capcut: 'No: app required',
-    davinci: 'No: 4 GB download',
+    // Same unsourced figure as the two comparison tables, in download form.
+    davinci: 'No: multi-GB download',
     premiere: 'No: subscription + install',
   },
 ];

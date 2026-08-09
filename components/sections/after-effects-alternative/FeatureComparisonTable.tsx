@@ -30,7 +30,12 @@ const comparisonData: ComparisonRow[] = [
     // SystemRequirementsSection on /lightweight-video-editor), so this row was
     // the odd one out by nearly a factor of five. One figure, everywhere.
     afterEffects: 'About 15 GB of disk space',
-    daVinci: '3-4 GB desktop install',
+    // "3-4 GB" had no source, and there is none to be had: Blackmagic publishes
+    // no disk-space figure for Resolve at all. Its stated minimums cover CPU,
+    // GPU and RAM only, and the techspecs page is about control panels. Third
+    // parties range from 2 GB to over 7 GB with nothing primary behind any of
+    // them, so the only defensible claim is the one every source agrees on.
+    daVinci: 'Multi-gigabyte desktop install',
     winner: 'flashfx',
     note: 'FlashFX works on Chromebooks',
   },
