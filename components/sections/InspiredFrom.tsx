@@ -34,18 +34,25 @@ import { useAmbient } from '@/lib/motion';
  * half a logo in each direction. Splitting the two jobs across two elements is
  * the fix, and merging them back reintroduces it.
  *
- * ── The logos are placeholders ──────────────────────────────────────────────
+ * ── The marks ───────────────────────────────────────────────────────────────
  *
- * Premiere Pro, CapCut, Figma and Rive are the four. Their marks are not in the
- * repo, so browser icons stand in — `SOURCES` is the only thing to edit when the
- * real ones land.
+ * Premiere Pro, CapCut, Figma and Rive, supplied by the owner and stored in
+ * `public/source/`. They replaced browser icons that stood in while the real
+ * ones were missing.
+ *
+ * All four are WebP. `next.config.js` sets `images: { unoptimized: true }`, so
+ * `next/image` converts nothing — whatever is committed is what ships, and a
+ * PNG here would be four times the weight for no gain. Convert before adding.
+ *
+ * These are third-party trademarks, used to name the tools rather than to imply
+ * any endorsement, which is what the wording around them is careful to say.
  */
 
 const SOURCES = [
-  { name: 'Premiere Pro', trait: 'depth', placeholder: 'edge' },
-  { name: 'CapCut', trait: 'speed', placeholder: 'chrome' },
-  { name: 'Figma', trait: 'the canvas', placeholder: 'firefox' },
-  { name: 'Rive', trait: 'interaction', placeholder: 'opera' },
+  { name: 'Premiere Pro', trait: 'depth', src: '/source/premiere.webp' },
+  { name: 'CapCut', trait: 'speed', src: '/source/capcut.webp' },
+  { name: 'Figma', trait: 'the canvas', src: '/source/figma.webp' },
+  { name: 'Rive', trait: 'interaction', src: '/source/rive.webp' },
 ];
 
 const VB = { w: 1000, h: 460 };
@@ -170,10 +177,10 @@ export function InspiredFrom() {
                   transition={{ duration: 0.4, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <Image
-                    src={`/browsers/${s.placeholder}.webp`}
+                    src={s.src}
                     alt={`${s.name} logo`}
-                    width={140}
-                    height={140}
+                    width={200}
+                    height={200}
                     className="w-full h-full object-contain"
                     style={{
                       // The glow replaces the tile that used to be here: it

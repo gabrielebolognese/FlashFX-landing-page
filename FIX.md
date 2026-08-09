@@ -110,12 +110,31 @@ and ask.
   "no unmeasured performance claims" in its own metadata, and an unqualified
   "50s" would contradict the site's stated position on its own comparison page.
 
-  **No After Effects specification is quoted anywhere**, because Adobe's system
-  requirements pages could not be fetched to confirm one, and third-party
-  sources disagree (8 GB vs 15 GB for install size). Every After Effects line in
-  that section is a structural statement that needs no number — it installs to
-  disk, it wants a dedicated card, it opens one project at a time. **Do not add
-  a figure without checking helpx.adobe.com first.**
+  **Exactly one After Effects specification is quoted: ~15 GB to install.**
+  Owner's call, 2026-08-09. Every other After Effects line in that section is a
+  structural statement that needs no number — it installs to disk, it wants a
+  dedicated card, it opens one project at a time.
+
+  ⚠ **The 15 GB is not confirmed at the source.** helpx.adobe.com has refused to
+  load on every attempt across several sessions (timeout, then ECONNRESET, on
+  both the current and the versioned pages, and on the regional mirrors). It
+  rests on two weaker supports: the site has published "15+ GB installation" on
+  `/lightweight-video-editor` since before `LoadTime` existed, and third-party
+  sources agree on 15 GB for the 25.x releases. The 8 GB figure that made the
+  old two-to-one disagreement is for earlier versions.
+
+  It is hedged as "about 15 GB" everywhere it appears, and it now appears in
+  **three** places, all saying the same thing: `LoadTime` (homepage),
+  `SystemRequirementsSection` (`/lightweight-video-editor`) and the Installation
+  row of `FeatureComparisonTable` (`/after-effects-alternative`). That last one
+  read "2-4 GB desktop install" until 2026-08-09 and was the site's own worst
+  contradiction on this point. If Adobe's page ever loads and disagrees, all
+  three change together.
+
+  ❓ **Open: the DaVinci Resolve cell in that same row still says "3-4 GB desktop
+  install".** It is now the only install figure on the site not on the 15 GB
+  scale, which makes Resolve look four times lighter than After Effects. It has
+  no source either. Needs a figure or a decision to drop the cell.
 
 - **RAM floor: 4 GB. Settled 2026-08-07 — this is now the only figure.**
 
@@ -134,12 +153,23 @@ and ask.
   (After Effects 16 GB, DaVinci 8/16 GB, Premiere 16 GB, CapCut 4 GB, the 8 GB
   benchmark laptop).
 
-  ℹ **The site already publishes an After Effects install size**, which the new
-  `LoadTime` section deliberately does not quote:
-  `SystemRequirementsSection.tsx` line 20 states **"15+ GB installation"**. It
-  is unverified against helpx.adobe.com — Adobe's pages would not load — but it
-  is already live, so `LoadTime` could use the same figure for consistency if
-  the owner confirms it. Ask before adding it.
+  ℹ **Resolved 2026-08-09.** `LoadTime` now quotes the same ~15 GB install size
+  the rest of the site publishes. See the performance entry above for what that
+  figure does and does not rest on.
+
+- **Plugins: users can build them, but every community plugin is reviewed
+  before release, and submissions are not open to everyone yet.** Stated by the
+  owner 2026-08-09.
+
+  This settles a contradiction the "possibilities are endless" section opened:
+  it promised "plugins built by the people using it" on the homepage while
+  `FeatureComparisonTable` described FlashFX's plugin story as "Curated
+  built-ins" and gave the row to After Effects. Both now say the same thing, and
+  **the row still goes to After Effects** — anyone can publish an AE plugin
+  today, which is a real difference and not one to argue with.
+
+  Do not describe the plugin system as open, or as accepting submissions from
+  anyone, until the owner says the review gate has been lifted.
 
 - **Templates: ten tutorial templates.** Stated by the owner 2026-08-07, for the
   `TemplateStart` section. The count is the only figure claimed.

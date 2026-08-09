@@ -26,7 +26,10 @@ const comparisonData: ComparisonRow[] = [
   {
     feature: 'Installation',
     flashfx: 'Browser-based, no install',
-    afterEffects: '2-4 GB desktop install',
+    // Was "2-4 GB". The rest of the site says ~15 GB (LoadTime on the homepage,
+    // SystemRequirementsSection on /lightweight-video-editor), so this row was
+    // the odd one out by nearly a factor of five. One figure, everywhere.
+    afterEffects: 'About 15 GB of disk space',
     daVinci: '3-4 GB desktop install',
     winner: 'flashfx',
     note: 'FlashFX works on Chromebooks',
@@ -92,10 +95,15 @@ const comparisonData: ComparisonRow[] = [
   },
   {
     feature: 'Plugin Ecosystem',
-    flashfx: 'Curated built-ins',
+    flashfx: 'Built-ins + reviewed community plugins',
     afterEffects: 'Largest in the industry',
     daVinci: 'Limited compared to AE',
+    // The row still goes to After Effects, and should. Anyone can publish an AE
+    // plugin today; FlashFX reviews every community submission and has not
+    // opened them to everyone yet. Saying otherwise to win a row would be a
+    // claim a visitor could disprove in one click.
     winner: 'afterEffects',
+    note: 'FlashFX community plugins are reviewed before release',
   },
   {
     feature: 'Export Formats',

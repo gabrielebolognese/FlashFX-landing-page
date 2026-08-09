@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { CtaButton } from '@/components/ui/cta-button';
@@ -19,13 +20,23 @@ import { EDITOR_URL } from '@/lib/editor';
  * GPU, chunked timelines, several projects at once. All of it is in FIX.md under
  * *Canonical facts*.
  *
- * The After Effects side quotes **no specification at all**, deliberately.
- * Adobe's system-requirements pages could not be fetched to confirm one, and
- * third-party sources disagree by nearly a factor of two on install size alone.
- * Every line about After Effects here is structural — it installs to disk, it
- * wants a dedicated card, it opens one project at a time — which is true
- * regardless of which version's spec sheet you read. Do not add a number
- * without checking helpx.adobe.com first.
+ * The After Effects side quotes exactly **one** specification: the ~15 GB
+ * install. Every other line about it is structural — it installs to disk, it
+ * wants a dedicated card, it opens one project at a time — which holds
+ * regardless of which version's spec sheet you read. Keep it that way.
+ *
+ * On the 15 GB: helpx.adobe.com has refused to load on every attempt across
+ * several sessions, so it is **not confirmed at the source**. It rests on two
+ * things instead: `SystemRequirementsSection.tsx` has published "15+ GB
+ * installation" on `/lightweight-video-editor` since long before this section
+ * existed, and third-party sources agree on 15 GB for the 25.x releases. The
+ * older 8 GB figure circulating for earlier versions is what the two-to-one
+ * disagreement in FIX.md was about.
+ *
+ * Because it is unconfirmed, it is hedged in the copy ("about 15 GB") and it is
+ * the *same* number the rest of the site uses. If Adobe's page ever loads and
+ * says otherwise, both places change together — a figure that is wrong in one
+ * spot and right in another is worse than either.
  *
  * The 50-second figure is the one measurement, and it carries its own caveat in
  * the markup: *measured on one machine*. That label is load-bearing.
@@ -40,14 +51,36 @@ type Stat = {
   word?: string;
   unit?: string;
   label: string;
-  /** The After Effects counterpart. Structural, never a spec. */
-  against: string;
+  /** The After Effects counterpart. Structural, apart from the install size. */
+  against: ReactNode;
   /** Renders the "measured on one machine" caveat. */
   measured?: boolean;
 };
 
+/**
+ * The one number on the After Effects side. It is deliberately quieter than the
+ * FlashFX figure above it: this card's claim is the 0, and 15 GB is the thing
+ * the 0 is standing against, not a competing headline.
+ */
+function Figure({ children }: { children: ReactNode }) {
+  return (
+    <strong className="font-semibold text-fx-text-primary" style={{ fontVariantNumeric: 'tabular-nums' }}>
+      {children}
+    </strong>
+  );
+}
+
 const STATS: Stat[] = [
-  { to: 0, unit: 'MB', label: 'to install', against: 'After Effects installs to disk before you open anything' },
+  {
+    to: 0,
+    unit: 'MB',
+    label: 'to install',
+    against: (
+      <>
+        After Effects wants <Figure>about 15 GB</Figure> on disk before you open anything
+      </>
+    ),
+  },
   {
     to: 2,
     unit: 's',

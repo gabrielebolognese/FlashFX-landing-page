@@ -314,7 +314,7 @@ export default function Home() {
           id="endless"
           title="The possibilities are endless"
           accent="endless"
-          subtitle="Official FlashFX plugins, and plugins built by the people using it. The same goes for templates and presets: what ships is a starting point, not the ceiling."
+          subtitle="Official FlashFX plugins, plus plugins built by the people using it. Community ones are reviewed before they ship, so submissions are not open to everyone yet. Templates and presets work the same way: what ships is a starting point, not the ceiling."
         >
           <Endless />
         </FeatureBlock>
