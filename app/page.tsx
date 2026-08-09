@@ -162,15 +162,15 @@ export default function Home() {
         {/* Before the plain-English section on purpose: the beginner card
             promises "describe and go", and the next section is that. */}
         <ForEveryone />
-        {/* The evidence for the claim the two cards above make, in two
-            screenshots of the same editor doing the least and the most. */}
-        <SimpleToFullScale />
         {/*
-          Directly after the opening video and before the timelines, because the
-          order is an argument: here is the editor, here is what it can be told
-          to do, and here is the timeline it does it on.
+          Straight after the beginner card that promises "describe and go",
+          because this is that promise. It used to sit below the two
+          screenshots, reached by a hand-off line that has since gone.
         */}
         <EditInPlainEnglish />
+        {/* The evidence for the claim the cards above make, in two screenshots
+            of the same editor doing the least and the most. */}
+        <SimpleToFullScale />
         {/*
           Every one of these was a YouTube embed of someone else's screen. They
           are now live demos of the product (immersionmilestones.md I3) — the

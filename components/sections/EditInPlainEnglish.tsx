@@ -31,7 +31,13 @@ const PromptToArt = dynamic(() => import('@/components/demos/PromptToArt').then(
 
 export function EditInPlainEnglish() {
   return (
-    <section id="edit-in-plain-english" className="relative w-full pt-6 md:pt-9 pb-20 md:pb-28 overflow-hidden">
+    /*
+      Full padding top and bottom again. The cramped `pt-6 md:pt-9` was there to
+      close the gap under the hand-off line that used to introduce this section
+      from the screenshots above. That line is gone and this now follows the
+      beginners-and-experts cards, so the heading needs its own air back.
+    */
+    <section id="edit-in-plain-english" className="relative w-full py-20 md:py-28 overflow-hidden">
       <motion.h2
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
