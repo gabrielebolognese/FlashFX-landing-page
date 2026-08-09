@@ -203,6 +203,21 @@ and ask.
   Do not describe the plugin system as open, or as accepting submissions from
   anyone, until the owner says the review gate has been lifted.
 
+- **2.5D camera.** Stated by the owner 2026-08-09, for the `DepthCamera`
+  section. What may be said: FlashFX has a professional 2.5D camera; it takes
+  flat layers, stands them at different depths and moves a real camera through
+  them; and doing this on the web is a hard problem and a significant thing to
+  have working in a browser tab.
+
+  What may **not** be said, because none of it has been stated or verified: any
+  world first, any "only editor that", any benchmark, any comparison to a named
+  competitor's camera, and any feature list. The bullets under the other feature
+  blocks came from `editorFeatures.ts` or from the owner; there is no such source
+  for this one, so the section deliberately ships with prose and no list.
+
+  ❓ **Open: the feature list for this section**, and whether the camera should
+  get a `?template=` deep link like particles and the four scenes.
+
 - **Template deep links: `galaxy`, `city-skyline`, `rocket-launch`, `forest`.**
   Supplied by the owner 2026-08-09 and added to `TEMPLATES` in `lib/editor.ts`,
   so all four cards in `TemplateStart` open their own template rather than the

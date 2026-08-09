@@ -14,6 +14,7 @@ import { ShapeTools, ClipPlayback, VectorPen } from '@/components/demos/feature-
 import { ConvinceOpener } from '@/components/sections/ConvinceOpener';
 import { AgentLanes, EditNotGenerate, AskAI, Endless } from '@/components/demos/convince-demos';
 import { InspiredFrom } from '@/components/sections/InspiredFrom';import { ParticleGeneration } from '@/components/sections/ParticleGeneration';
+import { DepthCamera } from '@/components/sections/DepthCamera';
 import { ProceduralAnimation } from '@/components/sections/ProceduralAnimation';
 import { TemplateStart } from '@/components/sections/TemplateStart';
 import { AllOnWeb } from '@/components/sections/AllOnWeb';
@@ -238,6 +239,10 @@ export default function Home() {
         {/* Directly under the particles: both are animation you describe rather
             than draw, from opposite ends. */}
         <ProceduralAnimation />
+        {/* Last of the capability run, and the biggest: particles and procedural
+            animation both generate things, and this moves through what you
+            already have. */}
+        <DepthCamera />
         {/* Straight after the capability tour: the page has just shown what the
             editor can do, which is exactly when "how would I ever make that"
             needs an answer. */}
