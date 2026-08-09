@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { CtaButton } from '@/components/ui/cta-button';
-import { EDITOR_URL } from '@/lib/editor';
+import { TEMPLATES, editorTemplate } from '@/lib/editor';
 
 /*
  * "Flat layers, and a camera that moves through them."
@@ -15,11 +15,11 @@ import { EDITOR_URL } from '@/lib/editor';
  *
  * ── Full width, not split ───────────────────────────────────────────────────
  *
- * The demo renders the rig and the camera's own shot side by side inside one
- * canvas, and the argument only lands if both are big enough to compare. A
- * copy column beside it would take half the width and leave the inset the size
- * of a postage stamp. So the copy sits above and the canvas takes the viewport,
- * the same shape `ProceduralAnimation` uses and for the same reason.
+ * The demo opens on a flat picture and takes it apart into five layers standing
+ * in space. That move needs room: in half a column the layers separate by a
+ * few dozen pixels and the whole point of the section goes with it. So the copy
+ * sits above and the canvas takes the viewport, the same shape
+ * `ProceduralAnimation` uses and for the same reason.
  *
  * ── What is claimed here ────────────────────────────────────────────────────
  *
@@ -80,16 +80,16 @@ export function DepthCamera() {
       </motion.p>
 
       {/*
-        Full-bleed and tall. The rig on the left needs room for five layers to
-        stand apart, and the shot in the corner has to stay large enough to read
-        as a shot rather than as a thumbnail.
+        Full-bleed and tall. The layers need the height to stand apart once the
+        picture comes apart, and the panel that opens when the camera is held
+        has to stay large enough to read as a shot rather than as a thumbnail.
       */}
       <div className="relative mt-12 md:mt-16 w-screen left-1/2 -translate-x-1/2 h-[78vh] min-h-[480px] md:min-h-[620px]">
         <CameraRig className="absolute inset-0" />
       </div>
 
       <div className="mt-10 flex justify-center px-6">
-        <CtaButton href={EDITOR_URL} size="md">
+        <CtaButton href={editorTemplate(TEMPLATES.parallax)} size="md">
           Move a camera through your own layers
         </CtaButton>
       </div>

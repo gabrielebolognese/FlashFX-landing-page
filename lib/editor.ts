@@ -39,6 +39,9 @@ export const TEMPLATES = {
   citySkyline: 'city-skyline',
   rocketLaunch: 'rocket-launch',
   forest: 'forest',
+  // The 2.5D camera. Named for what it does rather than for the section it is
+  // linked from, which is why it is `parallax` and not `camera`.
+  parallax: 'parallax',
 } as const;
 
 export type TemplateId = (typeof TEMPLATES)[keyof typeof TEMPLATES];
