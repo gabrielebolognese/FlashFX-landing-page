@@ -20,23 +20,27 @@ import { EDITOR_URL } from '@/lib/editor';
  * GPU, chunked timelines, several projects at once. All of it is in FIX.md under
  * *Canonical facts*.
  *
- * The After Effects side quotes exactly **one** specification: the ~15 GB
+ * The After Effects side quotes exactly **one** specification: the 8 GB
  * install. Every other line about it is structural — it installs to disk, it
  * wants a dedicated card, it opens one project at a time — which holds
  * regardless of which version's spec sheet you read. Keep it that way.
  *
- * On the 15 GB: helpx.adobe.com has refused to load on every attempt across
- * several sessions, so it is **not confirmed at the source**. It rests on two
- * things instead: `SystemRequirementsSection.tsx` has published "15+ GB
- * installation" on `/lightweight-video-editor` since long before this section
- * existed, and third-party sources agree on 15 GB for the 25.x releases. The
- * older 8 GB figure circulating for earlier versions is what the two-to-one
- * disagreement in FIX.md was about.
+ * On the 8 GB, and why it is not the figure this site used to print:
+ * helpx.adobe.com will not load from here (timeouts and connection resets on
+ * the current page, the versioned pages and the regional mirrors, across
+ * several sessions), so it was sourced from what quotes it instead. Two
+ * independent references give **8 GB of available hard-disk space** for the
+ * 25.x releases and tie it to a specific build. The larger number the site had
+ * been publishing traces to a single SEO page, and a smaller one elsewhere is
+ * an older version's requirement. 8 GB is the reading with the most behind it.
  *
- * Because it is unconfirmed, it is hedged in the copy ("about 15 GB") and it is
- * the *same* number the rest of the site uses. If Adobe's page ever loads and
- * says otherwise, both places change together — a figure that is wrong in one
- * spot and right in another is worse than either.
+ * Adobe's own wording adds "additional free space required during
+ * installation", so 8 GB is a floor rather than the true cost — which is why
+ * the copy says "asks for", not "is".
+ *
+ * It is the same number everywhere on the site. If Adobe's page ever loads and
+ * disagrees, all three places change together: here,
+ * `SystemRequirementsSection` and `FeatureComparisonTable`.
  *
  * The 50-second figure is the one measurement, and it carries its own caveat in
  * the markup: *measured on one machine*. That label is load-bearing.
@@ -59,7 +63,7 @@ type Stat = {
 
 /**
  * The one number on the After Effects side. It is deliberately quieter than the
- * FlashFX figure above it: this card's claim is the 0, and 15 GB is the thing
+ * FlashFX figure above it: this card's claim is the 0, and 8 GB is the thing
  * the 0 is standing against, not a competing headline.
  */
 function Figure({ children }: { children: ReactNode }) {
@@ -77,7 +81,7 @@ const STATS: Stat[] = [
     label: 'to install',
     against: (
       <>
-        After Effects wants <Figure>about 15 GB</Figure> on disk before you open anything
+        After Effects asks for <Figure>8 GB</Figure> of disk space before you open anything
       </>
     ),
   },

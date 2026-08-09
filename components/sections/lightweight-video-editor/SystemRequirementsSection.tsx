@@ -17,7 +17,10 @@ const competitorReqs = [
   {
     tool: 'Adobe After Effects',
     ram: '16 GB (32 GB recommended)',
-    storage: '15+ GB installation',
+    // Was "15+ GB", which is where the rest of the site got the number. Adobe's
+    // stated minimum for 25.x is 8 GB of available hard-disk space, plus
+    // unspecified extra during installation. See the note in LoadTime.tsx.
+    storage: '8 GB installation',
     gpu: 'Dedicated GPU required',
     os: 'Windows 10+ / macOS 13+',
     passes: false,

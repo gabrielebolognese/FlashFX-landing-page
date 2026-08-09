@@ -31,6 +31,14 @@ export const EDITOR_URL = 'https://editor.flashfx.app';
  */
 export const TEMPLATES = {
   particles: 'particles',
+  // The four "Scenes" templates, ids supplied by the owner 2026-08-09. Note
+  // `city-skyline` and `rocket-launch` are hyphenated while the screenshot
+  // files they pair with are not (`cityskyline.webp`) — the id is the editor's,
+  // not this repo's, so it does not follow from the filename.
+  galaxy: 'galaxy',
+  citySkyline: 'city-skyline',
+  rocketLaunch: 'rocket-launch',
+  forest: 'forest',
 } as const;
 
 export type TemplateId = (typeof TEMPLATES)[keyof typeof TEMPLATES];

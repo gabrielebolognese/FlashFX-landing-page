@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { CtaButton } from '@/components/ui/cta-button';
+import { EDITOR_URL, TEMPLATES as TEMPLATE_IDS, editorTemplate } from '@/lib/editor';
 
 /*
  * "Not sure where to start? Start with a template!"
@@ -19,13 +20,20 @@ import { CtaButton } from '@/components/ui/cta-button';
  * invented, which is the point — the whole argument of the section is that these
  * are things the product actually ships.
  *
- * ── Where the button goes ───────────────────────────────────────────────────
+ * ── Where the links go ──────────────────────────────────────────────────────
  *
- * The editor, because there is no templates gallery to send anyone to. There is
- * no `/templates` route and no templates subdomain — blog, documentation,
- * editor and roadmap are the only ones the site knows about. A button labelled
- * "Explore all templates" pointing at a URL that does not exist is FIX.md M6
- * all over again. Point it somewhere better the moment somewhere better exists.
+ * **Each card opens its own template**, through `editorTemplate()`, so clicking
+ * City Skyline lands on City Skyline rather than on an empty dashboard. Note
+ * the ids are the editor's and do not follow from the filenames: the id is
+ * `city-skyline` while the screenshot is `cityskyline.webp`.
+ *
+ * **"Explore all templates" still goes to the editor**, because there is no
+ * gallery to send anyone to yet. There is no `/templates` route and no
+ * templates subdomain — blog, documentation, editor and roadmap are the only
+ * ones the site knows about. A button labelled "Explore all templates" pointing
+ * at a URL that does not exist is FIX.md M6 all over again. The owner is
+ * building one and will supply the URL (2026-08-09); this is the one line to
+ * change when it lands.
  */
 
 type Template = {
@@ -33,6 +41,8 @@ type Template = {
   /** The description the editor itself shows for this template. */
   blurb: string;
   src: string;
+  /** Opens the editor on this template. Typed, so a bad id will not compile. */
+  href: string;
 };
 
 /*
@@ -52,28 +62,32 @@ const TEMPLATES: Template[] = [
     title: 'City Skyline',
     blurb: 'A night skyline with a glowing moon and twinkling windows.',
     src: '/templates/cityskyline.webp',
+    href: editorTemplate(TEMPLATE_IDS.citySkyline),
   },
   {
     title: 'Forest',
     blurb: 'Layered trees swaying in the breeze with drifting leaves.',
     src: '/templates/forest.webp',
+    href: editorTemplate(TEMPLATE_IDS.forest),
   },
   {
     title: 'Galaxy',
     blurb: 'A glowing core with planets orbiting on tilted rings over a starfield.',
     src: '/templates/galaxy.webp',
+    href: editorTemplate(TEMPLATE_IDS.galaxy),
   },
   {
     title: 'Rocket Launch',
     blurb: 'A rocket lifts off with a flickering flame past twinkling stars.',
     src: '/templates/rocketlaunch.webp',
+    href: editorTemplate(TEMPLATE_IDS.rocketLaunch),
   },
 ];
 
 function TemplateCard({ template, index }: { template: Template; index: number }) {
   return (
     <motion.a
-      href="https://editor.flashfx.app"
+      href={template.href}
       target="_blank"
       rel="noopener noreferrer"
       initial={{ opacity: 0, y: 26 }}
@@ -163,7 +177,7 @@ export function TemplateStart() {
         </div>
 
         <div className="mt-12 flex justify-center">
-          <CtaButton href="https://editor.flashfx.app" size="lg">
+          <CtaButton href={EDITOR_URL} size="lg">
             Explore all templates
           </CtaButton>
         </div>

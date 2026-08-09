@@ -115,21 +115,37 @@ and ask.
   structural statement that needs no number — it installs to disk, it wants a
   dedicated card, it opens one project at a time.
 
-  ⚠ **The 15 GB is not confirmed at the source.** helpx.adobe.com has refused to
-  load on every attempt across several sessions (timeout, then ECONNRESET, on
-  both the current and the versioned pages, and on the regional mirrors). It
-  rests on two weaker supports: the site has published "15+ GB installation" on
-  `/lightweight-video-editor` since before `LoadTime` existed, and third-party
-  sources agree on 15 GB for the 25.x releases. The 8 GB figure that made the
-  old two-to-one disagreement is for earlier versions.
+  **The figure is 8 GB. Corrected 2026-08-09 — it was 15 GB, and that was
+  wrong.**
 
-  It is hedged as "about 15 GB" everywhere it appears, and it now appears in
-  **three** places, all saying the same thing: `LoadTime` (homepage),
-  `SystemRequirementsSection` (`/lightweight-video-editor`) and the Installation
-  row of `FeatureComparisonTable` (`/after-effects-alternative`). That last one
-  read "2-4 GB desktop install" until 2026-08-09 and was the site's own worst
-  contradiction on this point. If Adobe's page ever loads and disagrees, all
-  three change together.
+  helpx.adobe.com cannot be reached from this environment: timeouts and
+  connection resets on the current page, the 2024 and 2025 versioned pages, and
+  the `/in/` and `/sg/` mirrors, across several sessions. `community.adobe.com`
+  does load but quotes no requirement. So the figure was sourced from
+  publications that quote Adobe's table, and they were weighed rather than
+  picked:
+
+  | Source | Figure | Notes |
+  | --- | --- | --- |
+  | invgate.com/itdb | **8 GB** | Ties it to 25.6, Nov 2025 |
+  | proxpc.com | **8 GB** | Same figure for Windows and macOS |
+  | fixthephoto.com | 15 GB | Adobe's phrasing, no version tie |
+  | ituonline.com | 5 GB | Matches older releases |
+
+  Two independent sources on 8 GB, both anchored to a specific current build, is
+  the strongest reading. The 15 GB the site had published since before `LoadTime`
+  existed traces to one page. **This is still second-hand — check helpx.adobe.com
+  the first time it loads.**
+
+  Adobe's wording adds *"additional free space required during installation"*, so
+  8 GB is a floor. The homepage copy says After Effects "asks for" 8 GB for that
+  reason.
+
+  It appears in **three** places, all saying the same thing: `LoadTime`
+  (homepage), `SystemRequirementsSection` (`/lightweight-video-editor`) and the
+  Installation row of `FeatureComparisonTable` (`/after-effects-alternative`).
+  That last one read "2-4 GB desktop install" until 2026-08-09 and was the
+  site's own worst contradiction on this point. All three change together.
 
   **DaVinci Resolve: no install size is claimed. Resolved 2026-08-09 by looking
   for the source and not finding one.**
@@ -169,7 +185,7 @@ and ask.
   (After Effects 16 GB, DaVinci 8/16 GB, Premiere 16 GB, CapCut 4 GB, the 8 GB
   benchmark laptop).
 
-  ℹ **Resolved 2026-08-09.** `LoadTime` now quotes the same ~15 GB install size
+  ℹ **Resolved 2026-08-09.** `LoadTime` now quotes the same 8 GB install size
   the rest of the site publishes. See the performance entry above for what that
   figure does and does not rest on.
 
@@ -186,6 +202,19 @@ and ask.
 
   Do not describe the plugin system as open, or as accepting submissions from
   anyone, until the owner says the review gate has been lifted.
+
+- **Template deep links: `galaxy`, `city-skyline`, `rocket-launch`, `forest`.**
+  Supplied by the owner 2026-08-09 and added to `TEMPLATES` in `lib/editor.ts`,
+  so all four cards in `TemplateStart` open their own template rather than the
+  dashboard.
+
+  The ids do **not** follow from the screenshot filenames: `city-skyline` pairs
+  with `cityskyline.webp` and `rocket-launch` with `rocketlaunch.webp`. Never
+  derive an id from a filename.
+
+  ❓ **Still open: the templates gallery URL.** "Explore all templates" points at
+  the editor because no gallery exists yet. The owner is building one and will
+  supply the URL. It is one line in `TemplateStart.tsx`.
 
 - **Templates: ten tutorial templates.** Stated by the owner 2026-08-07, for the
   `TemplateStart` section. The count is the only figure claimed.

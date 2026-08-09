@@ -26,10 +26,10 @@ const comparisonData: ComparisonRow[] = [
   {
     feature: 'Installation',
     flashfx: 'Browser-based, no install',
-    // Was "2-4 GB". The rest of the site says ~15 GB (LoadTime on the homepage,
-    // SystemRequirementsSection on /lightweight-video-editor), so this row was
-    // the odd one out by nearly a factor of five. One figure, everywhere.
-    afterEffects: 'About 15 GB of disk space',
+    // Adobe's stated minimum for the 25.x releases, and the same figure the
+    // homepage and /lightweight-video-editor print. This row said "2-4 GB"
+    // until 2026-08-09, which was the site's own worst contradiction on it.
+    afterEffects: '8 GB of disk space',
     // "3-4 GB" had no source, and there is none to be had: Blackmagic publishes
     // no disk-space figure for Resolve at all. Its stated minimums cover CPU,
     // GPU and RAM only, and the techspecs page is about control panels. Third
