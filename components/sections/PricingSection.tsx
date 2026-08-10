@@ -12,19 +12,21 @@ import { PricingComponent, BillingCycle, PriceTier, FeatureGroup, Feature } from
  *
  * -- Which numbers were given, and which were derived ------------------------
  *
- * Given: the two names, $29 for Pro, $89 for Ultra, and "Ultra is 3.5x Pro".
+ * Almost all of it is now given. The owner set the ladder directly on
+ * 2026-08-10: credits 1M / 50M / 200M, version history 30 / 60 / 90 days, the
+ * whole 3D set except advanced materials opened up to the free tier, and
+ * comments and guest access opened to every plan.
  *
- * Derived from that, and worth knowing before changing any of them:
+ * Only two numbers are still derived: **$854/yr** for Ultra, from the same ~20%
+ * annual discount Pro already carried (278 / 348) applied to 89 x 12, and
+ * **70 GB** of storage, which is 3.5x Pro's 20 GB.
  *
- *   - $854/yr for Ultra, from the same ~20% annual discount Pro already carried
- *     (278 / 348) applied to 89 x 12.
- *   - 70 GB of storage and 1,750 AI credits, exactly 3.5x Pro's 20 GB and 500.
- *   - 1 year of version history. 3.5x of 90 days is 315, which is not a number
- *     any product prints, so it rounds up to the nearest natural unit.
+ * The original "Ultra is 3.5x Pro" framing now holds for storage only. Credits
+ * go 4x from Pro to Ultra and history 1.5x, because those were set by hand
+ * afterwards. Do not "restore" the ratio: the explicit numbers win.
  *
- * Long-form agents are the one new capability and the wording is the owner's:
- * multiple parallel scenes, Ultra only. Nothing else here was invented. Every
- * other Ultra row is either a 3.5x scaling or something Teams already had.
+ * Long-form agents and AI in 3D are the two Ultra-only capabilities, both the
+ * owner's wording. Nothing here was invented.
  *
  * -- This data is mirrored ---------------------------------------------------
  *
@@ -60,18 +62,25 @@ const freeFeatureGroups: FeatureGroup[] = [
   {
     label: '3D Features',
     features: [
-      { name: '3D primitives', isIncluded: true, value: '2 shapes' },
+      { name: '3D primitives', isIncluded: true, value: 'All shapes' },
+      /*
+       * Advanced materials is the only 3D row still behind a plan. The owner
+       * opened model import, texture maps, HDRI and timeline 3D to the free tier
+       * on 2026-08-10 and named those four; this one was not in the list, so it
+       * stays where it was rather than being swept along with them.
+       */
       { name: 'Advanced materials (PBR / toon / wireframe)', isIncluded: false },
-      { name: '3D model import (GLB / OBJ / FBX / STL)', isIncluded: false },
-      { name: 'Texture maps (diffuse / normal / roughness)', isIncluded: false },
-      { name: 'HDRI lighting & environment', isIncluded: false },
-      { name: '3D animation in timeline', isIncluded: false },
+      { name: '3D model import (GLB / OBJ / FBX / STL)', isIncluded: true },
+      { name: 'Texture maps (diffuse / normal / roughness)', isIncluded: true },
+      { name: 'HDRI lighting & environment', isIncluded: true },
+      { name: '3D animation in timeline', isIncluded: true },
+      { name: 'AI in 3D', isIncluded: false },
     ],
   },
   {
     label: 'AI Features',
     features: [
-      { name: 'AI credits', isIncluded: false },
+      { name: 'AI credits', isIncluded: true, value: '1M / month' },
       { name: 'AI motion graphics', isIncluded: false },
       { name: 'AI assistant', isIncluded: false },
       { name: 'AI image search', isIncluded: false },
@@ -89,10 +98,10 @@ const freeFeatureGroups: FeatureGroup[] = [
       { name: 'Shared asset library', isIncluded: false },
       { name: 'Role management (Admin / Editor / Viewer)', isIncluded: false },
       { name: 'Version history', isIncluded: true, value: '30 days' },
-      { name: 'Comments & annotations', isIncluded: false },
+      { name: 'Comments & annotations', isIncluded: true },
       { name: 'Brand kit', isIncluded: false },
       { name: 'Team templates', isIncluded: false },
-      { name: 'Guest access', isIncluded: false },
+      { name: 'Guest access', isIncluded: true },
       { name: 'Admin dashboard', isIncluded: false },
     ],
   },
@@ -130,12 +139,13 @@ const proFeatureGroups: FeatureGroup[] = [
       { name: 'Texture maps (diffuse / normal / roughness)', isIncluded: true },
       { name: 'HDRI lighting & environment', isIncluded: true },
       { name: '3D animation in timeline', isIncluded: true },
+      { name: 'AI in 3D', isIncluded: false },
     ],
   },
   {
     label: 'AI Features',
     features: [
-      { name: 'AI credits', isIncluded: true, value: '500 / month' },
+      { name: 'AI credits', isIncluded: true, value: '50M / month' },
       { name: 'AI motion graphics', isIncluded: true },
       { name: 'AI assistant', isIncluded: true },
       { name: 'AI image search', isIncluded: true },
@@ -152,11 +162,11 @@ const proFeatureGroups: FeatureGroup[] = [
       { name: 'Real-time collaboration', isIncluded: false },
       { name: 'Shared asset library', isIncluded: false },
       { name: 'Role management (Admin / Editor / Viewer)', isIncluded: false },
-      { name: 'Version history', isIncluded: true, value: '90 days' },
-      { name: 'Comments & annotations', isIncluded: false },
+      { name: 'Version history', isIncluded: true, value: '60 days' },
+      { name: 'Comments & annotations', isIncluded: true },
       { name: 'Brand kit', isIncluded: true },
       { name: 'Team templates', isIncluded: false },
-      { name: 'Guest access', isIncluded: false },
+      { name: 'Guest access', isIncluded: true },
       { name: 'Admin dashboard', isIncluded: true },
     ],
   },
@@ -194,12 +204,13 @@ const ultraFeatureGroups: FeatureGroup[] = [
       { name: 'Texture maps (diffuse / normal / roughness)', isIncluded: true },
       { name: 'HDRI lighting & environment', isIncluded: true },
       { name: '3D animation in timeline', isIncluded: true },
+      { name: 'AI in 3D', isIncluded: true },
     ],
   },
   {
     label: 'AI Features',
     features: [
-      { name: 'AI credits', isIncluded: true, value: '1,750 / month' },
+      { name: 'AI credits', isIncluded: true, value: '200M / month' },
       { name: 'AI motion graphics', isIncluded: true },
       { name: 'AI assistant', isIncluded: true },
       { name: 'AI image search', isIncluded: true },
@@ -216,7 +227,7 @@ const ultraFeatureGroups: FeatureGroup[] = [
       { name: 'Real-time collaboration', isIncluded: true },
       { name: 'Shared asset library', isIncluded: true },
       { name: 'Role management (Admin / Editor / Viewer)', isIncluded: true },
-      { name: 'Version history', isIncluded: true, value: '1 year' },
+      { name: 'Version history', isIncluded: true, value: '90 days' },
       { name: 'Comments & annotations', isIncluded: true },
       { name: 'Brand kit', isIncluded: true },
       { name: 'Team templates', isIncluded: true },
@@ -246,11 +257,13 @@ const cardPlans: [PriceTier, PriceTier, PriceTier] = [
       { name: 'Full editor: shapes, text, images, timeline', isIncluded: true },
       { name: 'Keyframe system & easing curves', isIncluded: true },
       { name: 'Custom fonts', isIncluded: true },
-      { name: '3D primitives', isIncluded: true, value: '2 shapes' },
+      { name: '3D primitives', isIncluded: true, value: 'All shapes' },
+      { name: '3D model import, textures, HDRI & timeline 3D', isIncluded: true },
+      { name: 'AI credits', isIncluded: true, value: '1M / month' },
+      { name: 'Comments & guest access', isIncluded: true },
       { name: 'Version history', isIncluded: true, value: '30 days' },
-      { name: 'AI features', isIncluded: false },
-      { name: 'Advanced 3D & materials', isIncluded: false },
-      { name: 'Collaboration', isIncluded: false },
+      { name: 'Advanced materials (PBR / toon / wireframe)', isIncluded: false },
+      { name: 'Team workspace & real-time collaboration', isIncluded: false },
     ],
   },
   {
@@ -270,18 +283,19 @@ const cardPlans: [PriceTier, PriceTier, PriceTier] = [
       { name: 'Priority support', isIncluded: true },
       { name: 'Full 3D: all primitives, materials, lighting', isIncluded: true },
       { name: '3D model import (GLB / OBJ / FBX / STL)', isIncluded: true },
-      { name: 'AI credits', isIncluded: true, value: '500 / month' },
+      { name: 'AI credits', isIncluded: true, value: '50M / month' },
       { name: 'AI motion graphics, assistant & image tools', isIncluded: true },
       { name: 'AI background remover & sound generator', isIncluded: true },
       { name: 'Brand kit & admin dashboard', isIncluded: true },
-      { name: 'Version history', isIncluded: true, value: '90 days' },
+      { name: 'Version history', isIncluded: true, value: '60 days' },
       { name: 'Long-form agents', isIncluded: false },
+      { name: 'AI in 3D', isIncluded: false },
     ],
   },
   {
     id: 'ultra',
     name: 'Ultra',
-    description: 'Long-form agents, parallel scenes, and 3.5x of everything in Pro.',
+    description: 'Long-form agents, AI in 3D, and 200M credits a month.',
     priceMonthly: 89,
     priceAnnually: 854,
     isPopular: false,
@@ -289,14 +303,15 @@ const cardPlans: [PriceTier, PriceTier, PriceTier] = [
     features: [
       { name: 'Everything in Pro', isIncluded: true },
       { name: 'Long-form agents (multiple parallel scenes)', isIncluded: true },
-      { name: 'AI credits', isIncluded: true, value: '1,750 / month' },
+      { name: 'AI in 3D', isIncluded: true },
+      { name: 'AI credits', isIncluded: true, value: '200M / month' },
       { name: 'Cloud storage', isIncluded: true, value: '70 GB' },
       { name: 'Team workspace & real-time collaboration', isIncluded: true },
       { name: 'Shared asset library', isIncluded: true },
       { name: 'Role management (Admin / Editor / Viewer)', isIncluded: true },
       { name: 'Comments & annotations', isIncluded: true },
       { name: 'Team templates & guest access', isIncluded: true },
-      { name: 'Version history', isIncluded: true, value: '1 year' },
+      { name: 'Version history', isIncluded: true, value: '90 days' },
     ],
   },
 ];

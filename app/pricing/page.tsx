@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
   title: 'Pricing: Free Tier, Pro & Ultra | FlashFX',
   description:
-    'FlashFX pricing: a free tier with unlimited projects and no watermark, Pro at $29/month for AI and full 3D, and Ultra at $89/month for long-form agents and 3.5x the limits. No install, no credit card to start.',
+    'FlashFX pricing: a free tier with unlimited projects and no watermark, Pro at $29/month for AI and full 3D, and Ultra at $89/month for long-form agents, AI in 3D and 200M credits. No install, no credit card to start.',
   keywords: [
     'FlashFX pricing',
     'FlashFX cost',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Pricing: Free Tier, Pro & Ultra | FlashFX',
     description:
-      'A free tier with unlimited projects and no watermark. Pro at $29/month for AI and full 3D. Ultra at $89/month for long-form agents and 3.5x the limits.',
+      'A free tier with unlimited projects and no watermark. Pro at $29/month for AI and full 3D. Ultra at $89/month for long-form agents, AI in 3D and 200M credits.',
     url: 'https://flashfx.app/pricing',
     siteName: 'FlashFX',
     locale: 'en_US',
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Pricing: Free Tier, Pro & Ultra | FlashFX',
     description:
-      'A free tier with unlimited projects and no watermark. Pro at $29/month for AI and full 3D. Ultra at $89/month for long-form agents and 3.5x the limits.',
+      'A free tier with unlimited projects and no watermark. Pro at $29/month for AI and full 3D. Ultra at $89/month for long-form agents, AI in 3D and 200M credits.',
     images: OG_IMAGES,
   },
   alternates: {
@@ -76,7 +76,7 @@ const pricingSchema = {
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
       description:
-        'Unlimited projects, the full editor, keyframe animation, and exports with no watermark.',
+        'Unlimited projects, the full editor, keyframe animation, every 3D primitive with model import and HDRI lighting, 1M AI credits a month, and exports with no watermark.',
     },
     {
       '@type': 'Offer',
@@ -85,7 +85,7 @@ const pricingSchema = {
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
       description:
-        'Everything in Free, plus AI features, full 3D with model import, and priority support. $278 billed annually.',
+        'Everything in Free, plus the AI toolset, 50M AI credits a month, advanced 3D materials, 20 GB of storage, and priority support. $278 billed annually.',
       priceSpecification: {
         '@type': 'UnitPriceSpecification',
         price: '29',
@@ -100,7 +100,7 @@ const pricingSchema = {
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
       description:
-        'Everything in Pro, plus long-form agents across multiple parallel scenes, 1,750 AI credits, 70 GB of storage, and team collaboration. $854 billed annually.',
+        'Everything in Pro, plus long-form agents across multiple parallel scenes, AI in 3D, 200M AI credits a month, 70 GB of storage, and team collaboration. $854 billed annually.',
       priceSpecification: {
         '@type': 'UnitPriceSpecification',
         price: '89',

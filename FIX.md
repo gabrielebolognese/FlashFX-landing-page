@@ -61,23 +61,33 @@ and ask.
   old $39/seat Teams became **Ultra** at $89, so the paid ladder is two tiers and
   there is no per-seat plan any more.
 
-  **Ultra is 3.5x Pro**, the owner's framing. What that means row by row:
+  **The ladder, set by the owner on 2026-08-10:**
 
   | | Free | Pro | Ultra |
   | --- | --- | --- | --- |
   | Cloud storage | 500 MB | 20 GB | 70 GB |
-  | AI credits | none | 500/mo | 1,750/mo |
-  | Version history | 30 days | 90 days | 1 year |
-  | Long-form agents | no | no | **yes** |
-  | Collaboration | no | no | yes |
+  | AI credits | 1M/mo | 50M/mo | 200M/mo |
+  | Version history | 30 days | 60 days | 90 days |
+  | 3D primitives, import, textures, HDRI, timeline 3D | **yes** | yes | yes |
+  | Advanced materials (PBR / toon / wireframe) | no | yes | yes |
+  | AI toolset (motion graphics, assistant, image, audio) | no | yes | yes |
+  | AI in 3D | no | no | **yes** |
+  | Long-form agents (parallel scenes) | no | no | **yes** |
+  | Comments, guest access | **yes** | yes | yes |
+  | Team workspace, collaboration, roles | no | no | yes |
 
-  ⚠ **Given by the owner: the names, $29, $89, "3.5x", and long-form agents for
-  multiple parallel scenes.** Everything else was derived — $854 is the same ~20%
-  annual discount Pro already had, 70 GB and 1,750 are exact 3.5x scalings, and
-  1 year of history is 315 days (3.5x of 90) rounded up to a printable unit. No
-  capability was invented: every other Ultra row is a scaling or something the
-  Teams tier already listed. **The feature list past that is open** — the owner
-  said "etc." and nothing further was added on a guess.
+  Only **$854/yr** and **70 GB** are derived: the same ~20% annual discount Pro
+  already carried, and 3.5x Pro's storage. Everything else is explicit.
+
+  ⚠ **"Ultra is 3.5x Pro" now holds for storage only.** Credits go 4x from Pro to
+  Ultra and history 1.5x, because those were set by hand afterwards. Do not
+  "restore" the ratio — the explicit numbers win.
+
+  ⚠ **The free tier has AI credits but none of the AI tools.** That is what was
+  asked for and what the table says, but 1M credits a month with nothing in the
+  table to spend them on is a question waiting to be asked. Either the toolset
+  opens to free or the free credit line needs explaining. **Raised with the owner
+  2026-08-10, unresolved.**
 
   **The prices live in three places and none derives from the others:**
   `PricingSection.tsx` (the cards and table), `app/pricing/page.tsx` (metadata
@@ -110,10 +120,14 @@ and ask.
   one the `EditInPlainEnglish` section rests on. What comes out is a project you
   can then edit by hand.
 
-  **AI is not on the free tier.** `faqData.ts` states that "the free tier is a
-  complete manual editor with no AI features" and puts them on Pro and Ultra.
-  **Long-form agents working across multiple parallel scenes are Ultra only**
-  (owner, 2026-08-10).
+  **The AI *toolset* is not on the free tier, but AI *credits* are** (owner,
+  2026-08-10). Free carries 1M credits a month; AI motion graphics, the
+  assistant, image search and generation, the background remover and the sound
+  generator are Pro and Ultra. The old absolute claim, "the free tier is a
+  complete manual editor with no AI features", was true until that change and is
+  now gone from `faqData.ts` — do not reintroduce it.
+
+  **Ultra only: long-form agents across multiple parallel scenes, and AI in 3D.**
   Any new AI copy must not imply otherwise. The existing feature entries — *AI
   Image Generation* (DALL·E), *AI Chat Assistant*, *AI Motion Pipeline* with its
   four stages — are the published detail; do not invent capabilities past them.

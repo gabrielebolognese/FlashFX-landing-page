@@ -73,13 +73,13 @@ export const faqData: FaqEntry[] = [
     category: 'Features',
     question: 'Does FlashFX do 3D?',
     answer:
-      'Yes. The free tier includes 3D primitives that animate on the same timeline as everything else. Full 3D, all primitives, PBR and toon materials, HDRI lighting, and model import for GLB, OBJ, FBX, and STL, is part of the Pro plan.',
+      'Yes, and most of it is on the free tier. Every 3D primitive, model import for GLB, OBJ, FBX and STL, texture maps, HDRI lighting and environments, and 3D animation on the same timeline as everything else are all included at no cost. Advanced materials, meaning PBR, toon and wireframe, are part of Pro. AI in 3D is Ultra only.',
   },
   {
     category: 'Features',
     question: 'Is there anything AI-powered?',
     answer:
-      'On paid plans. Pro includes AI credits, AI motion graphics, an AI assistant, image search and generation, a background remover, and a sound generator. Ultra adds long-form agents that work across multiple parallel scenes. The free tier is a complete manual editor with no AI features.',
+      'Every plan carries AI credits: 1M a month on the free tier, 50M on Pro and 200M on Ultra. The AI toolset itself, meaning AI motion graphics, the assistant, image search and generation, the background remover and the sound generator, is on Pro and Ultra. Ultra adds long-form agents that work across multiple parallel scenes, and AI in 3D.',
   },
   {
     category: 'Export',
@@ -109,13 +109,13 @@ export const faqData: FaqEntry[] = [
     category: 'Plans & billing',
     question: 'Is the free tier really free?',
     answer:
-      'Yes, and it is not a timed trial. The free tier includes unlimited projects, the full editor, the keyframe system, custom fonts, 3D primitives, 30-day version history, and exports with no watermark. There is no countdown and no expiry.',
+      'Yes, and it is not a timed trial. The free tier includes unlimited projects, the full editor, the keyframe system, custom fonts, every 3D primitive with model import and HDRI lighting, 1M AI credits a month, comments and guest access, 30-day version history, and exports with no watermark. There is no countdown and no expiry.',
   },
   {
     category: 'Plans & billing',
     question: 'What do the paid plans cost?',
     answer:
-      'Pro is $29 per month, or $278 billed annually, and adds AI features, full 3D with model import, 20 GB of cloud storage, priority support, and 90-day version history. Ultra is $89 per month, or $854 billed annually, and multiplies those limits by about three and a half: 1,750 AI credits, 70 GB of storage, and a year of version history. It also adds long-form agents across multiple parallel scenes, plus a team workspace, real-time collaboration, shared assets, role management, and comments.',
+      'Pro is $29 per month, or $278 billed annually, and adds the AI toolset, advanced 3D materials, 50M AI credits a month, 20 GB of cloud storage, priority support, and 60-day version history. Ultra is $89 per month, or $854 billed annually, and adds long-form agents across multiple parallel scenes, AI in 3D, 200M AI credits a month, 70 GB of storage, 90-day version history, and a team workspace with real-time collaboration, shared assets and role management.',
   },
   {
     category: 'Plans & billing',
@@ -133,7 +133,7 @@ export const faqData: FaqEntry[] = [
     category: 'Projects & data',
     question: 'Can I recover an earlier version of a project?',
     answer:
-      'Yes. Version history covers the last 30 days on the free tier, the last 90 days on Pro, and a full year on Ultra. The editor also keeps unlimited undo and redo within a session, and auto-backup runs in the background.',
+      'Yes. Version history covers the last 30 days on the free tier, 60 days on Pro, and 90 days on Ultra. The editor also keeps unlimited undo and redo within a session, and auto-backup runs in the background.',
   },
   {
     category: 'Projects & data',
