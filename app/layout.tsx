@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Outfit, JetBrains_Mono, Inter } from 'next/font/google';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/layout/Footer';
+import { BeyondTheFooter } from '@/components/sections/BeyondTheFooter';
 import { PageLoader } from '@/components/PageLoader';
 import { SiteBackdrop } from '@/components/ui/site-backdrop';
 import { OG_IMAGES } from '@/lib/seo';
@@ -149,6 +150,13 @@ export default function RootLayout({
         <Navbar />
         {children}
         <Footer />
+        {/*
+          Below the footer, and only on the homepage. `BeyondTheFooter` gates
+          itself on the pathname: the footer lives here, so this is the only
+          place it can sit, but seven viewport heights of joke under the privacy
+          policy would be a defect rather than a joke.
+        */}
+        <BeyondTheFooter />
       </body>
     </html>
   );

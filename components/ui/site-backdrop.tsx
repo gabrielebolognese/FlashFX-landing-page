@@ -202,7 +202,18 @@ export function SiteBackdrop() {
 
     let scroll = 0;
     const readScroll = () => {
-      const span = document.documentElement.scrollHeight - window.innerHeight;
+      /*
+       * Measured against the end of the *page*, not the end of the document.
+       *
+       * Anything marked `data-fx-beyond` sits below the footer and is not part
+       * of the page's argument — the joke in `BeyondTheFooter` is seven viewport
+       * heights of it. Counting that would stretch this ramp so the real content
+       * never reached the light end of the gradient, and the footer would sit in
+       * the same navy as the hero.
+       */
+      const beyond = document.querySelector('[data-fx-beyond]');
+      const tail = beyond ? (beyond as HTMLElement).offsetHeight : 0;
+      const span = document.documentElement.scrollHeight - tail - window.innerHeight;
       scroll = span > 0 ? Math.min(1, Math.max(0, window.scrollY / span)) : 0;
     };
     readScroll();
