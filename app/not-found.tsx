@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 const destinations = [
   { href: '/', title: 'Home', description: 'What FlashFX is, and what it can do.' },
   { href: '/features', title: 'Features', description: 'Design, animation, 3D, and export.' },
-  { href: '/pricing', title: 'Pricing', description: 'The free tier, Ultra, and Teams.' },
+  { href: '/pricing', title: 'Pricing', description: 'The free tier, Pro, and Ultra.' },
   { href: '/about', title: 'About', description: 'The team building FlashFX.' },
   {
     href: '/after-effects-alternative',

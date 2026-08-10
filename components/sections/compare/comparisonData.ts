@@ -296,7 +296,7 @@ export const capabilities: CapabilityRow[] = [
     flashfx: true,
     capcut: false,
     resolve: true,
-    note: 'FlashFX: Teams plan',
+    note: 'FlashFX: Ultra plan',
   },
   {
     group: 'Collaboration',

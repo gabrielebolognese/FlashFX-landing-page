@@ -73,13 +73,13 @@ export const faqData: FaqEntry[] = [
     category: 'Features',
     question: 'Does FlashFX do 3D?',
     answer:
-      'Yes. The free tier includes 3D primitives that animate on the same timeline as everything else. Full 3D, all primitives, PBR and toon materials, HDRI lighting, and model import for GLB, OBJ, FBX, and STL, is part of the Ultra plan.',
+      'Yes. The free tier includes 3D primitives that animate on the same timeline as everything else. Full 3D, all primitives, PBR and toon materials, HDRI lighting, and model import for GLB, OBJ, FBX, and STL, is part of the Pro plan.',
   },
   {
     category: 'Features',
     question: 'Is there anything AI-powered?',
     answer:
-      'On paid plans. Ultra includes AI credits, AI motion graphics, an AI assistant, image search and generation, a background remover, and a sound generator. The free tier is a complete manual editor with no AI features.',
+      'On paid plans. Pro includes AI credits, AI motion graphics, an AI assistant, image search and generation, a background remover, and a sound generator. Ultra adds long-form agents that work across multiple parallel scenes. The free tier is a complete manual editor with no AI features.',
   },
   {
     category: 'Export',
@@ -115,25 +115,25 @@ export const faqData: FaqEntry[] = [
     category: 'Plans & billing',
     question: 'What do the paid plans cost?',
     answer:
-      'Ultra is $29 per month, or $278 billed annually, and adds AI features, full 3D with model import, 20 GB of cloud storage, priority support, and 90-day version history. Teams is $39 per seat per month, or $374 per seat billed annually, and adds a team workspace, real-time collaboration, shared assets, role management, and comments.',
+      'Pro is $29 per month, or $278 billed annually, and adds AI features, full 3D with model import, 20 GB of cloud storage, priority support, and 90-day version history. Ultra is $89 per month, or $854 billed annually, and multiplies those limits by about three and a half: 1,750 AI credits, 70 GB of storage, and a year of version history. It also adds long-form agents across multiple parallel scenes, plus a team workspace, real-time collaboration, shared assets, role management, and comments.',
   },
   {
     category: 'Plans & billing',
     question: 'Can I get a refund?',
     answer:
-      'Refunds are covered by our refund policy, which sets out when one applies and how to request it. The free tier costs nothing, so this only ever concerns Ultra and Teams subscriptions.',
+      'Refunds are covered by our refund policy, which sets out when one applies and how to request it. The free tier costs nothing, so this only ever concerns Pro and Ultra subscriptions.',
   },
   {
     category: 'Projects & data',
     question: 'Where are my projects stored?',
     answer:
-      'In cloud storage, so a project opens on any machine rather than living on one hard drive. You get 50 MB without an account, 500 MB once you sign up to the free tier, and 20 GB on Ultra and Teams.',
+      'In cloud storage, so a project opens on any machine rather than living on one hard drive. You get 50 MB without an account, 500 MB once you sign up to the free tier, 20 GB on Pro, and 70 GB on Ultra.',
   },
   {
     category: 'Projects & data',
     question: 'Can I recover an earlier version of a project?',
     answer:
-      'Yes. Version history covers the last 30 days on the free tier and the last 90 days on Ultra and Teams. The editor also keeps unlimited undo and redo within a session, and auto-backup runs in the background.',
+      'Yes. Version history covers the last 30 days on the free tier, the last 90 days on Pro, and a full year on Ultra. The editor also keeps unlimited undo and redo within a session, and auto-backup runs in the background.',
   },
   {
     category: 'Projects & data',

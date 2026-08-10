@@ -4,6 +4,36 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { PricingComponent, BillingCycle, PriceTier, FeatureGroup, Feature } from '@/components/ui/pricing-card';
 
+/*
+ * Three tiers: Free, Pro, Ultra. Restructured 2026-08-10 on the owner's
+ * instruction: the old $29 Ultra became Pro and the old $39/seat Teams became
+ * Ultra at $89, so the paid ladder is two tiers rather than a mid tier plus a
+ * seat-priced one.
+ *
+ * -- Which numbers were given, and which were derived ------------------------
+ *
+ * Given: the two names, $29 for Pro, $89 for Ultra, and "Ultra is 3.5x Pro".
+ *
+ * Derived from that, and worth knowing before changing any of them:
+ *
+ *   - $854/yr for Ultra, from the same ~20% annual discount Pro already carried
+ *     (278 / 348) applied to 89 x 12.
+ *   - 70 GB of storage and 1,750 AI credits, exactly 3.5x Pro's 20 GB and 500.
+ *   - 1 year of version history. 3.5x of 90 days is 315, which is not a number
+ *     any product prints, so it rounds up to the nearest natural unit.
+ *
+ * Long-form agents are the one new capability and the wording is the owner's:
+ * multiple parallel scenes, Ultra only. Nothing else here was invented. Every
+ * other Ultra row is either a 3.5x scaling or something Teams already had.
+ *
+ * -- This data is mirrored ---------------------------------------------------
+ *
+ * `app/pricing/page.tsx` restates the prices in its metadata and in an Offer
+ * graph, and `faqData.ts` states them in prose. Neither is derived from here and
+ * both are read by crawlers, so a price changed in this file alone is a price
+ * that is wrong in the index and right on the page.
+ */
+
 const freeFeatureGroups: FeatureGroup[] = [
   {
     label: 'General',
@@ -48,10 +78,11 @@ const freeFeatureGroups: FeatureGroup[] = [
       { name: 'AI image generation', isIncluded: false },
       { name: 'AI background remover', isIncluded: false },
       { name: 'AI sound generator', isIncluded: false },
+      { name: 'Long-form agents (multiple parallel scenes)', isIncluded: false },
     ],
   },
   {
-    label: 'Teams & Collaboration',
+    label: 'Collaboration',
     features: [
       { name: 'Team workspace', isIncluded: false },
       { name: 'Real-time collaboration', isIncluded: false },
@@ -67,7 +98,7 @@ const freeFeatureGroups: FeatureGroup[] = [
   },
 ];
 
-const ultraFeatureGroups: FeatureGroup[] = [
+const proFeatureGroups: FeatureGroup[] = [
   {
     label: 'General',
     features: [
@@ -111,10 +142,11 @@ const ultraFeatureGroups: FeatureGroup[] = [
       { name: 'AI image generation', isIncluded: true },
       { name: 'AI background remover', isIncluded: true },
       { name: 'AI sound generator', isIncluded: true },
+      { name: 'Long-form agents (multiple parallel scenes)', isIncluded: false },
     ],
   },
   {
-    label: 'Teams & Collaboration',
+    label: 'Collaboration',
     features: [
       { name: 'Team workspace', isIncluded: false },
       { name: 'Real-time collaboration', isIncluded: false },
@@ -130,12 +162,12 @@ const ultraFeatureGroups: FeatureGroup[] = [
   },
 ];
 
-const teamsFeatureGroups: FeatureGroup[] = [
+const ultraFeatureGroups: FeatureGroup[] = [
   {
     label: 'General',
     features: [
       { name: 'Projects', isIncluded: true, value: 'Unlimited' },
-      { name: 'Cloud storage', isIncluded: true, value: '20 GB' },
+      { name: 'Cloud storage', isIncluded: true, value: '70 GB' },
       { name: 'Export formats (MP4 / GIF / WebM / SVG)', isIncluded: true },
       { name: 'Priority support', isIncluded: true },
     ],
@@ -167,23 +199,24 @@ const teamsFeatureGroups: FeatureGroup[] = [
   {
     label: 'AI Features',
     features: [
-      { name: 'AI credits', isIncluded: true, value: '2000 / month' },
+      { name: 'AI credits', isIncluded: true, value: '1,750 / month' },
       { name: 'AI motion graphics', isIncluded: true },
       { name: 'AI assistant', isIncluded: true },
       { name: 'AI image search', isIncluded: true },
       { name: 'AI image generation', isIncluded: true },
       { name: 'AI background remover', isIncluded: true },
       { name: 'AI sound generator', isIncluded: true },
+      { name: 'Long-form agents (multiple parallel scenes)', isIncluded: true },
     ],
   },
   {
-    label: 'Teams & Collaboration',
+    label: 'Collaboration',
     features: [
       { name: 'Team workspace', isIncluded: true },
       { name: 'Real-time collaboration', isIncluded: true },
       { name: 'Shared asset library', isIncluded: true },
       { name: 'Role management (Admin / Editor / Viewer)', isIncluded: true },
-      { name: 'Version history', isIncluded: true, value: '90 days' },
+      { name: 'Version history', isIncluded: true, value: '1 year' },
       { name: 'Comments & annotations', isIncluded: true },
       { name: 'Brand kit', isIncluded: true },
       { name: 'Team templates', isIncluded: true },
@@ -217,17 +250,20 @@ const cardPlans: [PriceTier, PriceTier, PriceTier] = [
       { name: 'Version history', isIncluded: true, value: '30 days' },
       { name: 'AI features', isIncluded: false },
       { name: 'Advanced 3D & materials', isIncluded: false },
-      { name: 'Team collaboration', isIncluded: false },
+      { name: 'Collaboration', isIncluded: false },
     ],
   },
   {
-    id: 'ultra',
-    name: 'Ultra',
+    id: 'pro',
+    name: 'Pro',
     description: 'Unlock AI, full 3D, and priority support for serious creators.',
     priceMonthly: 29,
     priceAnnually: 278,
+    // The middle tier stays the highlighted one. It is the volume plan, and a
+    // badge on the most expensive column reads as a sales tactic rather than as
+    // a recommendation.
     isPopular: true,
-    buttonLabel: 'Start Ultra Trial',
+    buttonLabel: 'Start Pro Trial',
     features: [
       { name: 'Everything in Free', isIncluded: true },
       { name: 'Cloud storage', isIncluded: true, value: '20 GB' },
@@ -239,26 +275,28 @@ const cardPlans: [PriceTier, PriceTier, PriceTier] = [
       { name: 'AI background remover & sound generator', isIncluded: true },
       { name: 'Brand kit & admin dashboard', isIncluded: true },
       { name: 'Version history', isIncluded: true, value: '90 days' },
+      { name: 'Long-form agents', isIncluded: false },
     ],
   },
   {
-    id: 'teams',
-    name: 'Teams',
-    description: 'Built for agencies and creative teams that move fast.',
-    priceMonthly: 39,
-    priceAnnually: 374,
-    priceSuffix: 'per seat',
+    id: 'ultra',
+    name: 'Ultra',
+    description: 'Long-form agents, parallel scenes, and 3.5x of everything in Pro.',
+    priceMonthly: 89,
+    priceAnnually: 854,
     isPopular: false,
-    buttonLabel: 'Start Teams Trial',
+    buttonLabel: 'Start Ultra Trial',
     features: [
-      { name: 'Everything in Ultra', isIncluded: true },
-      { name: 'AI credits', isIncluded: true, value: '2000 / month' },
+      { name: 'Everything in Pro', isIncluded: true },
+      { name: 'Long-form agents (multiple parallel scenes)', isIncluded: true },
+      { name: 'AI credits', isIncluded: true, value: '1,750 / month' },
+      { name: 'Cloud storage', isIncluded: true, value: '70 GB' },
       { name: 'Team workspace & real-time collaboration', isIncluded: true },
       { name: 'Shared asset library', isIncluded: true },
       { name: 'Role management (Admin / Editor / Viewer)', isIncluded: true },
       { name: 'Comments & annotations', isIncluded: true },
       { name: 'Team templates & guest access', isIncluded: true },
-      { name: 'Version history', isIncluded: true, value: '90 days' },
+      { name: 'Version history', isIncluded: true, value: '1 year' },
     ],
   },
 ];
@@ -266,8 +304,8 @@ const cardPlans: [PriceTier, PriceTier, PriceTier] = [
 function buildTablePlans(): [PriceTier, PriceTier, PriceTier] {
   return [
     { ...cardPlans[0], features: flattenFeatures(freeFeatureGroups) },
-    { ...cardPlans[1], features: flattenFeatures(ultraFeatureGroups) },
-    { ...cardPlans[2], features: flattenFeatures(teamsFeatureGroups) },
+    { ...cardPlans[1], features: flattenFeatures(proFeatureGroups) },
+    { ...cardPlans[2], features: flattenFeatures(ultraFeatureGroups) },
   ];
 }
 

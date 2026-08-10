@@ -20,7 +20,7 @@ import dynamic from 'next/dynamic';
  *
  * It must also not imply the AI features are free. `faqData.ts` states plainly
  * that "the free tier is a complete manual editor with no AI features" and puts
- * them on Ultra and Teams. The line under the demo says so, and it stays.
+ * them on Pro and Ultra. The line under the demo says so, and it stays.
  */
 const PromptToArt = dynamic(() => import('@/components/demos/PromptToArt').then((m) => m.PromptToArt), {
   ssr: false,
@@ -66,7 +66,7 @@ export function EditInPlainEnglish() {
       </div>
 
       <p className="mt-2 px-6 text-center font-mono text-[11px] tracking-wide text-fx-text-secondary/70">
-        AI features are included with Ultra and Teams.
+        AI features are included with Pro and Ultra.
       </p>
     </section>
   );

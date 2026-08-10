@@ -56,7 +56,7 @@ export default function RefundPolicyPage() {
       <PolicyLayout
         eyebrow="Legal"
         title="Refund Policy"
-        standfirst="The free tier costs nothing, so this only applies to Ultra and Teams. Here is when a refund applies and how to ask for one."
+        standfirst="The free tier costs nothing, so this only applies to Pro and Ultra. Here is when a refund applies and how to ask for one."
         dataId="018911a9-2bbf-4134-b294-587fbc90fcea"
       />
     </>

@@ -56,12 +56,41 @@ and ask.
   and is usable without signing up. Already claimed in `MigrationGuide.tsx`,
   `BeginnerWalkthrough.tsx`, `FeaturesFinalCTA.tsx` and `YTWorkflow.tsx` — this
   entry makes it verified rather than assumed.
+- **Plans: Free, Pro ($29/mo, $278/yr), Ultra ($89/mo, $854/yr).** Restructured
+  2026-08-10 on the owner's instruction. The old $29 Ultra became **Pro** and the
+  old $39/seat Teams became **Ultra** at $89, so the paid ladder is two tiers and
+  there is no per-seat plan any more.
+
+  **Ultra is 3.5x Pro**, the owner's framing. What that means row by row:
+
+  | | Free | Pro | Ultra |
+  | --- | --- | --- | --- |
+  | Cloud storage | 500 MB | 20 GB | 70 GB |
+  | AI credits | none | 500/mo | 1,750/mo |
+  | Version history | 30 days | 90 days | 1 year |
+  | Long-form agents | no | no | **yes** |
+  | Collaboration | no | no | yes |
+
+  ⚠ **Given by the owner: the names, $29, $89, "3.5x", and long-form agents for
+  multiple parallel scenes.** Everything else was derived — $854 is the same ~20%
+  annual discount Pro already had, 70 GB and 1,750 are exact 3.5x scalings, and
+  1 year of history is 315 days (3.5x of 90) rounded up to a printable unit. No
+  capability was invented: every other Ultra row is a scaling or something the
+  Teams tier already listed. **The feature list past that is open** — the owner
+  said "etc." and nothing further was added on a guess.
+
+  **The prices live in three places and none derives from the others:**
+  `PricingSection.tsx` (the cards and table), `app/pricing/page.tsx` (metadata
+  *and* an `Offer` graph), and `faqData.ts` (prose, which `app/faq/page.tsx`
+  turns into `FAQPage` schema). A price changed in one is a price that is wrong
+  in Google's index and right on the page.
+
 - **Cloud storage: 50 MB without an account, 500 MB on the free tier, 20 GB on
-  Ultra and Teams.** Confirmed 2026-08-06. The 50 MB and 500 MB figures are not
-  in conflict — they are different states. `PricingSection.tsx` is the source of
-  truth for what a *plan* includes; any copy quoting a storage number must say
-  which state it means, or it reads as a contradiction (as
-  `editorFeatures.ts` did until 2026-08-06).
+  Pro, 70 GB on Ultra.** Confirmed 2026-08-06, Ultra figure 2026-08-10. The
+  50 MB and 500 MB figures are not in conflict — they are different states.
+  `PricingSection.tsx` is the source of truth for what a *plan* includes; any
+  copy quoting a storage number must say which state it means, or it reads as a
+  contradiction (as `editorFeatures.ts` did until 2026-08-06).
 - **3D capability — what FlashFX does and does not do.** Confirmed 2026-08-07.
   It **can**: import 3D objects, animate cubes and other primitives, perform
   basic 3D editing, and run *morph animations that modify objects* — the
@@ -82,7 +111,9 @@ and ask.
   can then edit by hand.
 
   **AI is not on the free tier.** `faqData.ts` states that "the free tier is a
-  complete manual editor with no AI features" and puts them on Ultra and Teams.
+  complete manual editor with no AI features" and puts them on Pro and Ultra.
+  **Long-form agents working across multiple parallel scenes are Ultra only**
+  (owner, 2026-08-10).
   Any new AI copy must not imply otherwise. The existing feature entries — *AI
   Image Generation* (DALL·E), *AI Chat Assistant*, *AI Motion Pipeline* with its
   four stages — are the published detail; do not invent capabilities past them.

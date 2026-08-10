@@ -7,9 +7,9 @@ import { OG_IMAGES } from '@/lib/seo';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flashfx.app'),
-  title: 'Pricing: Free Tier, Ultra & Teams | FlashFX',
+  title: 'Pricing: Free Tier, Pro & Ultra | FlashFX',
   description:
-    'FlashFX pricing: a free tier with unlimited projects and no watermark, Ultra at $29/month for AI and full 3D, and Teams at $39/seat/month for collaboration. No install, no credit card to start.',
+    'FlashFX pricing: a free tier with unlimited projects and no watermark, Pro at $29/month for AI and full 3D, and Ultra at $89/month for long-form agents and 3.5x the limits. No install, no credit card to start.',
   keywords: [
     'FlashFX pricing',
     'FlashFX cost',
@@ -24,9 +24,9 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'Pricing: Free Tier, Ultra & Teams | FlashFX',
+    title: 'Pricing: Free Tier, Pro & Ultra | FlashFX',
     description:
-      'A free tier with unlimited projects and no watermark. Ultra at $29/month for AI and full 3D. Teams at $39/seat/month for collaboration.',
+      'A free tier with unlimited projects and no watermark. Pro at $29/month for AI and full 3D. Ultra at $89/month for long-form agents and 3.5x the limits.',
     url: 'https://flashfx.app/pricing',
     siteName: 'FlashFX',
     locale: 'en_US',
@@ -35,9 +35,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pricing: Free Tier, Ultra & Teams | FlashFX',
+    title: 'Pricing: Free Tier, Pro & Ultra | FlashFX',
     description:
-      'A free tier with unlimited projects and no watermark. Ultra at $29/month for AI and full 3D. Teams at $39/seat/month for collaboration.',
+      'A free tier with unlimited projects and no watermark. Pro at $29/month for AI and full 3D. Ultra at $89/month for long-form agents and 3.5x the limits.',
     images: OG_IMAGES,
   },
   alternates: {
@@ -66,7 +66,7 @@ const pricingSchema = {
   publisher: { '@id': 'https://flashfx.app/#organization' },
   // No aggregateRating — see app/page.tsx. Do not reintroduce.
   description:
-    'FlashFX is a browser-based motion graphics editor with a free tier, a $29/month Ultra plan, and a $39/seat/month Teams plan.',
+    'FlashFX is a browser-based motion graphics editor with a free tier, a $29/month Pro plan, and an $89/month Ultra plan.',
   screenshot: 'https://flashfx.app/Screenshot_2026-03-01_183521.png',
   offers: [
     {
@@ -80,7 +80,7 @@ const pricingSchema = {
     },
     {
       '@type': 'Offer',
-      name: 'Ultra',
+      name: 'Pro',
       price: '29',
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
@@ -95,15 +95,15 @@ const pricingSchema = {
     },
     {
       '@type': 'Offer',
-      name: 'Teams',
-      price: '39',
+      name: 'Ultra',
+      price: '89',
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
       description:
-        'Everything in Ultra, plus team workspace, real-time collaboration, and role management. Per seat. $374 per seat billed annually.',
+        'Everything in Pro, plus long-form agents across multiple parallel scenes, 1,750 AI credits, 70 GB of storage, and team collaboration. $854 billed annually.',
       priceSpecification: {
         '@type': 'UnitPriceSpecification',
-        price: '39',
+        price: '89',
         priceCurrency: 'USD',
         billingDuration: 'P1M',
       },
