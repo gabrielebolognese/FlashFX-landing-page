@@ -98,7 +98,13 @@ module.exports = {
    * All four stay live, linked from the footer, and readable. They are simply
    * not advertised for indexing.
    */
-  exclude: ['/privacy', '/terms', '/refund-policy', '/acceptable-use-policy'],
+  /*
+   * `/x-comment` is a personal dev-only tool, not a page of this site. It
+   * already 404s in a production build and carries `noindex`, but it is listed
+   * here too so a future change to either of those does not quietly put it in
+   * the sitemap — the three defences are independent on purpose.
+   */
+  exclude: ['/privacy', '/terms', '/refund-policy', '/acceptable-use-policy', '/x-comment'],
   transform: async (config, path) => {
     const { priority, changefreq } = ROUTES[path] || DEFAULT_ROUTE;
 
