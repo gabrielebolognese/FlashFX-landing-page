@@ -51,6 +51,28 @@ const ROUTES = {
 
 const DEFAULT_ROUTE = { priority: 0.7, changefreq: 'monthly' };
 
+/*
+ * Image sitemap entries for the homepage gallery.
+ *
+ * Read from the same JSON the carousel renders and the ImageGallery schema
+ * quotes, which is the reason that file is JSON and not TypeScript: this config
+ * is CommonJS and runs after the Next build, outside anything that could import
+ * a `.ts` module.
+ *
+ * Google discovers images it can already reach by crawling the page, so this is
+ * not the difference between indexed and not. What it adds is the caption,
+ * attached to the image rather than inferred from whatever markup happens to
+ * surround it, and a guarantee that images inside a client-rendered marquee are
+ * enumerated somewhere a crawler does not have to execute JavaScript to find.
+ */
+const galleryImages = require('./lib/gallery-images.json');
+
+const HOMEPAGE_IMAGES = galleryImages.map((image) => ({
+  loc: new URL(`/lookslike/${image.file}`, process.env.SITE_URL || 'https://flashfx.app'),
+  title: image.alt.split(',')[0],
+  caption: image.alt,
+}));
+
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
   siteUrl: process.env.SITE_URL || 'https://flashfx.app',
@@ -86,6 +108,8 @@ module.exports = {
       priority,
       lastmod: config.autoLastmod ? new Date().toISOString() : undefined,
       alternateRefs: config.alternateRefs ?? [],
+      // Only the homepage carries the gallery, so only the homepage lists it.
+      images: path === '/' ? HOMEPAGE_IMAGES : undefined,
     };
   },
   robotsTxtOptions: {

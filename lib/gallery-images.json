@@ -1,0 +1,192 @@
+[
+  {
+    "file": "flashfx-departure-board-animation.webp",
+    "h": 612,
+    "alt": "An airport departure board animation being built in FlashFX, its split-flap letters keyframed across 234 timeline tracks"
+  },
+  {
+    "file": "flashfx-departure-board-icon-library.webp",
+    "h": 612,
+    "alt": "The same departure board scene in FlashFX with planes taxiing through rain, the built-in icon library open on the left"
+  },
+  {
+    "file": "flashfx-bar-chart-race-animation.webp",
+    "h": 613,
+    "alt": "A bar chart race of programming languages animating in FlashFX, with per-digit counters rolling on 220 tracks"
+  },
+  {
+    "file": "flashfx-bar-chart-race-template-browser.webp",
+    "h": 613,
+    "alt": "A bar chart race in FlashFX with the animation template browser open, showing Bar Chart Race and Beach among the presets"
+  },
+  {
+    "file": "flashfx-bar-chart-expressions.webp",
+    "h": 612,
+    "alt": "A quarterly bar chart in FlashFX with the expressions panel open, driving position with a wiggle expression"
+  },
+  {
+    "file": "flashfx-bar-chart-wiggle-expression.webp",
+    "h": 612,
+    "alt": "A five-quarter bar chart in FlashFX beside the code panel, with wiggle and rotation expressions offered as starting points"
+  },
+  {
+    "file": "flashfx-forest-scene-animation.webp",
+    "h": 613,
+    "alt": "A layered forest scene in FlashFX, trees swaying on their own keyframed tracks"
+  },
+  {
+    "file": "flashfx-forest-scene-background-fill.webp",
+    "h": 613,
+    "alt": "A daytime forest scene in FlashFX with the background fill panel open on its solid colour stops"
+  },
+  {
+    "file": "flashfx-sunset-scene-animation.webp",
+    "h": 607,
+    "alt": "A sunset scene in FlashFX, the sun sinking into the sea under banded gradient skies"
+  },
+  {
+    "file": "flashfx-sunset-scene-timeline.webp",
+    "h": 607,
+    "alt": "A sunset scene in FlashFX with its ten-track timeline, dot and box layers animating the sun and its reflection"
+  },
+  {
+    "file": "flashfx-beach-scene-animation.webp",
+    "h": 618,
+    "alt": "A beach scene in FlashFX with sky, sea and sand bands, fourteen objects selected and the align panel open"
+  },
+  {
+    "file": "flashfx-night-sky-moon-scene.webp",
+    "h": 617,
+    "alt": "A night sky scene in FlashFX, a glowing moon over a starfield with thirty-one animated layers"
+  },
+  {
+    "file": "flashfx-snow-scene-snowman.webp",
+    "h": 611,
+    "alt": "A winter scene in FlashFX, snow drifting past a snowman across forty-three timeline tracks"
+  },
+  {
+    "file": "flashfx-rain-scene-object-selection.webp",
+    "h": 617,
+    "alt": "A rain scene in FlashFX with thirty-seven objects selected, showing the raindrop and puddle layers as outlines"
+  },
+  {
+    "file": "flashfx-galaxy-scene-animation.webp",
+    "h": 613,
+    "alt": "A galaxy scene in FlashFX, planets orbiting a glowing core over a starfield"
+  },
+  {
+    "file": "flashfx-galaxy-orbit-starfield-scene.webp",
+    "h": 613,
+    "alt": "A galaxy scene in FlashFX with fifty-seven layers, planets held on tilted orbital rings over a starfield"
+  },
+  {
+    "file": "flashfx-galaxy-334-track-timeline.webp",
+    "h": 616,
+    "alt": "A long galaxy animation in FlashFX zoomed out to show all 334 timeline tracks at once"
+  },
+  {
+    "file": "flashfx-orbit-animation-shape-properties.webp",
+    "h": 616,
+    "alt": "An orbiting solar system in FlashFX with a circle layer selected, its radius, fill and transform values open in the properties panel"
+  },
+  {
+    "file": "flashfx-solar-system-camera-scene.webp",
+    "h": 613,
+    "alt": "A solar system animation in FlashFX with the scene camera enabled, ninety-seven layers running over a 617-frame timeline"
+  },
+  {
+    "file": "flashfx-2-5d-camera-parallax-scene.webp",
+    "h": 607,
+    "alt": "The 2.5D camera parallax showcase in FlashFX, flat cards at different depths with a camera trucking across and pushing in"
+  },
+  {
+    "file": "flashfx-fireworks-animation.webp",
+    "h": 606,
+    "alt": "A fireworks animation in FlashFX, sparks bursting across a night sky on 75 tracks"
+  },
+  {
+    "file": "flashfx-fireworks-spark-burst.webp",
+    "h": 606,
+    "alt": "A firework mid-burst in FlashFX, a ring of pink sparks expanding over a dark sky on seventy-five tracks"
+  },
+  {
+    "file": "flashfx-chain-reaction-animation.webp",
+    "h": 614,
+    "alt": "A chain reaction animation in FlashFX: dominoes into a marble, a lever, a bucket and 200 balls through a funnel"
+  },
+  {
+    "file": "flashfx-chain-reaction-align-panel.webp",
+    "h": 614,
+    "alt": "The chain reaction scene in FlashFX with 239 objects selected at once and the align and distribute panel open"
+  },
+  {
+    "file": "flashfx-hypno-spiral-pattern.webp",
+    "h": 607,
+    "alt": "A hypnotic spiral pattern generated in FlashFX, with the pattern presets and parameters open"
+  },
+  {
+    "file": "flashfx-hypno-spiral-pattern-presets.webp",
+    "h": 607,
+    "alt": "A yellow and violet spiral generated in FlashFX, with twelve pattern presets listed beside it including Ocean Waves and Moire"
+  },
+  {
+    "file": "flashfx-ripple-rings-pattern.webp",
+    "h": 610,
+    "alt": "Concentric ripple rings generated in FlashFX, with scale, warp, contrast and speed controls"
+  },
+  {
+    "file": "flashfx-ripple-rings-pattern-controls.webp",
+    "h": 610,
+    "alt": "A ripple ring pattern in FlashFX with its scale, rotation, warp, contrast, speed and complexity sliders and a colour palette"
+  },
+  {
+    "file": "flashfx-neon-plasma-pattern.webp",
+    "h": 611,
+    "alt": "A neon plasma pattern in FlashFX, glowing cells drifting across the canvas"
+  },
+  {
+    "file": "flashfx-neon-plasma-blob-pattern.webp",
+    "h": 611,
+    "alt": "A neon plasma pattern in FlashFX, yellow blobs haloed in violet drifting across a black field on forty tracks"
+  },
+  {
+    "file": "flashfx-cell-field-pattern.webp",
+    "h": 609,
+    "alt": "A cell field pattern in FlashFX, warm Voronoi shapes animating over a loading title"
+  },
+  {
+    "file": "flashfx-cell-field-voronoi-pattern.webp",
+    "h": 609,
+    "alt": "A Voronoi cell field in FlashFX in amber and plum, generated as a pattern layer over a loading spinner"
+  },
+  {
+    "file": "flashfx-pen-writing-handwriting-animation.webp",
+    "h": 611,
+    "alt": "A handwriting animation in FlashFX, ruled lines drawing themselves onto a sheet of paper across a 617-frame timeline"
+  },
+  {
+    "file": "flashfx-blackjack-deal-audio-timeline.webp",
+    "h": 614,
+    "alt": "A top-down blackjack deal in FlashFX with cards on a green table and eight voiceover tracks laid out as waveforms below"
+  },
+  {
+    "file": "flashfx-video-import-voiceover-tracks.webp",
+    "h": 612,
+    "alt": "Imported footage of a laptop playing on the FlashFX canvas with three voiceover clips on separate audio tracks"
+  },
+  {
+    "file": "flashfx-graph-editor-animation-curves.webp",
+    "h": 612,
+    "alt": "The FlashFX graph editor open on position, rotation, scale and opacity curves, with the expression panel beside it"
+  },
+  {
+    "file": "flashfx-linear-gradient-background-editor.webp",
+    "h": 612,
+    "alt": "A linear gradient background being edited in FlashFX, angle and colour stops set on a red to grey ramp"
+  },
+  {
+    "file": "flashfx-project-settings-panel.webp",
+    "h": 609,
+    "alt": "The FlashFX project settings dialog showing frame rate, canvas size, default duration and autosave interval"
+  }
+]

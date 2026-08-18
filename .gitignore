@@ -51,3 +51,11 @@ public/browser icons/
 # were deploying to Netlify inside public/. Kept on disk, out of the repo.
 public/*.zip
 public/*.rar
+
+# Source screenshots and screen recordings for the gallery, kept on disk and
+# never deployed. The versions that ship are the WebP files in public/lookslike,
+# converted from these — 6.33 MB of PNG became 0.93 MB. Committing the originals
+# would breach the per-asset budget in scripts/check-budgets.mjs and put ~10 MB
+# of duplicates on every clone, for files nothing references.
+# Same treatment as the A380 archives above, and for the same reason.
+public/v2 - Copy/

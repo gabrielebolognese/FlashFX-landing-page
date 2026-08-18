@@ -2,6 +2,7 @@ import { Hero } from '@/components/sections/Hero';
 import { WhatIsFlashFX } from '@/components/sections/WhatIsFlashFX';
 import { VideoPlaceholder } from '@/components/sections/VideoPlaceholder';
 import { ImageCarousel } from '@/components/sections/ImageCarousel';
+import { galleryImageObjects, GALLERY } from '@/lib/gallery';
 import { SolutionSection } from '@/components/sections/SolutionSection';
 import { ForEveryone } from '@/components/sections/ForEveryone';
 import { SimpleToFullScale } from '@/components/sections/SimpleToFullScale';
@@ -76,6 +77,30 @@ const entityGraph = {
       ],
     },
   ],
+};
+
+/*
+ * The screenshot gallery, as structured data.
+ *
+ * Every node is derived from `lib/gallery-images.json`, the same file the
+ * carousel renders and the image sitemap quotes. Image SEO is three signals
+ * that have to agree — the `alt` in the HTML, the `caption` in the sitemap and
+ * the `description` here — and the only reliable way to keep three signals
+ * agreeing is to stop writing them three times.
+ *
+ * `creator` points at the organisation node in the graph above rather than
+ * repeating a publisher inline, so the gallery hangs off the site's existing
+ * entity graph instead of sitting beside it as an island.
+ */
+const gallerySchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ImageGallery',
+  '@id': 'https://flashfx.app/#gallery',
+  name: 'Motion graphics made in FlashFX',
+  description: `${GALLERY.length} screenshots of the FlashFX editor with an animation part-built: scenes, generated patterns, timelines, expressions and the 2.5D camera.`,
+  url: 'https://flashfx.app/',
+  isPartOf: { '@id': 'https://flashfx.app/#organization' },
+  associatedMedia: galleryImageObjects(),
 };
 
 const softwareSchema = {
@@ -154,6 +179,14 @@ export default function Home() {
         id="faq-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      {/* A plain script tag, like the two above it: next/script defers the tag
+          into the RSC payload, so it never reaches the server-rendered HTML a
+          crawler reads. */}
+      <script
+        id="gallery-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(gallerySchema) }}
       />
 
       <main>
