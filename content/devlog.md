@@ -1,5 +1,45 @@
 # Devlog
 
+## 2026-08-18
+
+2 commits, 38 files changed, +938/-243, 31 new files. First work since 10 August — 11 to 17 August have no commits, and no entries below, because nothing was written on them. Two arcs, unrelated to each other: making 25 supplied screenshots findable in Google Images, and adding a personal tool to a repo that is not private in the way it looks.
+
+### Image SEO for the gallery
+
+- Twenty-five screenshots arrived as `Screenshot 2026-08-08 190030.png` and are now named for what they show.
+  - Number: 6.33 MB of PNG became 0.93 MB of WebP at 1200px, 85% less, largest 66 kB against a 220 kB per-asset budget. The gallery is 38 images and 1.41 MB.
+  - Hard part: naming them required opening all twenty-five first, which is slower than it sounds and is the only way the result is honest. Two are the same departure-board scene — one with the icon library open, one zoomed out to 234 tracks — and a filename derived from a guess would have made them `departure-board-1` and `departure-board-2`. The same applies to four near-identical galaxy shots and two ripple-ring patterns.
+
+- `lib/gallery-images.json` is now the only place a screenshot is described.
+  - Hard part: image SEO is three signals that have to agree — the `alt` a crawler reads, the `caption` in the sitemap, and the `description` in the structured data. Written in three files they drift, and a caption contradicting its own alt is worse than no caption. The file is JSON rather than TypeScript for one specific reason: `next-sitemap.config.js` is CommonJS and runs after the build, outside anything that can import a `.ts` module, so JSON is the only format all three consumers can share.
+  - From it: an `ImageGallery` node with 38 `ImageObject` children whose `creator` points at the existing organisation node, so the gallery attaches to the entity graph rather than forming an island beside it; and 38 captioned entries in the image sitemap.
+  - Deliberately absent: `license` and `acquireLicensePage`. Google's licensable-images treatment wants both, neither exists, and inventing a licence URL to earn a badge is a rights claim this site has not made anywhere else.
+
+- The carousel became three rows, the middle one running against the other two.
+  - Number: 114 `<img>` elements for 38 pictures; exactly 38 carry alt text.
+  - Hard part: each row repeats three times to close its loop, so a naive implementation puts 38 descriptions on the page three times over — 114 identical alt strings, noise to a screen reader and to a crawler. Copies two and three are `alt=""` and `aria-hidden`. Separately, rows are dealt every-third rather than sliced: the source list is grouped by subject, so slicing would have put thirteen consecutive pattern shots in one row.
+  - Hard part: drag survived the rewrite only because each row animates toward a single target with `repeat`, not through a keyframe array. framer restarts a repeat from wherever the value was when the animation began, so a flung row carries on from where it was let go instead of snapping back.
+
+- Near miss: `public/v2 - Copy/` was untracked but **not ignored**.
+  - Number: ~10 MB — the source PNGs plus two copies of a 4.5 MB screen recording.
+  - Hard part: untracked and ignored look identical in `git status`, and `git add -A` would have committed all of it and failed the per-asset budget in `scripts/check-budgets.mjs`. Caught by checking `git check-ignore` before staging rather than after. Now ignored, the same treatment the A380 archives and the source browser icons already had.
+
+### A personal tool in a public repo
+
+- `/x-comment`: paste an X post, send it, get an editable draft reply back. A page plus a route handler, dev-only.
+  - Number: 8 files, +407/-20 (`c04cb45`).
+  - Hard part: the question was whether the API key could go straight into the app, on the grounds that it is local, the repo is private, and the key is capped. The repo is private; the **build output is not** — this repo deploys to flashfx.app from `main`, so a `NEXT_PUBLIC_` variable or a key inlined in a component ships inside a JavaScript chunk any visitor can open. Repo visibility does not cover it. The correction mattered more than the feature.
+  - Hard part: the second-order version is subtler. Moving the call server-side into a route handler fixes the exposure but creates a public unauthenticated endpoint that spends the key — anyone who finds `/api/x-comment` can run it. Both halves therefore return 404 when `NODE_ENV` is production. That is belt and braces rather than the only defence, since Netlify has never held the key, but it states the intent instead of resting on a secret's absence.
+  - A route handler is not "a whole backend", which was the objection worth answering directly: it is one file running inside the `npm run dev` that already exists, and the only place in a Next app a secret can live without reaching the client.
+
+- Model settings worth recording: `claude-opus-5` at low effort with adaptive thinking left **on** rather than disabled. Low effort already captures most of the token saving, and disabling thinking on this model can leak thinking tags into the visible answer. `max_tokens` is 4000 rather than sized to a 280-character reply, because on this model it caps thinking and response text together.
+
+### Verification, and a wrong first read
+
+- Checked against the build: 38 unique image sources with exactly 38 alt strings, 38 `ImageObject` nodes, 38 `image:loc` entries with captions, no client chunk referencing `ANTHROPIC_API_KEY`, and nothing key-shaped anywhere in `.next`.
+- The production gate looked broken at first. A grep for the page title found "X comment assistant" in the built HTML, which reads as the tool having rendered. It had not: that string was the `metadata.title` in the RSC flight payload, and the actual `<title>` was "Page not found". Grepping for the tool's own UI strings instead returned zero. **Grep for content that only exists on the path you are trying to rule out** — a title survives the 404 and proves nothing.
+- **The tool has never made a real API call.** There is no key on this machine, so the request path, the error branches, and the clipboard permissions are all **structurally verified only**. Nothing was checked in a browser, which now also covers the three-row carousel.
+
 ## 2026-08-10
 
 3 commits, 12 files changed, +341/−89, one new file (`components/sections/BeyondTheFooter.tsx`). Two arcs, and they share a through-line: both changes reached well past the file they started in. The pricing rework looked like editing one component and turned out to touch seven independent restatements of the same numbers, four of which feed structured data. The joke under the footer looked like six empty divs and turned out to change the colour of every section above it.
