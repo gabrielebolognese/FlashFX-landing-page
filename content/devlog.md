@@ -26,6 +26,8 @@
 
 ### A personal tool in a public repo
 
+> **Reverted on 2026-08-20 — wrong repo.** The tool never belonged here; it was built against this project by mistake and `c04cb45` was reverted in full, taking the page, the route handler, the `@anthropic-ai/sdk` dependency and the sitemap exclusion with it. The arc stays because the reasoning below is the reusable part: it is about what a public build output means for a secret, and that applies wherever the tool actually lands.
+
 - `/x-comment`: paste an X post, send it, get an editable draft reply back. A page plus a route handler, dev-only.
   - Number: 8 files, +407/-20 (`c04cb45`).
   - Hard part: the question was whether the API key could go straight into the app, on the grounds that it is local, the repo is private, and the key is capped. The repo is private; the **build output is not** — this repo deploys to flashfx.app from `main`, so a `NEXT_PUBLIC_` variable or a key inlined in a component ships inside a JavaScript chunk any visitor can open. Repo visibility does not cover it. The correction mattered more than the feature.
