@@ -43,10 +43,30 @@ import { GALLERY, GALLERY_ROWS, GALLERY_WIDTH, gallerySrc, type GalleryImage } f
  * its caption cannot contradict each other.
  */
 
-/** Card size. The screenshots are 1200 x ~612, so this is their own ratio. */
-const CARD_W = 420;
-const CARD_H = 214;
-const GAP = 20;
+/*
+ * Card size.
+ *
+ * This was a flat `CARD_W = 420`, which is wider than the phone it was being
+ * asked to fit on: 117% of a 360px screen, 108% of a 390px one. A single card
+ * could never sit inside the viewport, so the row read as one permanently
+ * clipped picture rather than as a gallery.
+ *
+ * It is a `clamp` now — 78vw on a phone, so one card sits in view with a sliver
+ * of the next one showing that the row continues, and still 420px from tablet
+ * width up. The ratio is the screenshots' own, 1200 x ~612.
+ *
+ * These are CSS strings rather than numbers on purpose. A number would have to
+ * be recomputed in JavaScript on every resize and kept in step with the style
+ * that consumes it; CSS resolves the width itself, and `MarqueeRow` measures
+ * what CSS decided instead of predicting it.
+ */
+const CARD_W = 'clamp(240px, 78vw, 420px)';
+const CARD_RATIO = 1200 / 612;
+const CARD_H = `calc(${CARD_W} / ${CARD_RATIO})`;
+const GAP = 'clamp(10px, 2.5vw, 20px)';
+
+/** How many times each row's contents repeat to close the loop. */
+const COPIES = 3;
 
 export function ImageCarousel() {
   /** Index into the flat `GALLERY`, so the expanded view walks all 38. */
@@ -161,12 +181,23 @@ export function ImageCarousel() {
                   width={GALLERY_WIDTH}
                   height={shown.h}
                   sizes="90vw"
-                  className="w-auto h-auto max-w-[74vw] max-h-[74vh] rounded-lg shadow-2xl"
+                  /*
+                   * 58vw on a phone, not 74. The expanded view is a row of
+                   * image-plus-two-arrows, and at 390px the arrows and their
+                   * gaps take 104px of the 366px left inside the padding — a
+                   * 74vw image is 289px, so the row came to 393px and pushed
+                   * its own arrows off the screen. 58vw is 226px and fits.
+                   *
+                   * `dvh` rather than `vh` for the same reason as everywhere
+                   * else: `vh` is measured against the viewport with the address
+                   * bar hidden, so a `vh`-capped image runs under the chrome.
+                   */
+                  className="w-auto h-auto max-w-[58vw] sm:max-w-[74vw] max-h-[68dvh] rounded-lg shadow-2xl"
                   priority
                 />
                 {/* The description, visible rather than only in the alt. It is
                     the same string, so the page and the crawler agree. */}
-                <p className="max-w-[74vw] text-center text-sm text-fx-text-secondary px-2">
+                <p className="max-w-[58vw] sm:max-w-[74vw] text-center text-sm text-fx-text-secondary px-2">
                   {shown.alt}
                 </p>
               </motion.div>
@@ -222,10 +253,49 @@ function MarqueeRow({
    * exactly the signal for "that was a drag, not a tap".
    */
   const dragged = useRef(false);
+  const strip = useRef<HTMLDivElement>(null);
+  /** Whether the reversed row has been placed at its start yet. */
+  const placed = useRef(false);
 
-  const span = (CARD_W + GAP) * images.length;
+  /*
+   * Measured, not computed.
+   *
+   * The loop distance has to be exactly one copy of the contents or the seam
+   * shows. While the card was a fixed 420 that could be arithmetic, but the
+   * width is a `clamp` now and only the browser knows what it resolved to — so
+   * the strip reports its own width and the animation follows. `ResizeObserver`
+   * covers the two ways it changes: the viewport resizing, and the images
+   * loading in at their real size.
+   */
+  const [span, setSpan] = useState(0);
 
   useEffect(() => {
+    const node = strip.current;
+    if (!node) return;
+    const measure = () => setSpan(node.scrollWidth / COPIES);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    // Nothing can start before the strip has a width; a zero span would animate
+    // to the position it is already in and the row would sit still.
+    if (!span) return;
+
+    /*
+     * The reversed row travels from -span up to 0, so it has to be sitting at
+     * -span before it starts. That used to be an `initial` prop, which cannot
+     * work now that the distance is measured rather than known at first render.
+     * Placed once, by ref rather than on every dependency change: re-running it
+     * on a hover would yank the row back mid-travel.
+     */
+    if (reverse && !placed.current) {
+      controls.set({ x: -span });
+      placed.current = true;
+    }
+
     if (active && !isDragging && !isHovering) {
       /*
        * A single target with `repeat`, not a keyframe array. framer restarts a
@@ -255,10 +325,10 @@ function MarqueeRow({
       onMouseLeave={() => setIsHovering(false)}
     >
       <motion.div
+        ref={strip}
         drag="x"
         dragConstraints={{ left: -span, right: 0 }}
         dragElastic={0.1}
-        initial={{ x: reverse ? -span : 0 }}
         onPointerDownCapture={() => {
           dragged.current = false;
         }}
@@ -271,7 +341,7 @@ function MarqueeRow({
         className="flex absolute left-0 top-0"
         style={{ gap: GAP }}
       >
-        {[0, 1, 2].map((copy) =>
+        {Array.from({ length: COPIES }, (_, copy) => copy).map((copy) =>
           images.map((image, index) => (
             <motion.div
               key={`${copy}-${index}`}
@@ -303,7 +373,9 @@ function MarqueeRow({
                 // repeating the description three times helps nobody.
                 alt={copy === 0 ? image.alt : ''}
                 fill
-                sizes="420px"
+                // Matches the clamp above, so a phone is not handed the
+                // 420px-wide candidate for a 300px slot.
+                sizes="(max-width: 538px) 78vw, 420px"
                 className="object-cover pointer-events-none"
                 draggable={false}
                 quality={88}
