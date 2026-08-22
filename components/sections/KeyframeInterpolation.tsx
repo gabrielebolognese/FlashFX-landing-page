@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Play, RotateCcw } from 'lucide-react';
+import { vh } from '@/lib/viewport';
 
 /*
  * Easing curves as a rollercoaster (immersionmilestones.md I8).
@@ -311,7 +312,7 @@ export function KeyframeInterpolation() {
         Keyframe Interpolation, <span style={{ color: '#f5c842' }}>like a rollercoaster!</span>
       </h3>
 
-      <div className="relative w-full h-[54vh] min-h-[360px] md:h-[64vh] mt-6 select-none">
+      <div className="relative w-full fx-vh min-h-[360px] mt-6 select-none" style={vh(54, 64)}>
         {/* Controls sit in the frame's corners rather than under it, so the
             track keeps the height. */}
         <div className="absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-4 px-4 sm:px-8">

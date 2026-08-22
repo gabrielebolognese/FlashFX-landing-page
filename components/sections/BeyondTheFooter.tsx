@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { vh } from '@/lib/viewport';
 
 /*
  * The joke under the footer.
@@ -85,8 +86,8 @@ export function BeyondTheFooter() {
       {SCREENS.map((screen, i) => (
         <section
           key={i}
-          className="relative w-full h-screen flex items-center justify-center"
-          style={{ background: screen.shade }}
+          className="relative w-full fx-vh flex items-center justify-center"
+          style={{ ...vh(100), background: screen.shade }}
           // The empty ones are spacers and nothing else; there is no reason for
           // a screen reader to announce five of them.
           aria-hidden={screen.line ? undefined : true}
@@ -104,8 +105,8 @@ export function BeyondTheFooter() {
 
       <section
         ref={stage}
-        className="relative w-full h-screen flex items-center justify-center px-4"
-        style={{ background: '#05070f' }}
+        className="relative w-full fx-vh flex items-center justify-center px-4"
+        style={{ ...vh(100), background: '#05070f' }}
       >
         <div
           className="relative w-full max-w-5xl overflow-hidden rounded-xl border border-fx-border shadow-2xl"

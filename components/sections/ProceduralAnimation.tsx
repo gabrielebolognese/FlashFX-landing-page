@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { CtaButton } from '@/components/ui/cta-button';
+import { vh } from '@/lib/viewport';
 
 /*
  * "Can it do procedural animations too? Say less!"
@@ -41,7 +42,10 @@ export function ProceduralAnimation() {
       {/* Full-bleed, because two of the formations — the waveform and the ribbon
           — are written to reach the frame edge, and a centred column would cut
           exactly the part that makes them read. */}
-      <div className="relative mt-10 md:mt-14 w-screen left-1/2 -translate-x-1/2 h-[62vh] min-h-[420px] md:min-h-[560px]">
+      <div
+        className="relative mt-10 md:mt-14 w-screen left-1/2 -translate-x-1/2 fx-vh min-h-[420px] md:min-h-[560px]"
+        style={vh(62)}
+      >
         <ProceduralMorph />
       </div>
 

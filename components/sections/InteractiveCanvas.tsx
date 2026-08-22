@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
+import { vh } from '@/lib/viewport';
 
 /*
  * Follows the two timelines (immersionmilestones.md I8, 2026-08-07).
@@ -49,7 +50,8 @@ export function InteractiveCanvas() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.7, delay: 0.15 }}
-          className="mt-10 md:mt-14 w-full h-[64vh] min-h-[440px] md:h-[76vh] md:min-h-[560px]"
+          className="mt-10 md:mt-14 w-full fx-vh min-h-[440px] md:min-h-[560px]"
+          style={vh(64, 76)}
         >
           <CanvasStudio />
         </motion.div>

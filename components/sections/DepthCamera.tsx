@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { CtaButton } from '@/components/ui/cta-button';
 import { TEMPLATES, editorTemplate } from '@/lib/editor';
+import { vh } from '@/lib/viewport';
 
 /*
  * "Flat layers, and a camera that moves through them."
@@ -84,7 +85,10 @@ export function DepthCamera() {
         picture comes apart, and the panel that opens when the camera is held
         has to stay large enough to read as a shot rather than as a thumbnail.
       */}
-      <div className="relative mt-12 md:mt-16 w-screen left-1/2 -translate-x-1/2 h-[78vh] min-h-[480px] md:min-h-[620px]">
+      <div
+        className="relative mt-12 md:mt-16 w-screen left-1/2 -translate-x-1/2 fx-vh min-h-[480px] md:min-h-[620px]"
+        style={vh(78)}
+      >
         <CameraRig className="absolute inset-0" />
       </div>
 

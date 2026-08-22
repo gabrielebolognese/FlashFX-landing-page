@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useAmbient } from '@/lib/motion';
 import { CtaButton } from '@/components/ui/cta-button';
+import { vh } from '@/lib/viewport';
 
 /*
  * "All on web", with the browsers it runs in scattered around it
@@ -74,7 +75,8 @@ export function AllOnWeb() {
     <section
       id="all-on-web"
       ref={ref}
-      className="relative w-full h-[82vh] min-h-[540px] overflow-hidden flex items-center justify-center"
+      className="relative w-full fx-vh min-h-[540px] overflow-hidden flex items-center justify-center"
+      style={vh(82)}
     >
       {/* Light behind the words, breathing. */}
       <motion.div

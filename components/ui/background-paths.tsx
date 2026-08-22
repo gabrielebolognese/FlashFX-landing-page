@@ -113,7 +113,7 @@ export function BackgroundPaths({
     const { ref, active } = useAmbient<HTMLDivElement>();
 
     return (
-        <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-fx-bg-base">
+        <div className="relative fx-min-vh w-full flex items-center justify-center overflow-hidden bg-fx-bg-base">
             <div ref={ref} className="absolute inset-0">
                 <AmbientProvider active={active}>
                     <FloatingPaths position={1} />

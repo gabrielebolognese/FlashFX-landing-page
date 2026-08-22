@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { CtaButton } from '@/components/ui/cta-button';
+import { vh } from '@/lib/viewport';
 
 /*
  * The hero opens on the cube animation, not on a headline
@@ -74,8 +75,8 @@ export function Hero() {
      * nothing shifts in tone when they arrive.
      */
     <section
-      className="relative w-full h-screen flex items-center justify-center overflow-hidden"
-      style={{ background: '#06091C' }}
+      className="relative w-full fx-vh flex items-center justify-center overflow-hidden"
+      style={{ ...vh(100), background: '#06091C' }}
     >
       {raysOn && (
         <motion.div

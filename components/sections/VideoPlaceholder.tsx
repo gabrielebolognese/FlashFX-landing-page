@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { VideoLoading, useVideoEmbed } from '@/components/ui/video-loading';
 import { Demo, demoFrame, type DemoKind } from '@/components/demos';
+import { vh } from '@/lib/viewport';
 
 interface VideoPlaceholderProps {
   title: string;
@@ -123,8 +124,8 @@ export function VideoPlaceholder({ title, description, isMainDemo, youtubeId, se
   return (
     <section
       id={id}
-      className={`relative w-full px-6 overflow-hidden ${isMainDemo ? 'flex flex-col justify-center' : 'py-12 md:py-20'}`}
-      style={isMainDemo ? { height: '100vh', minHeight: '100vh' } : undefined}
+      className={`relative w-full px-6 overflow-hidden ${isMainDemo ? 'fx-vh fx-min-vh flex flex-col justify-center' : 'py-12 md:py-20'}`}
+      style={isMainDemo ? vh(100) : undefined}
     >
       {/*
         This section paints no background of its own, and there is no longer a

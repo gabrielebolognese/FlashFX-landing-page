@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Paperclip, Image as ImageIcon, Mic, Sparkles, ArrowRight, Copy } from 'lucide-react';
 import { CtaButton } from '@/components/ui/cta-button';
 import { useDemo } from './demo-kit';
+import { vh } from '@/lib/viewport';
 
 /*
  * Prompt in, animation out — the demo for "Edit in plain English".
@@ -659,7 +660,7 @@ export function PromptToArt() {
       action rather than eating into it: a point 100px above the bottom edge ends
       up further from that edge, not closer.
     */
-    <div ref={ref} className="relative w-full h-[65vh] min-h-[390px] md:min-h-[527px] overflow-hidden">
+    <div ref={ref} className="relative w-full fx-vh min-h-[390px] md:min-h-[527px] overflow-hidden" style={vh(65)}>
       <div className="absolute inset-0" style={{ transform: 'scale(0.85)', transformOrigin: 'center center' }}>
       {/* Artwork. Positioning on the wrapper, animation on the child — an inline
           transform from framer would otherwise overwrite Tailwind's translate. */}

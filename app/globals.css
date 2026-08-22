@@ -898,3 +898,56 @@
     color: var(--color-text-secondary);
   }
 }
+
+/*
+ * Viewport height a phone can actually see.
+ *
+ * `100vh` on a phone is measured against the viewport with the browser chrome
+ * *hidden*. While the address bar is showing — which is how every page starts —
+ * a `100vh` section is taller than the space available, so its bottom is under
+ * the chrome. On the hero that is the call to action; on the seven screens below
+ * the footer it is the whole joke landing off-centre.
+ *
+ * ── Why `svh` and not `dvh` ─────────────────────────────────────────────────
+ *
+ * `dvh` tracks the visible area *as it changes*, so a `dvh` section resizes
+ * every time the address bar slides away. These sections are full of canvases:
+ * a resize fires their `ResizeObserver`, which reprojects the scene and
+ * repaints — during a scroll, which is exactly when the frame budget is
+ * already spent. `svh` is the small viewport, chrome shown: it is stable, it is
+ * never taller than what the visitor can see, and it never triggers a relayout
+ * mid-scroll. The cost is that a section is slightly shorter than the screen
+ * once the bar hides, which nothing here depends on.
+ *
+ * `dvh` remains right for fixed overlays that must fit whatever is visible at
+ * this instant, and that is where it is used: the navbar sheet and the gallery
+ * lightbox.
+ *
+ * ── Why a custom property rather than `h-[78svh]` ──────────────────────────
+ *
+ * The doubled declaration. A browser without `svh` drops that line and keeps the
+ * `vh` one above it, which is the behaviour these sections have today. Written
+ * as a Tailwind arbitrary value there is only one declaration, and an
+ * unsupporting browser falls all the way through to `height: auto` — which on a
+ * section whose canvas is `absolute inset-0` means zero height and an invisible
+ * demo. A silent blank is a much worse failure than a slightly tall one.
+ *
+ * Usage: `className="fx-vh"` with `style={vh(78)}` from `lib/viewport.ts`,
+ * or `vh(64, 76)` when the section wants a different height from `md` up.
+ */
+.fx-vh {
+  height: calc(var(--fx-vh, 100) * 1vh);
+  height: calc(var(--fx-vh, 100) * 1svh);
+}
+
+.fx-min-vh {
+  min-height: calc(var(--fx-vh, 100) * 1vh);
+  min-height: calc(var(--fx-vh, 100) * 1svh);
+}
+
+@media (min-width: 768px) {
+  .fx-vh {
+    height: calc(var(--fx-vh-md, var(--fx-vh, 100)) * 1vh);
+    height: calc(var(--fx-vh-md, var(--fx-vh, 100)) * 1svh);
+  }
+}

@@ -1,5 +1,9 @@
 # Devlog
 
+## 2026-08-19
+
+1 commit, 1 file changed, +40, nothing added. Documentation only: the 18 August entry below. The one decision worth recording is what the entry does *not* contain — 11 to 17 August have no commits, so they got no entries rather than eight paragraphs of "no changes". Padding empty days is how a log stops being readable: the next real gap becomes indistinguishable from filler, and the reader loses the ability to see at a glance when work actually happened. The gap is stated once, in the entry that follows it.
+
 ## 2026-08-18
 
 2 commits, 38 files changed, +938/-243, 31 new files. First work since 10 August — 11 to 17 August have no commits, and no entries below, because nothing was written on them. Two arcs, unrelated to each other: making 25 supplied screenshots findable in Google Images, and adding a personal tool to a repo that is not private in the way it looks.
