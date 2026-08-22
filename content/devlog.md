@@ -1,5 +1,55 @@
 # Devlog
 
+## 2026-08-22
+
+6 commits, 21 files changed, +837/-190. One programme in five phases: the site was not usable on a phone, and the phases were run 1, 2, 4, 3, 5 at the owner's direction rather than in order. One unrelated commit gave the footer a Legal column. Nothing here has been opened on a real device.
+
+### There was no navigation below 1024px
+
+- The navbar links were `hidden lg:flex` with no hamburger behind them, so a phone had a logo, a CTA, and no way to reach anything else.
+  - Number: +260/-16 into `components/Navbar.tsx`.
+  - Hard part: the dropdowns opened on `mouseenter`, and the fix is not to add tap handlers alongside. A touch device synthesises a hover on tap, so both would fire and a menu would open and close in the same gesture. The hover handlers are now attached **only** when `(hover: hover) and (pointer: fine)` matches, and tap drives the menu otherwise — one input model at a time rather than two overlapping ones.
+  - A menu needs every way out, not just the way in: Escape, a `pointerdown` outside it, and crossing the breakpoint while it is open all dismiss it. The last one matters because rotating a phone can cross 1024px with a sheet open, leaving an overlay above a layout that no longer has anything under it.
+
+### The gallery card was sized for a desktop
+
+- `components/sections/ImageCarousel.tsx`: the card is now `clamp(240px, 78vw, 420px)` with its height derived from the real 1200x612 aspect.
+  - Hard part: the marquee's loop distance was a constant that happened to equal one copy of the row at desktop card width. The moment the width became fluid the constant was wrong, and the row jumped at every loop. The span is now measured — `scrollWidth / COPIES` inside a `ResizeObserver` — which is what makes a fluid marquee possible at all; the animation returns early until that measurement exists.
+
+### The motion tier could not see a phone
+
+- `lib/motion/device-tier.ts` now demotes touch-primary devices.
+  - Number: +28/-1, the smallest change of the day and the one that moved the most.
+  - Hard part: the tier had existed since I7 for exactly this visitor and had never once caught one. It read `hardwareConcurrency` and `deviceMemory`; a modern handset reports eight cores, and Chrome caps `deviceMemory` at 8 to limit fingerprinting, so both thresholds passed and every phone resolved to `full` — the full-screen backdrop shader, six concurrent ambient loops, undiminished particle counts. Hardware counters describe capacity, and nothing about them says "battery".
+  - `(pointer: coarse)` is the missing declaration. It reports the device's *primary* input, so a touchscreen laptop still reads `fine`. Chosen over viewport width because the answer is cached for the session: pointer type does not change under a visitor, and window width changes every time someone drags a corner.
+
+### Viewport heights, and the unit I had planned was wrong
+
+- Eleven full-height sections across ten files moved to a `.fx-vh` / `.fx-min-vh` utility driven by a `--fx-vh` custom property, with `lib/viewport.ts` keeping the cast out of the call sites.
+  - Hard part: this was planned as `vh` to `dvh`, and `dvh` is the wrong unit here. It tracks the visible area *as it changes*, so a `dvh` section relayouts every time the address bar slides away — and these sections carry canvases whose `ResizeObserver` then reprojects the scene mid-scroll, when the frame budget is already spent. That trades a static clipping bug for scroll jank on the heaviest sections of the page. `svh` is the small viewport: stable, never taller than what is visible. `dvh` stays correct for the fixed overlays from phases 1 and 2, which must fit whatever is visible right now.
+  - Hard part: why a custom property instead of `h-[78svh]`. The utility emits the `vh` line and then the `svh` line, so a browser without `svh` keeps today's behaviour. A Tailwind arbitrary value is a *single* declaration — an unsupporting browser falls through to `height: auto`, and a section whose canvas is `absolute inset-0` then has no height at all. A slightly tall section is a much better failure than an invisible one. Both declarations survive minification; that was checked.
+
+### Two scenes drawn in absolute pixels
+
+- The orbital timeline put every node 280px from the centre of a container 360px wide, and `overflow-hidden` took the rest.
+  - Number: the ring is 588px at desktop and 417px at a 485px viewport; the radius floor is 96px.
+  - Hard part: because the ring turns, the nodes did not merely look cramped — each one disappeared for part of every rotation, and a tapped one could open its card off screen. 280 is now a ceiling rather than a value.
+  - Hard part: horizontal room is budgeted against the **labels**, not the nodes. A node is 56px across; "Documentation" underneath it is nearer 96px, so the label reaches the edge first and the node is the wrong thing to measure against.
+  - The nodes carry real links, so they stay in the server HTML at the desktop radius rather than waiting for a measurement. That makes the first correction have to be instant — `transition: none` until measured — or every visitor watches a 700ms slide inward on load.
+
+- The two workstation scenes keep their pixel geometry and are scaled to fit instead.
+  - Hard part: they cannot be rebuilt fluid. CSS 3D has no percentage `translateZ` — depth is measured in pixels or not at all — so a percentage layout would hold the Z offsets at their pixel values while everything around them shrank, and the monitor rig would flatten as the screen narrowed. A plain 2D scale on an ancestor of the `perspective` element scales the finished projection whole and keeps every depth relationship as authored.
+  - Both scenes divide by **one shared design width**. Fitting each to its own extents would leave the laptop untouched while the rig shrank, drawing the beginner's laptop larger than the expert's three-monitor desk — the opposite of what the section says.
+  - Found on the way: the orbit's rotation was a `setInterval` writing React state 20 times a second, re-rendering seven nodes, from first paint until navigation, on screen or off. It holds a governor slot now, which is what CLAUDE.md has said all along.
+
+### Verification, and three self-inflicted problems
+
+- Headless Chrome was used to dump the post-JavaScript DOM at several widths. The fitted values are real: the ring measures 417px narrow and 520px at tablet width, and the workstation scale moves off 1. At 1440px the ring is still 588px **in the server-rendered style format**, which is the strongest available proof that desktop is untouched — React never had to rewrite it.
+- What that does not cover: Chrome on Windows clamps a headless window to roughly 485px, so 320-414px was never actually rendered. Those numbers come from running the formula in node, not from a browser. Nothing in any of the five phases has been opened on a real device.
+- `git add -A` swept the uncommitted 19 August devlog entry into the phase 3 commit, after I had said I would leave it alone pending a decision. Naming the files is not pedantry when the working tree holds something deliberately unstaged.
+- Running `npm run build` while `npm run dev` was live clobbered `.next` underneath the dev server, which began returning 500 — and that looked like a compile error in the change I had just made. Then backgrounding a restart with a shell `&` let the job die with its parent while a node process kept holding port 3000, so the next server silently bound 3001 and the 500 appeared to persist. Reading the log first would have been faster than either.
+- During the audit that preceded all this, I reported that no viewport meta tag shipped, from a grep against a build output the dev server had since removed. Caught before it reached a fix, but it is the second time in a week that a grep against a stale artifact produced a confident wrong answer.
+
 ## 2026-08-19
 
 1 commit, 1 file changed, +40, nothing added. Documentation only: the 18 August entry below. The one decision worth recording is what the entry does *not* contain — 11 to 17 August have no commits, so they got no entries rather than eight paragraphs of "no changes". Padding empty days is how a log stops being readable: the next real gap becomes indistinguishable from filler, and the reader loses the ability to see at a glance when work actually happened. The gap is stated once, in the entry that follows it.
