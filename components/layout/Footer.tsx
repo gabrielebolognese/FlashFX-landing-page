@@ -48,8 +48,29 @@ const footerLinks = {
       { text: 'About', href: '/about' },
       { text: 'Careers', href: '/careers' },
       { text: 'Brand', href: '/brand' },
-      { text: 'Privacy Policy', href: '/privacy' },
+    ],
+  },
+  /*
+   * Legal, split out of Company on 2026-08-20.
+   *
+   * These five were the tail of an eight-item Company column, below About,
+   * Careers and Brand — which is where a visitor looking for the refund terms
+   * would never think to look, and where a policy link carries no more weight
+   * than a brand-assets link. A named column is the convention for exactly this
+   * reason, and it is the first place anyone checks.
+   *
+   * All five are already separate routes with their own metadata; nothing here
+   * changes what they are, only where they are found.
+   *
+   * `Your Data` is in this group rather than Company because it is not an
+   * explainer sitting beside the privacy policy — it *is* the privacy policy in
+   * server-rendered form, and `/privacy` canonicalises to it.
+   */
+  legal: {
+    label: 'Legal',
+    links: [
       { text: 'Terms of Service', href: '/terms' },
+      { text: 'Privacy Policy', href: '/privacy' },
       { text: 'Refund Policy', href: '/refund-policy' },
       { text: 'Acceptable Use', href: '/acceptable-use-policy' },
       { text: 'Your Data in FlashFX', href: '/your-data' },
@@ -79,7 +100,12 @@ export function Footer() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12">
+        {/*
+          Six columns now that Legal has its own. Six across does not fit at
+          1024px without the labels wrapping, so `lg` takes three and a second
+          row, and only `xl` puts them all on one line.
+        */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-12">
           {Object.entries(footerLinks).map(([key, column]) => (
             <div key={key}>
               <h3

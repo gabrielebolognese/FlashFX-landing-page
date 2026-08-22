@@ -97,6 +97,32 @@ module.exports = {
    *
    * All four stay live, linked from the footer, and readable. They are simply
    * not advertised for indexing.
+   *
+   * ── Re-examined 2026-08-20, with a measurement ─────────────────────────────
+   *
+   * Asked to add the legal pages to the sitemap alongside the new footer Legal
+   * column. They still cannot go in, and this is what the built HTML actually
+   * contains rather than what the comment above remembers:
+   *
+   *   /terms                    934 chars of prose   noindex
+   *   /refund-policy            959 chars           noindex
+   *   /acceptable-use-policy    940 chars           noindex
+   *   /privacy                  927 chars           canonical -> /your-data
+   *   /your-data             16,066 chars           indexed, already listed
+   *
+   * Those ~940 characters are the heading and standfirst this repo renders. The
+   * policy text arrives from Termly after hydration, so a crawler is served an
+   * empty shell — which is why the noindex is there, and listing a noindex URL
+   * is precisely the "Submitted URL marked 'noindex'" error in Search Console.
+   *
+   * The privacy policy IS in the sitemap already, as /your-data: 16k characters
+   * of the same policy, server-rendered. Nothing is missing from the index that
+   * could usefully be in it.
+   *
+   * To include the other three, one thing has to change first: their text has to
+   * be server-rendered in this repo the way /your-data's is. Export it from
+   * Termly into the page, drop the noindex, then add them here. Adding them
+   * before that trades a clean Search Console for three thin-content pages.
    */
   exclude: ['/privacy', '/terms', '/refund-policy', '/acceptable-use-policy'],
   transform: async (config, path) => {
