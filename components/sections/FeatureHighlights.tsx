@@ -129,10 +129,10 @@ function FeatureCard({ item, showCategory }: { item: CardItem; showCategory?: bo
           style={{ borderRadius: 'inherit' }}
         />
 
-        <div className="relative z-20 p-5 h-full flex flex-col">
+        <div className="relative z-20 p-2.5 sm:p-4 lg:p-5 h-full flex flex-row items-center gap-2.5 sm:flex-col sm:items-stretch sm:gap-0">
           {showCategory && category && (
             <span
-              className="text-xs font-medium mb-3 tracking-wider uppercase"
+              className="hidden sm:block text-xs font-medium mb-3 tracking-wider uppercase"
               style={{ color: 'rgba(245, 197, 24, 0.5)', fontFamily: 'var(--font-outfit)' }}
             >
               {category}
@@ -140,23 +140,23 @@ function FeatureCard({ item, showCategory }: { item: CardItem; showCategory?: bo
           )}
           <div
             ref={iconRef}
-            className="mb-3 w-9 h-9 flex items-center justify-center rounded-xl flex-shrink-0"
+            className="mb-0 sm:mb-3 w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center rounded-lg sm:rounded-xl flex-shrink-0"
             style={{
               background: 'linear-gradient(135deg, rgba(245, 197, 24, 0.16) 0%, rgba(245, 197, 24, 0.05) 100%)',
               border: '1px solid rgba(245, 197, 24, 0.22)',
               transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease',
             }}
           >
-            <Icon className="w-4 h-4 text-fx-accent-yellow" strokeWidth={1.5} />
+            <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fx-accent-yellow" strokeWidth={1.5} />
           </div>
 
           <h3
-            className="text-sm font-normal text-fx-text-primary mb-1.5"
+            className="text-[12px] leading-snug sm:text-sm sm:leading-normal font-normal text-fx-text-primary mb-0 sm:mb-1.5"
             style={{ fontFamily: 'var(--font-outfit)', fontWeight: 400 }}
           >
             {item.title}
           </h3>
-          <p className="text-fx-text-secondary text-xs leading-relaxed">
+          <p className="hidden sm:block text-fx-text-secondary text-xs leading-relaxed">
             {item.description}
           </p>
         </div>
@@ -177,10 +177,10 @@ function CategorySection({
   showCategory?: boolean;
 }) {
   return (
-    <div className="mb-20">
-      <div className="mb-8">
+    <div className="mb-12 sm:mb-16 lg:mb-20">
+      <div className="mb-5 sm:mb-8">
         <h3
-          className="text-2xl font-semibold text-white mb-2"
+          className="text-xl sm:text-2xl font-semibold text-white mb-2"
           style={{ fontFamily: 'var(--font-outfit)', fontWeight: 600 }}
         >
           {title}
@@ -188,7 +188,7 @@ function CategorySection({
         <p className="text-fx-text-secondary text-sm">{subtitle}</p>
       </div>
 
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-3 lg:gap-4">
         {items.map((item) => (
           <FeatureCard key={item.title} item={item} showCategory={showCategory} />
         ))}
@@ -212,10 +212,10 @@ export function FeatureHighlights() {
       keeps that ground, with a lead-in gradient above it that takes the page
       from the field into the solid colour.
     */
-    <section className="relative w-full pt-24">
+    <section className="relative w-full pt-14 sm:pt-20 lg:pt-24">
       <div className="relative z-[10] max-w-screen-2xl mx-auto px-6">
         <h2
-          className="section-heading font-display text-5xl md:text-7xl lg:text-8xl font-bold text-center mb-20"
+          className="section-heading font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-center mb-10 sm:mb-16 lg:mb-20"
           style={{ fontFamily: 'var(--font-inter), sans-serif', letterSpacing: '-0.03em' }}
         >
           <span style={{ color: '#f5c842' }}>Everything</span>
@@ -308,7 +308,7 @@ export function FeatureHighlights() {
           <CtaButton
             href={EDITOR_URL}
             size="xl"
-            style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)', letterSpacing: '-0.025em', lineHeight: 1 }}
+            style={{ fontSize: 'clamp(1.25rem, 5vw, 5rem)', letterSpacing: '-0.025em', lineHeight: 1 }}
           >
             And so much more
           </CtaButton>
@@ -319,7 +319,7 @@ export function FeatureHighlights() {
         className="relative w-full text-center"
         style={{
           background: '#141f40',
-          paddingBottom: '7rem',
+          paddingBottom: 'clamp(3rem, 8vw, 7rem)',
         }}
       >
 

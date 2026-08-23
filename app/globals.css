@@ -263,6 +263,22 @@
   transition: transform 200ms ease-out;
 }
 
+/*
+ * The placeholder height has to match the card it stands in for.
+ *
+ * `content-visibility: auto` skips rendering an off-screen card and asks
+ * `contain-intrinsic-size` how tall to pretend it is. 190px is the desktop
+ * card. Below `sm` the card is a chip roughly a third of that, and there are
+ * 176 of them — so the browser would reserve about three times the space the
+ * section actually needs, then correct it as each row scrolled in. That is a
+ * scrollbar that keeps changing length and a page whose end keeps moving.
+ */
+@media (max-width: 639px) {
+  .fx-feature-card {
+    contain-intrinsic-size: auto 58px;
+  }
+}
+
 .fx-feature-card:hover {
   transform: translateY(-4px);
 }
