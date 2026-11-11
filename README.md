@@ -6,7 +6,7 @@ Marketing site for [FlashFX](https://flashfx.app), a browser-based motion graphi
 
 ## Features
 
-**Pages (Next.js App Router, 22 routes)**
+**Pages (Next.js App Router, 20 routes)**
 
 | Group | Routes |
 |---|---|
@@ -19,7 +19,7 @@ Marketing site for [FlashFX](https://flashfx.app), a browser-based motion graphi
 **Interactive demos instead of video embeds** (`components/demos/`)
 
 - In-page recreations of the editor UI: keyframe timeline, clip (NLE) timeline, preset wall, media pool, shape tools, vector pen, clip playback, canvas studio, particle studio, camera rig, logo assembly, procedural morph and others.
-- Every registered demo is loaded with `dynamic({ ssr: false })` through `components/demos/index.tsx`, so none of them land in the initial bundle.
+- Every demo is loaded with `dynamic({ ssr: false })`, so none of them land in the initial bundle: through the registry in `components/demos/index.tsx` (timeline, clips, presets, media pool), the wrappers in `feature-demos.tsx` and `convince-demos.tsx`, or a dynamic import in the section that uses it.
 - Remaining YouTube embeds create their iframe only when an IntersectionObserver reports the section approaching; server HTML contains no iframes.
 
 **Motion system** (`lib/motion/`)
@@ -28,7 +28,7 @@ Marketing site for [FlashFX](https://flashfx.app), a browser-based motion graphi
 - Device tiering demotes low-end and touch-primary devices to lighter animation.
 - Shared `duration` / `loop` / `ease` / `reveal` tokens, plus `setLoopCap()` and `loopStats()` for diagnostics in the browser console.
 - `BeamBorder` and `SectionSeam` (`components/ui/beam-border.tsx`) provide the animated edge and divider treatments.
-- WebGL shader backgrounds (three.js, `@paper-design/shaders`) with a capped device pixel ratio (`lib/render-gate.ts`).
+- WebGL shader backgrounds built on three.js (`components/ui/shader-animation.tsx`, `web-gl-shader.tsx`) with a device pixel ratio capped at 1.5 (`lib/render-gate.ts`).
 
 **SEO and structured data**
 
@@ -49,7 +49,7 @@ Marketing site for [FlashFX](https://flashfx.app), a browser-based motion graphi
 
 ### Prerequisites
 
-- Node.js 16.14 or newer (required by Next.js 13.5.1) and npm
+- Node.js 18 or newer and npm. The repo declares no `engines` field or `.nvmrc`; in `package-lock.json`, Next.js 13.5.1 requires Node 16.14+, while `@netlify/plugin-nextjs` and `react-hook-form` require Node 18+.
 - git (the budget check in `postbuild` runs `git ls-files`)
 
 ### Download and install
@@ -104,7 +104,7 @@ Common edits:
 - **Add a page:** create `app/<slug>/page.tsx` (metadata, JSON-LD, section list) and a matching `components/sections/<slug>/` folder. The route is picked up by the sitemap automatically; add an entry to `ROUTES` in `next-sitemap.config.js` only if it needs a non-default priority.
 - **Add a changelog entry:** prepend a release to `components/sections/changelog/changelogData.ts`.
 - **Add a gallery screenshot:** add the WebP to `public/lookslike/` and describe it in `lib/gallery-images.json`.
-- **Add a demo:** register it in `components/demos/index.tsx` rather than importing it directly.
+- **Add a demo:** load it with `dynamic({ ssr: false })`, as `components/demos/index.tsx` does, rather than importing it directly.
 
 ### Conventions that break silently
 
@@ -115,7 +115,7 @@ Common edits:
 - **FAQ copy is duplicated by design** between the `faqSchema` literal in a page and the visible FAQ data. Update both.
 - **`h1` has a global gradient** with a transparent text fill (`app/globals.css`), so `text-*` colour classes on an `h1` are invisible.
 - **Images are unoptimised** (`images: { unoptimized: true }`); `next/image` does layout only and image weight is managed by hand, within the budgets above.
-- **No raw `repeat: Infinity`.** Continuous animation goes through `useAmbient()`.
+- **No raw `repeat: Infinity` in new work.** Continuous animation is meant to go through `useAmbient()`.
 - **Design tokens** live as CSS custom properties in `app/globals.css` and are exposed as `fx-*` Tailwind utilities. `components/ui/` holds both shadcn/ui primitives (`button.tsx`, `card.tsx`) and bespoke `fx-*` components that also export `Button` and `Card`; check the import path.
 
 ## Project structure
@@ -141,13 +141,13 @@ netlify.toml              Netlify build settings
 
 - Next.js 13.5.1 (App Router), React 18.2, TypeScript 5.2 (strict)
 - Tailwind CSS 3.3 with `tailwindcss-animate`, shadcn/ui on Radix UI primitives, lucide-react icons
-- framer-motion for animation; three.js and `@paper-design/shaders` for WebGL backgrounds
+- framer-motion for animation; three.js for WebGL backgrounds and 3D demos
 - `next/font/google`: Inter (headings), Outfit (body and UI), JetBrains Mono (figures)
 - `next-sitemap` for sitemap and robots generation
 - Termly embeds for four of the legal pages
 - Netlify with `@netlify/plugin-nextjs`
 
-`@supabase/supabase-js` is listed in `package.json` but is not used by any code in the repository.
+`@supabase/supabase-js` and `@paper-design/shaders` are listed in `package.json` but are not imported by any code in the repository (the latter appears only in `transpilePackages` in `next.config.js`).
 
 ## Further documentation
 
